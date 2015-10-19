@@ -192,8 +192,10 @@ Sqlite provides a somewhat limited support for multi-threading. It allows multip
 There is 2 ways to safely achieve concurrent transactions with sqlite:
 - make sure the data access code is single threaded
 - open / close a db* connection for each transaction
-The problem with the second solution is that opening/closing a connection is a non-trivial operation, and that prepared statements belongs to one and only one sqlite connection (so we cannot reuse statements prepared on one connection to execute code on another). So performance-wise, this approach did not fit with the goals I had with this library.
-So I did take the first approach : each DBContext instance creates a worker thread and a job queue. The sqlite connection is accessible to other components only from within a submited job (using DBContext::executeAsync()). So, multi-statement transactions should always be coded with this kind of code snippet:
+
+The problem with the second solution is that opening/closing a connection is a non-trivial operation, and that prepared statements belongs to one and only one sqlite connection (so we cannot reuse statements prepared on one connection to execute code on another). In term of performance, this approach did not fit with the goals I had with this library.
+
+So I did take the first approach : each DBContext instance creates a single worker thread and a job queue. The sqlite connection is accessible to other components only from within a submited job (using DBContext::executeAsync()), but submitting a job can be done from any thread. So, multi-statement transactions should always be coded with this kind of code snippet:
 ```C++
 ctx.executeAsync([ctx](sqlite3* db) {
 	auto ctxNonConstCopy = ctx;
