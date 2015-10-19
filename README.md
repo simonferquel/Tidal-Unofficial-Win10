@@ -187,3 +187,21 @@ ctx.executeAsync([ctx](sqlite3* db) {
 	trans.commit();
 });
 ```
+## Threading model
+Sqlite provides a somewhat limited support for multi-threading. It allows multiple db* instances to be open concurrently (even from multiple processes), and handles concurrent transactions quite well (even from multiple processes), but each db* instance should be considered as single threaded, at least when multi-statement transactions are needed. Indeed, there is no kind of transaction context in the sqlite library, so the user must very carefull when using it in a multi-threaded way so that statements belonging to different transactions do not interleave.
+There is 2 ways to safely achieve concurrent transactions with sqlite:
+- make sure the data access code is single threaded
+- open / close a db* connection for each transaction
+The problem with the second solution is that opening/closing a connection is a non-trivial operation, and that prepared statements belongs to one and only one sqlite connection (so we cannot reuse statements prepared on one connection to execute code on another). So performance-wise, this approach did not fit with the goals I had with this library.
+So I did take the first approach : each DBContext instance creates a worker thread and a job queue. The sqlite connection is accessible to other components only from within a submited job (using DBContext::executeAsync()). So, multi-statement transactions should always be coded with this kind of code snippet:
+```C++
+ctx.executeAsync([ctx](sqlite3* db) {
+	auto ctxNonConstCopy = ctx;
+	SynchronousTransactionScope trans(ctxNonConstCopy, db);
+	executeSynchronously<Query1>(ctxNonConstCopy, db, ...);
+	executeSynchronously<Query2>(ctxNonConstCopy, db, ...);
+	...
+	trans.commit();
+});
+```
+This way, 2 transactions cannot have there statements interleaved, and sqlite processing is always done in a single background thread. Results are exposed to the caller trough ppl tasks (so user code can wait for the result using the "get()" method, or submit a continuation task to work in a purely asynchronous and non-blocking style).
