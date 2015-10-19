@@ -1,0 +1,7 @@
+/**/.vs/
+/**/Debug/
+/**/Release/
+/**/ipch/
+/**/Generated Files/
+*.sdf
+*.opensdf
