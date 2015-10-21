@@ -8,6 +8,10 @@
 
 #include <SqliteException.h>
 #include <Sqlite3Extensions.h>
+
+#include <StringUtils.h>
+#include "GeneratedCode.h"
+
 using namespace std;
 using namespace LocalDB;
 using namespace LocalDB::SchemaDefinition;
@@ -198,6 +202,10 @@ public:
 			std::shared_ptr<TestSchemaV2> schema = std::make_shared<TestSchemaV2>(ctx);
 
 			schema->initializeAsync(concurrency::cancellation_token::none()).get();
+			auto classes = schema->generateEntitiesClasses({ "test", "entities" });
+			auto wclasses = LocalDB::convertToWideString(classes);
+			OutputDebugString(wclasses.c_str());
+			
 		}
 		Assert::AreEqual(0ll, executeAsync<CountQueryInt>(ctx).get());
 		Assert::AreEqual(0.0, executeAsync<CountQueryDouble>(ctx).get());

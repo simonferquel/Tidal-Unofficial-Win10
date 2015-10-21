@@ -26,6 +26,7 @@ namespace LocalDB {
 	public:
 		// initialize / upgrade the database schema
 		concurrency::task<void> initializeAsync(concurrency::cancellation_token cancelToken);
+		std::string generateEntitiesClasses(const std::vector<std::string>& nameSpace);
 		virtual ~SchemaBase() {}
 	};
 

@@ -265,5 +265,6 @@ namespace LocalDB {
 
 		// builds sql statement for creating tables and indices for the given schema definition or updating the schema
 		void buildSql(std::string& tableDefinitions, std::string& indicesDefinitions, const SchemaDefinition& definition, int currentVersion, int targetVersion = -1);
+		std::string generateEntitiesClasses(const SchemaDefinition& definition, const std::vector<std::string>& nameSpace);
 	}
 }

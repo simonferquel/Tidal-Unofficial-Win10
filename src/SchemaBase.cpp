@@ -198,3 +198,10 @@ concurrency::task<void> LocalDB::SchemaBase::initializeAsync(concurrency::cancel
 	});
 }
 
+std::string LocalDB::SchemaBase::generateEntitiesClasses(const std::vector<std::string>& nameSpace)
+{
+	SchemaDefinition::SchemaBuilder builder;
+	BuildSchema(builder);
+	return LocalDB::SchemaDefinition::generateEntitiesClasses(builder.definition(), nameSpace);
+}
+

@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <exception>
 #include <tuple>
+#include <sstream>
 using namespace LocalDB::SchemaDefinition;
 using namespace std;
 
@@ -264,3 +265,171 @@ void LocalDB::SchemaDefinition::buildSql(std::string& tableDefinitions, std::str
 		::buildSql(indicesDefinitions, index, currentVersion, targetVersion);
 	}
 }
+
+
+std::string sqliteToCppType(SqliteType t) {
+	switch (t)
+	{
+	case LocalDB::SchemaDefinition::SqliteType::Text:
+		return "std::wstring";
+	case LocalDB::SchemaDefinition::SqliteType::Int64:
+		return "std::int64_t";
+	case LocalDB::SchemaDefinition::SqliteType::Double:
+		return "double";
+	case LocalDB::SchemaDefinition::SqliteType::Blob:
+		return "std::vector<unsigned char>";
+	default:
+		break;
+	}
+	return "";
+}
+
+std::string sqliteToColumnFunction(SqliteType t) {
+	switch (t)
+	{
+	case LocalDB::SchemaDefinition::SqliteType::Text:
+		return "LocalDB::sqlite3_column_wstring";
+	case LocalDB::SchemaDefinition::SqliteType::Int64:
+		return "sqlite3_column_int64";
+	case LocalDB::SchemaDefinition::SqliteType::Double:
+		return "sqlite3_column_double";
+	case LocalDB::SchemaDefinition::SqliteType::Blob:
+		return "sqlite3_column_int64";
+	default:
+		break;
+	}
+	return "";
+}
+
+std::string sqliteToBindFunction(SqliteType t) {
+	switch (t)
+	{
+	case LocalDB::SchemaDefinition::SqliteType::Text:
+		return "LocalDB::sqlite3_bind_string";
+	case LocalDB::SchemaDefinition::SqliteType::Int64:
+		return "sqlite3_bind_int64";
+	case LocalDB::SchemaDefinition::SqliteType::Double:
+		return "sqlite3_bind_double";
+	case LocalDB::SchemaDefinition::SqliteType::Blob:
+		return "sqlite3_bind_int64";
+	default:
+		break;
+	}
+	return "";
+}
+template <typename Tit, typename TWrite, typename TPred>
+void stringJoin(ostream& stream, Tit rangeBegin, Tit rangeEnd, const std::string& separator, TWrite&& writeCallback, TPred&& predicate) {
+	bool first = true;
+	for (auto it = rangeBegin; it != rangeEnd; ++it) {
+		if (predicate(*it)) {
+			if (first) {
+				first = false;
+			}
+			else {
+				stream << separator;
+			}
+			writeCallback(stream, *it);
+		}
+	}
+}
+template <typename Tit, typename TWrite>
+void stringJoin(ostream& stream, Tit rangeBegin, Tit rangeEnd, const std::string& separator, TWrite&& writeCallback) {
+	return stringJoin(stream, rangeBegin, rangeEnd, separator, writeCallback, [](const auto&) {return true; });
+}
+
+
+std::string LocalDB::SchemaDefinition::generateEntitiesClasses(const SchemaDefinition & definition, const std::vector<std::string>& nameSpace)
+{
+	std::stringstream result;
+	result << "#pragma once" << std::endl;
+	result << "#include <string>" << std::endl;
+	result << "#include <vector>" << std::endl;
+	result << "#include <cstdint>" << std::endl;
+	result << "#include <sqlite3.h>" << std::endl;
+	result << "#include <DBQuery.h>" << std::endl;
+	result << "#include <Sqlite3Extensions.h>" << std::endl;
+	for (auto& ns : nameSpace) {
+		result << "namespace " << ns << "{" << std::endl;
+	}
+	for (auto& table : definition.tables) {
+		result << "struct " << table.name << "{" << std::endl;
+
+		for (auto& column : table.columns) {
+			result << sqliteToCppType(column.type) << " " << column.name << ";" << std::endl;
+		}
+
+		result << "static std::string getOrderedColumnsForSelect() {" << std::endl;
+		result << "return \"";
+
+		stringJoin(result, table.columns.begin(), table.columns.end(), ", ", [](auto& stream, const auto& col) {stream << col.name; });
+
+		result << "\";" << std::endl;
+		result << "}" << std::endl;
+
+		result << "static " << table.name << " createFromSqlRecord(sqlite3_stmt* stmt) {" << std::endl;
+		result << table.name << " data;" << std::endl;
+		int index = 0;
+		for (auto& column : table.columns) {
+			result << "data." << column.name << " = " << sqliteToColumnFunction(column.type) << "(stmt, " << (index++) << ");" << std::endl;
+		}
+		result << "return data;" << std::endl;
+		result << "}" << std::endl;
+
+		result << "};" << std::endl;
+
+		// insert command
+		result << "class " << table.name << "InsertDbQuery : public LocalDB::NoResultDBQuery{" << std::endl;
+		result << "private:" << std::endl;
+		result << table.name << " _entity;" << std::endl;
+		result << "protected:" << std::endl;
+		result << "virtual std::string identifier() override { return \"gen-" << table.name << "-insert\";}" << std::endl;
+		result << "virtual std::string sql(int ) override {" << std::endl;
+
+		result << "return \"insert into " << table.name << "(";
+		stringJoin(result, table.columns.begin(), table.columns.end(), ", ", [](auto& stream, const auto& col) {stream << col.name; });
+		result << ") values (";
+		stringJoin(result, table.columns.begin(), table.columns.end(), ", ", [](auto& stream, const auto& col) {stream << "@" << col.name; });
+		result << ")\";" << std::endl;
+		result << "}" << std::endl;
+
+		result << "virtual  void bindParameters(int, sqlite3* , sqlite3_stmt* statement) override {" << std::endl;
+		stringJoin(result, table.columns.begin(), table.columns.end(), "", [](auto& stream, const auto& col) {
+			stream << sqliteToBindFunction(col.type) << "(statement, sqlite3_bind_parameter_index(statement, \"@" << col.name << "\"), _entity." << col.name << ");" << std::endl;
+		});
+		result << "}" << std::endl;
+		result << "public:" << std::endl;
+		result << table.name << "InsertDbQuery(const LocalDB::DBContext& ctx, const " << table.name << "& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity){}" << std::endl;
+		result << "};" << std::endl;
+
+		// update query
+
+		result << "class " << table.name << "UpdateDbQuery : public LocalDB::NoResultDBQuery{" << std::endl;
+		result << "private:" << std::endl;
+		result << table.name << " _entity;" << std::endl;
+		result << "protected:" << std::endl;
+		result << "virtual std::string identifier() override { return \"gen-" << table.name << "-update\";}" << std::endl;
+		result << "virtual std::string sql(int ) override {" << std::endl;
+
+		result << "return \"update " << table.name << " SET ";
+		stringJoin(result, table.columns.begin(), table.columns.end(), ", ", [](auto& stream, const auto& col) {stream << col.name << " = @" << col.name; }, [](auto& col) {return !col.primaryKey; });
+		result << " WHERE ";
+		stringJoin(result, table.columns.begin(), table.columns.end(), " AND ", [](auto& stream, const auto& col) {stream << col.name << " = @" << col.name; }, [](auto& col) {return col.primaryKey; });
+		result << "\";" << std::endl;
+		result << "}" << std::endl;
+
+		result << "virtual  void bindParameters(int, sqlite3* , sqlite3_stmt* statement) override {" << std::endl;
+		stringJoin(result, table.columns.begin(), table.columns.end(), "", [](auto& stream, const auto& col) {
+			stream << sqliteToBindFunction(col.type) << "(statement, sqlite3_bind_parameter_index(statement, \"@" << col.name << "\"), _entity." << col.name << ");" << std::endl;
+		});
+		result << "}" << std::endl;
+		result << "public:" << std::endl;
+		result << table.name << "UpdateDbQuery(const LocalDB::DBContext& ctx, const " << table.name << "& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity){}" << std::endl;
+		result << "};" << std::endl;
+
+	}
+	for (auto ix = 0ULL; ix < nameSpace.size(); ++ix) {
+		result << "}" << std::endl;
+	}
+	return result.str();
+}
+
