@@ -11,7 +11,7 @@ Helper library for manipulating a local sqlite DB in a UWP application
 - Transactions
 
 ## Dependencies
-SQLite for Universal App Platform version 3.8.11.1
+SQLite for Universal App Platform version 3.9.1
 Windows 10 SDK version 10.0.10240.0
 
 ## Examples

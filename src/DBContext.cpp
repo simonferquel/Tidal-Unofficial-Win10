@@ -11,6 +11,30 @@
 #include "Internal\SqliteJobQueue.h"
 #include "SqliteSmartPtr.h"
 #include <map>
+
+// missing stuff from sqlite header
+
+extern "C" {
+
+	/*
+	* The value used with sqlite3_win32_set_directory() to specify that
+	* the data directory should be changed.
+	*/
+#ifndef SQLITE_WIN32_DATA_DIRECTORY_TYPE
+#  define SQLITE_WIN32_DATA_DIRECTORY_TYPE (1)
+#endif
+
+	/*
+	* The value used with sqlite3_win32_set_directory() to specify that
+	* the temporary directory should be changed.
+	*/
+#ifndef SQLITE_WIN32_TEMP_DIRECTORY_TYPE
+#  define SQLITE_WIN32_TEMP_DIRECTORY_TYPE (2)
+#endif
+	SQLITE_API int SQLITE_STDCALL sqlite3_win32_set_directory(DWORD type, LPCWSTR zValue);
+}
+
+
 using namespace LocalDB;
 
 struct sqlite3_destructor {
@@ -36,6 +60,7 @@ public:
 	impl(const std::wstring& filePath) : _filePath(filePath) {
 		_jobQueue = std::make_shared<details::SqliteJobQueue>(_cts.get_token());
 		std::call_once(g_dbOnce, []() {
+			sqlite3_win32_set_directory(SQLITE_WIN32_TEMP_DIRECTORY_TYPE, Windows::Storage::ApplicationData::Current->TemporaryFolder->Path->Data());
 			sqlite3_initialize();
 			
 			sqlite3_config(SQLITE_CONFIG_SERIALIZED);
