@@ -3,7 +3,7 @@
 #include <functional>
 #include <sqlite3.h>
 #include <ppltasks.h>
-#include <SqliteSmartPtr.h>
+#include "SqliteSmartPtr.h"
 namespace LocalDB {
 	// represents a DB associated with a dedicated processing thread
 	// this uses the pointer to shared implementation idiom

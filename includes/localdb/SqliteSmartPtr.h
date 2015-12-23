@@ -1,7 +1,7 @@
 #pragma once
 #include <sqlite3.h>
 #include <memory>
-#include <SqliteException.h>
+#include "SqliteException.h"
 namespace LocalDB {
 	// functor for destroying a sqlite statement
 	struct SqliteStatementDestructor {

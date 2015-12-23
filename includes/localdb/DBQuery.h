@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
-#include <DBContext.h>
+#include "DBContext.h"
 #include <mutex>
-#include <SqliteSmartPtr.h>
+#include "SqliteSmartPtr.h"
 #include <cstdint>
 #include <vector>
 #include <chrono>
