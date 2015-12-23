@@ -1,0 +1,34 @@
+﻿<Page
+    x:Class="Tidal.Settings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="OnPageLoaded"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Border BorderThickness="1,1,0,1" BorderBrush="Black" Background="#FF171717" Height="48">
+            <TextBlock x:Name="pageHeader" Style="{StaticResource PageTitleStyle}" FontSize="16">SETTINGS</TextBlock>
+
+        </Border>
+        <ScrollViewer Grid.Row="1">
+            <StackPanel>
+                <TextBlock Margin="12">Streaming quality</TextBlock>
+                <RadioButton Margin="12,0" Tag="LOW" x:Name="streamLow" GroupName="StreamingQuality" Checked="OnStreamingQualityChecked">Low</RadioButton>
+                <RadioButton Margin="12,0" Tag="HIGH" x:Name="streamHigh" GroupName="StreamingQuality" Checked="OnStreamingQualityChecked">High</RadioButton>
+                <RadioButton Margin="12,0" Tag="LOSSLESS" x:Name="streamLossless" GroupName="StreamingQuality" Checked="OnStreamingQualityChecked">Lossless</RadioButton>
+
+                <TextBlock Margin="12">Import quality</TextBlock>
+                <RadioButton x:Name="importLow" Margin="12,0" Tag="LOW" GroupName="ImportQuality" Checked="OnImportQualityChecked">Low</RadioButton>
+                <RadioButton x:Name="importHigh" Margin="12,0" Tag="HIGH" GroupName="ImportQuality" Checked="OnImportQualityChecked">High</RadioButton>
+                <RadioButton x:Name="importLossless" Margin="12,0" Tag="LOSSLESS" GroupName="ImportQuality" Checked="OnImportQualityChecked">Lossless</RadioButton>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

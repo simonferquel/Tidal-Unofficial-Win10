@@ -1,0 +1,103 @@
+﻿//
+// Playlists.xaml.cpp
+// Implementation of the Playlists class
+//
+
+#include "pch.h"
+#include "Playlists.xaml.h"
+#include <IncrementalDataSources.h>
+#include "SublistItemVM.h"
+#include "SublistFilterControl.xaml.h"
+#include "PlaylistResumeItemVM.h"
+#include <tools/TimeUtils.h>
+#include <tools/AsyncHelpers.h>
+#include "XamlHelpers.h"
+using namespace Tidal;
+
+using namespace Platform;
+using namespace Windows::Foundation;
+using namespace Windows::Foundation::Collections;
+using namespace Windows::UI::Xaml;
+using namespace Windows::UI::Xaml::Controls;
+using namespace Windows::UI::Xaml::Controls::Primitives;
+using namespace Windows::UI::Xaml::Data;
+using namespace Windows::UI::Xaml::Input;
+using namespace Windows::UI::Xaml::Media;
+using namespace Windows::UI::Xaml::Navigation;
+
+// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
+
+Playlists::Playlists()
+{
+	InitializeComponent();
+}
+
+
+concurrency::task<void> Tidal::Playlists::LoadAsync()
+{
+	auto moodsTask = getSublistsAsync(concurrency::cancellation_token::none(), L"moods");
+	auto featured = await getSublistsAsync(concurrency::cancellation_token::none());
+	auto moods = await moodsTask;
+	auto moodsSource = ref new Platform::Collections::Vector<SublistItemVM^>();
+	for (auto&& info : *moods) {
+		moodsSource->Append(ref new SublistItemVM(info));
+	}
+	moodsGV->ItemsSource = moodsSource;
+
+	auto featuredSource = ref new Platform::Collections::Vector<SublistItemVM^>();
+	for (auto&& info : *featured) {
+		if (info.hasPlaylists) {
+			featuredSource->Append(ref new SublistItemVM(info));
+		}
+	}
+	allPlaylistsFilter->SublistSource = featuredSource;
+}
+
+
+
+concurrency::task<void> Tidal::Playlists::LoadMoodAsync(SublistItemVM ^ item)
+{
+	
+	auto src = getNewsPlaylistsDataSource(L"moods", item->Path);
+	auto firstLoadTask = src->waitForNextLoadAsync();
+	playlistGV->ItemsSource = src;
+	allPlaylistsFilter->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	moodHeaderZone->Visibility = Windows::UI::Xaml::Visibility::Visible;
+	moodHeaderImage->Source = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(ref new Uri(item->HeadingUrl));
+	moodHeaderTxt->Text = item->Name;
+	await firstLoadTask;
+	await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(100)), concurrency::cancellation_token::none());
+	auto sv = FindOwningScrollViewer(moodHeaderZone);
+	auto ttv = moodHeaderZone->TransformToVisual(sv);
+	auto offset = ttv->TransformPoint(Point(0, 0));
+	sv->ChangeView(nullptr, sv->VerticalOffset + offset.Y, nullptr, false);
+}
+
+void Tidal::Playlists::OnPageLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	LoadAsync();
+}
+
+
+void Tidal::Playlists::OnAllPlaylistsFilterSelectionChanged(Platform::Object^ sender, Tidal::SublistItemVM^ e)
+{
+
+	playlistGV->ItemsSource = getNewsPlaylistsDataSource(L"featured", e->Path);
+}
+
+void Tidal::Playlists::OnSelectedMoodChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
+{
+	auto item = dynamic_cast<SublistItemVM^>(moodsGV->SelectedItem);
+	if (item) {
+		LoadMoodAsync(item);
+	}
+}
+
+
+void Tidal::Playlists::OnPlaylistItemClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e)
+{
+	auto item = dynamic_cast<Tidal::PlaylistResumeItemVM^>(e->ClickedItem);
+	if (item) {
+		item->Go();
+	}
+}

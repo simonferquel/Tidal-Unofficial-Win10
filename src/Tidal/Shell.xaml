@@ -1,0 +1,189 @@
+﻿<UserControl
+    x:Class="Tidal.Shell"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    RequestedTheme="Dark"
+    SizeChanged="OnSizeChanged"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="ListViewItemStyle1" TargetType="ListViewItem">
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="TabNavigation" Value="Local"/>
+            <Setter Property="IsHoldingEnabled" Value="True"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+            <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter ContentMargin="{TemplateBinding Padding}" ContentTransitions="{TemplateBinding ContentTransitions}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" SelectedForeground="{StaticResource TidalAccentBrush}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" PointerOverForeground="{StaticResource TidalAccentBrush}"/>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="rootGrid">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptativeStates">
+                <VisualState x:Name="Narrow"/>
+                <VisualState x:Name="Large">
+                    <VisualState.Setters>
+                        <Setter Target="splitView.(SplitView.DisplayMode)" Value="CompactOverlay"/>
+                    </VisualState.Setters>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="500"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="ExtraLarge">
+                    <VisualState.Setters>
+                        <Setter Target="splitView.(SplitView.DisplayMode)" Value="Inline"/>
+                        <Setter Target="splitView.(SplitView.IsPaneOpen)" Value="True"/>
+                        <Setter Target="outterHomeBtn.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="rootGrid.ColumnDefinitions[0].Width" Value="0"/>
+                    </VisualState.Setters>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1000"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="48"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Button Width="48" Height="48" x:Name="outterHomeBtn" Click="OnToggleSplitView">
+            <FontIcon Glyph="&#xE700;" />
+        </Button>
+        <RelativePanel Grid.Column="1" x:Name="titleBarContainer" >
+            <Button Height="48" x:Name="backButton" Visibility="Collapsed" Click="OnBackClick">
+                <Button.Background>
+                    <SolidColorBrush Color="#FF015353"/>
+                </Button.Background>
+                <SymbolIcon Symbol="Back"  />
+            </Button>
+            <Border Background="#FF171717" x:Name="titleBar" RelativePanel.AlignRightWithPanel="True" 
+                    RelativePanel.RightOf="backButton">
+                <FontIcon FontFamily="ms-appx:///Assets/TIDAL-Logo-Icons.ttf#tidal_logo" Glyph="b"
+                      HorizontalAlignment="Left" FontSize="136"/>
+            </Border>
+           
+        </RelativePanel>
+
+        <SplitView  x:Name="splitView" Grid.ColumnSpan="2" Grid.Row="1" OpenPaneLength="240">
+            <SplitView.Pane>
+                <ScrollViewer VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Rectangle Height="1" Fill="Black"/>
+                        <local:LoginView />
+                        <ListView x:Name="menuEntriesLV" ItemContainerStyle="{StaticResource ListViewItemStyle1}"
+                                  SelectionMode="Single"
+                                  SelectionChanged="OnSelectedMenuItemChanged">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="local:ShellMenuItem">
+                                    <Grid >
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="1" />
+                                            <RowDefinition Height="48" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="48" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Rectangle Height="1" Grid.ColumnSpan="2"  Fill="Black" />
+                                        <ContentPresenter Grid.Row="1" Content="{x:Bind Icon}" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                                        <Border Grid.Row="1" Visibility="{x:Bind BadgeVisibility, Mode=OneWay}"  HorizontalAlignment="Right" VerticalAlignment="Top" Margin="2" Background="{StaticResource TidalAccentBrush}" CornerRadius="8" RequestedTheme="Light" Padding="3,0,3,1" >
+                                            <TextBlock FontSize="12" Text="{x:Bind BadgeCount, Mode=OneWay}"></TextBlock>
+                                        </Border>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind Label}" VerticalAlignment="Center" Margin="4"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <local:ShellMenuItem Label="What's new" PageType="local:Home" >
+                                <local:ShellMenuItem.Icon>
+                                    <FontIcon FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="B" />
+                                </local:ShellMenuItem.Icon>
+                            </local:ShellMenuItem>
+
+                            <local:ShellMenuItem Label="TIDAL Rising" PageType="local:Rising" >
+                                <local:ShellMenuItem.Icon>
+                                    <FontIcon FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="N" />
+                                </local:ShellMenuItem.Icon>
+                            </local:ShellMenuItem>
+
+                            <local:ShellMenuItem Label="TIDAL Discovery" PageType="local:Discovery">
+                                <local:ShellMenuItem.Icon>
+                                    <FontIcon FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="0" />
+                                </local:ShellMenuItem.Icon>
+                            </local:ShellMenuItem>
+
+                            <local:ShellMenuItem Label="Playlists" PageType="local:Playlists" >
+                                <local:ShellMenuItem.Icon>
+                                    <FontIcon FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="M" />
+                                </local:ShellMenuItem.Icon>
+                            </local:ShellMenuItem>
+
+                            <local:ShellMenuItem Label="Genres" PageType="local:Genres">
+                                <local:ShellMenuItem.Icon>
+                                    <FontIcon FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="K" />
+                                </local:ShellMenuItem.Icon>
+                            </local:ShellMenuItem>
+                            <local:ShellMenuItem Label="Videos" PageType="local:Videos" >
+                                <local:ShellMenuItem.Icon>
+                                    <FontIcon FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="9" />
+                                </local:ShellMenuItem.Icon>
+                            </local:ShellMenuItem>
+
+                            <local:ShellMenuItem Label="My music" PageType="local:MyMusic" >
+                                <local:ShellMenuItem.Icon>
+                                    <FontIcon FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€" />
+                                </local:ShellMenuItem.Icon>
+                            </local:ShellMenuItem>
+
+
+                            <local:ShellMenuItem Label="Local music" PageType="local:LocalMusic" x:Name="localMusicMenuItem">
+                                <local:ShellMenuItem.Icon>
+                                    <FontIcon FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="f" />
+                                </local:ShellMenuItem.Icon>
+                            </local:ShellMenuItem>
+
+                            <local:ShellMenuItem Label="Settings" PageType="local:Settings" >
+                                <local:ShellMenuItem.Icon>
+                                    <FontIcon FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="T" />
+                                </local:ShellMenuItem.Icon>
+                            </local:ShellMenuItem>
+
+
+                        </ListView>
+                    </StackPanel>
+                </ScrollViewer>
+            </SplitView.Pane>
+            <Frame x:Name="navFrame" Navigated="OnNavigated" />
+
+            
+        </SplitView>
+
+        <SplitView x:Name="searchOverlay" PanePlacement="Right"  Grid.RowSpan="2" Grid.ColumnSpan="2">
+            <SplitView.Pane>
+                <local:SearchView/>
+            </SplitView.Pane>
+            <Button x:Name="searchBtn"  VerticalAlignment="Top" HorizontalAlignment="Right" Padding="0" Margin="0"
+                    Click="OnSearchButtonClick"
+                            Width="48" Height="48">
+                <SymbolIcon Symbol="Find" />
+            </Button>
+        </SplitView>
+    </Grid>
+
+
+</UserControl>

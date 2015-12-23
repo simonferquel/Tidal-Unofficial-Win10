@@ -1,0 +1,48 @@
+﻿<UserControl
+    x:Class="Tidal.LoginView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="80"
+    d:DesignWidth="400">
+
+    <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LoginStates">
+                <VisualState x:Name="LoggedOut">
+                    <VisualState.Setters>
+                        <Setter Target="userName.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="subscribtionName.(UIElement.Visibility)" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="LoggedIn">
+                    <VisualState.Setters>
+                        <Setter Target="loginButton.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="grid.(UIElement.Visibility)" Value="Visible"/>
+                        <Setter Target="userName.(UIElement.Visibility)" Value="Visible"/>
+                        <Setter Target="subscribtionName.(UIElement.Visibility)" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
+        <Grid x:Name="grid" Height="80">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <SymbolIcon Width="48" Grid.RowSpan="2" Symbol="Contact" />
+            <Ellipse Width="40" Height="40" Grid.RowSpan="2" Stroke="White" x:Name="userPic"  />
+            <TextBlock x:Name="userName" Grid.Column="1" VerticalAlignment="Bottom" Margin="4,0" />
+            <TextBlock x:Name="subscribtionName" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="4,0" Foreground="{StaticResource TidalAccentBrush}" />
+            <Button x:Name="loginButton" Margin="4" HorizontalAlignment="Stretch" Click="OnLoginClick" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">Login</Button>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>f6266c92-d287-4858-ace4-4e3523e4ddad</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>b1b85859-86a4-496f-a919-50d091c778fe</UniqueIdentifier>
+      <Extensions>bmp;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="App.xaml.cpp" />
+    <ClCompile Include="MainPage.xaml.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="AuthenticationService.cpp" />
+    <ClCompile Include="AuthenticationState.cpp" />
+    <ClCompile Include="Mediators.cpp" />
+    <ClCompile Include="MetricsHelper.cpp" />
+    <ClCompile Include="BindableSizeHelper.cpp" />
+    <ClCompile Include="IncrementalLoadingCollection.cpp" />
+    <ClCompile Include="PromotionItemVM.cpp" />
+    <ClCompile Include="IncrementalDataSources.cpp" />
+    <ClCompile Include="VideoPlayer.xaml.cpp" />
+    <ClCompile Include="Discovery.xaml.cpp" />
+    <ClCompile Include="FacebookLoginFlyout.xaml.cpp" />
+    <ClCompile Include="Genres.xaml.cpp" />
+    <ClCompile Include="Home.xaml.cpp" />
+    <ClCompile Include="LoginDialog.xaml.cpp" />
+    <ClCompile Include="LoginView.xaml.cpp" />
+    <ClCompile Include="MyMusic.xaml.cpp" />
+    <ClCompile Include="Playlists.xaml.cpp" />
+    <ClCompile Include="Rising.xaml.cpp" />
+    <ClCompile Include="Settings.xaml.cpp" />
+    <ClCompile Include="Shell.xaml.cpp" />
+    <ClCompile Include="Videos.xaml.cpp" />
+    <ClCompile Include="VideoItemVM.cpp" />
+    <ClCompile Include="AlbumResumeItemVM.cpp" />
+    <ClCompile Include="PlaylistResumeItemVM.cpp" />
+    <ClCompile Include="TrackItemVM.cpp" />
+    <ClCompile Include="FactorConverter.cpp" />
+    <ClCompile Include="AlbumDataSources.cpp" />
+    <ClCompile Include="AudioService.cpp" />
+    <ClCompile Include="AlbumPage.xaml.cpp" />
+    <ClCompile Include="PlaylistsDataSources.cpp" />
+    <ClCompile Include="WrapPanel.cpp" />
+    <ClCompile Include="ArtistDataSources.cpp" />
+    <ClCompile Include="ArtistItemVM.cpp" />
+    <ClCompile Include="ArtistPage.xaml.cpp" />
+    <ClCompile Include="PlaylistPage.xaml.cpp" />
+    <ClCompile Include="SublistItemVM.cpp" />
+    <ClCompile Include="SublistFilterControl.xaml.cpp" />
+    <ClCompile Include="GenrePage.xaml.cpp" />
+    <ClCompile Include="SearchResultGroup.cpp" />
+    <ClCompile Include="SearchView.xaml.cpp" />
+    <ClCompile Include="TrackTemplatesWithCover.xaml.cpp" />
+    <ClCompile Include="DownloadService.cpp" />
+    <ClCompile Include="MenuFlyouts.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="App.xaml.h" />
+    <ClInclude Include="MainPage.xaml.h" />
+    <ClInclude Include="AuthenticationService.h" />
+    <ClInclude Include="Mediator.h" />
+    <ClInclude Include="Mediators.h" />
+    <ClInclude Include="AuthenticationState.h" />
+    <ClInclude Include="ShellMenuItem.h" />
+    <ClInclude Include="MetricsHelper.h" />
+    <ClInclude Include="BindableSizeHelper.h" />
+    <ClInclude Include="IncrementalLoadingCollection.h" />
+    <ClInclude Include="PromotionItemVM.h" />
+    <ClInclude Include="IncrementalDataSources.h" />
+    <ClInclude Include="VideoPlayer.xaml.h" />
+    <ClInclude Include="Discovery.xaml.h" />
+    <ClInclude Include="FacebookLoginFlyout.xaml.h" />
+    <ClInclude Include="Genres.xaml.h" />
+    <ClInclude Include="Home.xaml.h" />
+    <ClInclude Include="LoginDialog.xaml.h" />
+    <ClInclude Include="MyMusic.xaml.h" />
+    <ClInclude Include="Playlists.xaml.h" />
+    <ClInclude Include="Rising.xaml.h" />
+    <ClInclude Include="Settings.xaml.h" />
+    <ClInclude Include="LoginView.xaml.h" />
+    <ClInclude Include="Shell.xaml.h" />
+    <ClInclude Include="Videos.xaml.h" />
+    <ClInclude Include="VideoItemVM.h" />
+    <ClInclude Include="AlbumResumeItemVM.h" />
+    <ClInclude Include="PlaylistResumeItemVM.h" />
+    <ClInclude Include="TrackItemVM.h" />
+    <ClInclude Include="FactorConverter.h" />
+    <ClInclude Include="AnimationHelpers.h" />
+    <ClInclude Include="AlbumDataSources.h" />
+    <ClInclude Include="AudioService.h" />
+    <ClInclude Include="AlbumPage.xaml.h" />
+    <ClInclude Include="PlaylistsDataSources.h" />
+    <ClInclude Include="WrapPanel.h" />
+    <ClInclude Include="ArtistDataSources.h" />
+    <ClInclude Include="GroupedAlbums.h" />
+    <ClInclude Include="ArtistItemVM.h" />
+    <ClInclude Include="ArtistPage.xaml.h" />
+    <ClInclude Include="PlaylistPage.xaml.h" />
+    <ClInclude Include="SublistItemVM.h" />
+    <ClInclude Include="SublistFilterControl.xaml.h" />
+    <ClInclude Include="IGo.h" />
+    <ClInclude Include="GenrePage.xaml.h" />
+    <ClInclude Include="SearchResultGroup.h" />
+    <ClInclude Include="SearchResultTemplateSelector.h" />
+    <ClInclude Include="XamlHelpers.h" />
+    <ClInclude Include="SearchView.xaml.h" />
+    <ClInclude Include="TrackTemplatesWithCover.xaml.h" />
+    <ClInclude Include="DownloadService.h" />
+    <ClInclude Include="MenuFlyouts.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\LockScreenLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\tidal-logo-large.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Tidal_TemporaryKey.pfx" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="MainPage.xaml" />
+    <Page Include="Shell.xaml" />
+    <Page Include="LoginView.xaml" />
+    <Page Include="LoginDialog.xaml" />
+    <Page Include="FacebookLoginFlyout.xaml" />
+    <Page Include="Home.xaml" />
+    <Page Include="Rising.xaml" />
+    <Page Include="Discovery.xaml" />
+    <Page Include="Playlists.xaml" />
+    <Page Include="Genres.xaml" />
+    <Page Include="Videos.xaml" />
+    <Page Include="MyMusic.xaml" />
+    <Page Include="Settings.xaml" />
+    <Page Include="VideoPlayer.xaml" />
+    <Page Include="AlbumPage.xaml" />
+    <Page Include="PlaylistPage.xaml" />
+    <Page Include="ArtistPage.xaml" />
+    <Page Include="SublistFilterControl.xaml" />
+    <Page Include="GenrePage.xaml" />
+    <Page Include="TrackTemplatesWithCover.xaml" />
+    <Page Include="SearchView.xaml" />
+    <Page Include="LocalMusic.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Assets\WiMP-Icons.ttf" />
+    <Font Include="Assets\TIDAL-Logo-Icons.ttf" />
+  </ItemGroup>
+</Project>

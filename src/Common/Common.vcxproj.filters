@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="tools\AsyncHelpers.cpp" />
+    <ClCompile Include="tools\TraceUtils.cpp" />
+    <ClCompile Include="Api\AlbumResume.cpp" />
+    <ClCompile Include="Api\ApiErrors.cpp" />
+    <ClCompile Include="Api\ArtistInfo.cpp" />
+    <ClCompile Include="Api\Config.cpp" />
+    <ClCompile Include="Api\GetAlbumResumeQuery.cpp" />
+    <ClCompile Include="Api\GetNewAlbumsQuery.cpp" />
+    <ClCompile Include="Api\GetNewPlaylistsQuery.cpp" />
+    <ClCompile Include="Api\GetNewVideosQuery.cpp" />
+    <ClCompile Include="Api\GetPromotionsQuery.cpp" />
+    <ClCompile Include="Api\GetSubscribtionQuery.cpp" />
+    <ClCompile Include="Api\GetUserInfoQuery.cpp" />
+    <ClCompile Include="Api\GetVideoUrlQuery.cpp" />
+    <ClCompile Include="Api\ImageUriResolver.cpp" />
+    <ClCompile Include="Api\LoginResult.cpp" />
+    <ClCompile Include="Api\LoginWithFacebookQuery.cpp" />
+    <ClCompile Include="Api\LoginWithPasswordQuery.cpp" />
+    <ClCompile Include="Api\PlaylistResume.cpp" />
+    <ClCompile Include="Api\PromotionArticle.cpp" />
+    <ClCompile Include="Api\QueryBase.cpp" />
+    <ClCompile Include="Api\SubscribtionInfo.cpp" />
+    <ClCompile Include="Api\TrackInfo.cpp" />
+    <ClCompile Include="Api\UrlInfo.cpp" />
+    <ClCompile Include="Api\UserInfo.cpp" />
+    <ClCompile Include="Api\VideoInfo.cpp" />
+    <ClCompile Include="Api\GetTrackStreamUrlQuery.cpp" />
+    <ClCompile Include="Api\GetArtistAlbumsQuery.cpp" />
+    <ClCompile Include="Api\GetPlaylistQuery.cpp" />
+    <ClCompile Include="Api\TracksQueryBase.cpp" />
+    <ClCompile Include="Api\GetArtistInfoQuery.cpp" />
+    <ClCompile Include="Api\GetArtistVideosQuery.cpp" />
+    <ClCompile Include="Api\GetArtistBioQuery.cpp" />
+    <ClCompile Include="Api\GetSimilarArtistsQuery.cpp" />
+    <ClCompile Include="Api\CoverCache.cpp" />
+    <ClCompile Include="Api\SublistInfo.cpp" />
+    <ClCompile Include="Api\GetListSublistsQuery.cpp" />
+    <ClCompile Include="Api\SearchResult.cpp" />
+    <ClCompile Include="Api\SearchQuery.cpp" />
+    <ClCompile Include="localdata\db.cpp" />
+    <ClCompile Include="localdata\TidalSchema.cpp" />
+    <ClCompile Include="localdata\GetCachedTrackInfoQuery.cpp" />
+    <ClCompile Include="CachedTrackManager.cpp" />
+    <ClCompile Include="localdata\GetExistingTrackImportJobQuery.cpp" />
+    <ClCompile Include="localdata\GetNextTrackImportJobQuery.cpp" />
+    <ClCompile Include="Api\GetTrackInfoQuery.cpp" />
+    <ClCompile Include="localdata\GetImportedAlbum.cpp" />
+    <ClCompile Include="localdata\GetLocalAlbumsQuery.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="tools\AsyncHelpers.h" />
+    <ClInclude Include="tools\StringUtils.h" />
+    <ClInclude Include="tools\TimeUtils.h" />
+    <ClInclude Include="tools\TraceUtils.h" />
+    <ClInclude Include="Api\AlbumResume.h" />
+    <ClInclude Include="Api\ApiErrors.h" />
+    <ClInclude Include="Api\ArtistInfo.h" />
+    <ClInclude Include="Api\Config.h" />
+    <ClInclude Include="Api\GetAlbumResumeQuery.h" />
+    <ClInclude Include="Api\GetAlbumTracksQuery.h" />
+    <ClInclude Include="Api\GetNewAlbumsQuery.h" />
+    <ClInclude Include="Api\GetNewPlaylistsQuery.h" />
+    <ClInclude Include="Api\GetNewTracksQuery.h" />
+    <ClInclude Include="Api\GetNewVideosQuery.h" />
+    <ClInclude Include="Api\GetPromotionsQuery.h" />
+    <ClInclude Include="Api\GetSubscribtionQuery.h" />
+    <ClInclude Include="Api\GetUserInfoQuery.h" />
+    <ClInclude Include="Api\GetVideoUrlQuery.h" />
+    <ClInclude Include="Api\ImageUriResolver.h" />
+    <ClInclude Include="Api\JsonHelpers.h" />
+    <ClInclude Include="Api\LoginResult.h" />
+    <ClInclude Include="Api\LoginWithFacebookQuery.h" />
+    <ClInclude Include="Api\LoginWithPasswordQuery.h" />
+    <ClInclude Include="Api\PaginatedList.h" />
+    <ClInclude Include="Api\PlaylistResume.h" />
+    <ClInclude Include="Api\PromotionArticle.h" />
+    <ClInclude Include="Api\QueryBase.h" />
+    <ClInclude Include="Api\SubscribtionInfo.h" />
+    <ClInclude Include="Api\TrackInfo.h" />
+    <ClInclude Include="Api\UrlInfo.h" />
+    <ClInclude Include="Api\UserInfo.h" />
+    <ClInclude Include="Api\VideoInfo.h" />
+    <ClInclude Include="tools\ScopedEventRegistration.h" />
+    <ClInclude Include="Api\GetTrackStreamUrlQuery.h" />
+    <ClInclude Include="Api\GetArtistAlbumsQuery.h" />
+    <ClInclude Include="Api\GetPlaylistQuery.h" />
+    <ClInclude Include="Api\TracksQueryBase.h" />
+    <ClInclude Include="Api\GetPlaylistTracksQuery.h" />
+    <ClInclude Include="Api\GetArtistInfoQuery.h" />
+    <ClInclude Include="Api\GetArtistPopularTracksQuery.h" />
+    <ClInclude Include="Api\GetArtistVideosQuery.h" />
+    <ClInclude Include="Api\GetArtistBioQuery.h" />
+    <ClInclude Include="Api\GetSimilarArtistsQuery.h" />
+    <ClInclude Include="Api\CoverCache.h" />
+    <ClInclude Include="Api\SublistInfo.h" />
+    <ClInclude Include="Api\GetListSublistsQuery.h" />
+    <ClInclude Include="Api\SearchResult.h" />
+    <ClInclude Include="Api\SearchQuery.h" />
+    <ClInclude Include="localdata\db.h" />
+    <ClInclude Include="localdata\TidalSchema.h" />
+    <ClInclude Include="localdata\Entities.h" />
+    <ClInclude Include="localdata\GetCachedTrackInfoQuery.h" />
+    <ClInclude Include="CachedTrackManager.h" />
+    <ClInclude Include="SoundQuality.h" />
+    <ClInclude Include="localdata\GetExistingTrackImportJobQuery.h" />
+    <ClInclude Include="localdata\GetNextTrackImportJobQuery.h" />
+    <ClInclude Include="Api\GetTrackInfoQuery.h" />
+    <ClInclude Include="localdata\GetImportedAlbum.h" />
+    <ClInclude Include="localdata\GetLocalAlbumsQuery.h" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,519 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{f6266c92-d287-4858-ace4-4e3523e4ddad}</ProjectGuid>
+    <RootNamespace>Tidal</RootNamespace>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.10586.0</WindowsTargetPlatformMinVersion>
+    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`SQLite.UAP.2015, Version=3.9.1`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\SQLite.UAP.2015.props" Condition="exists('$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`SQLite.UAP.2015, Version=3.9.1`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\SQLite.UAP.2015.props')" />
+    <Import Project="$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`WindowsMobile, Version=10.0.10586.0`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\WindowsMobile.props" Condition="exists('$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`WindowsMobile, Version=10.0.10586.0`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\WindowsMobile.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`SQLite.UAP.2015, Version=3.9.1`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\SQLite.UAP.2015.props" Condition="exists('$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`SQLite.UAP.2015, Version=3.9.1`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\SQLite.UAP.2015.props')" />
+    <Import Project="$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`WindowsMobile, Version=10.0.10586.0`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\WindowsMobile.props" Condition="exists('$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`WindowsMobile, Version=10.0.10586.0`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\WindowsMobile.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`SQLite.UAP.2015, Version=3.9.1`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\SQLite.UAP.2015.props" Condition="exists('$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`SQLite.UAP.2015, Version=3.9.1`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\SQLite.UAP.2015.props')" />
+    <Import Project="$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`WindowsMobile, Version=10.0.10586.0`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\WindowsMobile.props" Condition="exists('$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`WindowsMobile, Version=10.0.10586.0`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\WindowsMobile.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`SQLite.UAP.2015, Version=3.9.1`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\SQLite.UAP.2015.props" Condition="exists('$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`SQLite.UAP.2015, Version=3.9.1`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\SQLite.UAP.2015.props')" />
+    <Import Project="$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`WindowsMobile, Version=10.0.10586.0`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\WindowsMobile.props" Condition="exists('$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`WindowsMobile, Version=10.0.10586.0`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\WindowsMobile.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`SQLite.UAP.2015, Version=3.9.1`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\SQLite.UAP.2015.props" Condition="exists('$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`SQLite.UAP.2015, Version=3.9.1`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\SQLite.UAP.2015.props')" />
+    <Import Project="$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`WindowsMobile, Version=10.0.10586.0`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\WindowsMobile.props" Condition="exists('$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`WindowsMobile, Version=10.0.10586.0`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\WindowsMobile.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`SQLite.UAP.2015, Version=3.9.1`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\SQLite.UAP.2015.props" Condition="exists('$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`SQLite.UAP.2015, Version=3.9.1`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\SQLite.UAP.2015.props')" />
+    <Import Project="$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`WindowsMobile, Version=10.0.10586.0`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\WindowsMobile.props" Condition="exists('$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPlatformExtensionSDKLocation(`WindowsMobile, Version=10.0.10586.0`, $(TargetPlatformIdentifier), $(TargetPlatformVersion),  $(SDKReferenceDirectoryRoot), $(SDKExtensionDirectoryRoot), $(SDKReferenceRegistryRoot)))\DesignTime\CommonConfiguration\Neutral\WindowsMobile.props')" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <PackageCertificateKeyFile>Tidal_TemporaryKey.pfx</PackageCertificateKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)BuildOutput\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)BuildIntermediate\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir)Common;$(SolutionDir)..\dependancies\cpprestsdk\Release\include;$(SolutionDir)..\dependancies\UWP-LocalDB-CPP\includes;$(SolutionDir)..\dependancies\date;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)BuildOutput\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)BuildIntermediate\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir)Common;$(SolutionDir)..\dependancies\cpprestsdk\Release\include;$(SolutionDir)..\dependancies\UWP-LocalDB-CPP\includes;$(SolutionDir)..\dependancies\date;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <OutDir>$(SolutionDir)BuildOutput\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)BuildIntermediate\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir)Common;$(SolutionDir)..\dependancies\cpprestsdk\Release\include;$(SolutionDir)..\dependancies\UWP-LocalDB-CPP\includes;$(SolutionDir)..\dependancies\date;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <OutDir>$(SolutionDir)BuildOutput\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)BuildIntermediate\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir)Common;$(SolutionDir)..\dependancies\cpprestsdk\Release\include;$(SolutionDir)..\dependancies\UWP-LocalDB-CPP\includes;$(SolutionDir)..\dependancies\date;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)BuildOutput\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)BuildIntermediate\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir)Common;$(SolutionDir)..\dependancies\cpprestsdk\Release\include;$(SolutionDir)..\dependancies\UWP-LocalDB-CPP\includes;$(SolutionDir)..\dependancies\date;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)BuildOutput\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)BuildIntermediate\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir)Common;$(SolutionDir)..\dependancies\cpprestsdk\Release\include;$(SolutionDir)..\dependancies\UWP-LocalDB-CPP\includes;$(SolutionDir)..\dependancies\date;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <ClCompile>
+      <AdditionalOptions>/bigobj /await %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_NO_ASYNCRTIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <ClCompile>
+      <AdditionalOptions>/bigobj /await %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_NO_ASYNCRTIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/bigobj /await %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_NO_ASYNCRTIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/bigobj /await %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_NO_ASYNCRTIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalOptions>/bigobj /await %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_NO_ASYNCRTIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalOptions>/bigobj /await %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_NO_ASYNCRTIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AlbumDataSources.h" />
+    <ClInclude Include="AlbumResumeItemVM.h" />
+    <ClInclude Include="AlbumPage.xaml.h">
+      <DependentUpon>AlbumPage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="AnimationHelpers.h" />
+    <ClInclude Include="ArtistDataSources.h" />
+    <ClInclude Include="ArtistItemVM.h" />
+    <ClInclude Include="ArtistPage.xaml.h">
+      <DependentUpon>ArtistPage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="AudioService.h" />
+    <ClInclude Include="DownloadService.h" />
+    <ClInclude Include="FactorConverter.h" />
+    <ClInclude Include="GenrePage.xaml.h">
+      <DependentUpon>GenrePage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="GroupedAlbums.h" />
+    <ClInclude Include="IGo.h" />
+    <ClInclude Include="LocalMusic.xaml.h">
+      <DependentUpon>LocalMusic.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="MenuFlyouts.h" />
+    <ClInclude Include="PlaylistPage.xaml.h">
+      <DependentUpon>PlaylistPage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="PlaylistResumeItemVM.h" />
+    <ClInclude Include="PlaylistsDataSources.h" />
+    <ClInclude Include="SearchResultGroup.h" />
+    <ClInclude Include="SearchResultTemplateSelector.h" />
+    <ClInclude Include="SearchView.xaml.h">
+      <DependentUpon>SearchView.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="SublistFilterControl.xaml.h">
+      <DependentUpon>SublistFilterControl.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="SublistItemVM.h" />
+    <ClInclude Include="TrackItemVM.h" />
+    <ClInclude Include="TrackTemplatesWithCover.xaml.h">
+      <DependentUpon>TrackTemplatesWithCover.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="VideoItemVM.h" />
+    <ClInclude Include="VideoPlayer.xaml.h">
+      <DependentUpon>VideoPlayer.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="BindableSizeHelper.h" />
+    <ClInclude Include="Discovery.xaml.h">
+      <DependentUpon>Discovery.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="FacebookLoginFlyout.xaml.h">
+      <DependentUpon>FacebookLoginFlyout.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Genres.xaml.h">
+      <DependentUpon>Genres.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Home.xaml.h">
+      <DependentUpon>Home.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="IncrementalDataSources.h" />
+    <ClInclude Include="IncrementalLoadingCollection.h" />
+    <ClInclude Include="LoginDialog.xaml.h">
+      <DependentUpon>LoginDialog.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="MetricsHelper.h" />
+    <ClInclude Include="MyMusic.xaml.h">
+      <DependentUpon>MyMusic.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Playlists.xaml.h">
+      <DependentUpon>Playlists.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="PromotionItemVM.h" />
+    <ClInclude Include="Rising.xaml.h">
+      <DependentUpon>Rising.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Settings.xaml.h">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="ShellMenuItem.h" />
+    <ClInclude Include="AuthenticationService.h" />
+    <ClInclude Include="AuthenticationState.h" />
+    <ClInclude Include="LoginView.xaml.h">
+      <DependentUpon>LoginView.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Mediator.h" />
+    <ClInclude Include="Mediators.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="App.xaml.h">
+      <DependentUpon>App.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="MainPage.xaml.h">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Shell.xaml.h">
+      <DependentUpon>Shell.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Videos.xaml.h">
+      <DependentUpon>Videos.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="WrapPanel.h" />
+    <ClInclude Include="XamlHelpers.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="AlbumPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ArtistPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GenrePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="LocalMusic.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PlaylistPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SearchView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SublistFilterControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TrackTemplatesWithCover.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="VideoPlayer.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Discovery.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FacebookLoginFlyout.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Genres.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Home.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="LoginDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="LoginView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MainPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MyMusic.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Playlists.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Rising.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Shell.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Videos.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <None Include="packages.config" />
+    <None Include="Tidal_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\LockScreenLogo.scale-200.png" />
+    <Image Include="Assets\SplashScreen.scale-200.png" />
+    <Image Include="Assets\Square150x150Logo.scale-200.png" />
+    <Image Include="Assets\Square44x44Logo.scale-200.png" />
+    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Image Include="Assets\StoreLogo.png" />
+    <Image Include="Assets\tidal-logo-large.png" />
+    <Image Include="Assets\Wide310x150Logo.scale-200.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AlbumDataSources.cpp" />
+    <ClCompile Include="AlbumResumeItemVM.cpp" />
+    <ClCompile Include="AlbumPage.xaml.cpp">
+      <DependentUpon>AlbumPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="ArtistDataSources.cpp" />
+    <ClCompile Include="ArtistItemVM.cpp" />
+    <ClCompile Include="ArtistPage.xaml.cpp">
+      <DependentUpon>ArtistPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="AudioService.cpp" />
+    <ClCompile Include="DownloadService.cpp" />
+    <ClCompile Include="FactorConverter.cpp" />
+    <ClCompile Include="GenrePage.xaml.cpp">
+      <DependentUpon>GenrePage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="LocalMusic.xaml.cpp">
+      <DependentUpon>LocalMusic.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="MenuFlyouts.cpp" />
+    <ClCompile Include="PlaylistPage.xaml.cpp">
+      <DependentUpon>PlaylistPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="PlaylistResumeItemVM.cpp" />
+    <ClCompile Include="PlaylistsDataSources.cpp" />
+    <ClCompile Include="SearchResultGroup.cpp" />
+    <ClCompile Include="SearchView.xaml.cpp">
+      <DependentUpon>SearchView.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="SublistFilterControl.xaml.cpp">
+      <DependentUpon>SublistFilterControl.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="SublistItemVM.cpp" />
+    <ClCompile Include="TrackItemVM.cpp" />
+    <ClCompile Include="TrackTemplatesWithCover.xaml.cpp">
+      <DependentUpon>TrackTemplatesWithCover.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="VideoItemVM.cpp" />
+    <ClCompile Include="VideoPlayer.xaml.cpp">
+      <DependentUpon>VideoPlayer.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="BindableSizeHelper.cpp" />
+    <ClCompile Include="Discovery.xaml.cpp">
+      <DependentUpon>Discovery.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="FacebookLoginFlyout.xaml.cpp">
+      <DependentUpon>FacebookLoginFlyout.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Genres.xaml.cpp">
+      <DependentUpon>Genres.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Home.xaml.cpp">
+      <DependentUpon>Home.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="IncrementalDataSources.cpp" />
+    <ClCompile Include="IncrementalLoadingCollection.cpp" />
+    <ClCompile Include="LoginDialog.xaml.cpp">
+      <DependentUpon>LoginDialog.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="App.xaml.cpp">
+      <DependentUpon>App.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="AuthenticationService.cpp" />
+    <ClCompile Include="AuthenticationState.cpp" />
+    <ClCompile Include="LoginView.xaml.cpp">
+      <DependentUpon>LoginView.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="MainPage.xaml.cpp">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Mediators.cpp" />
+    <ClCompile Include="MetricsHelper.cpp" />
+    <ClCompile Include="MyMusic.xaml.cpp">
+      <DependentUpon>MyMusic.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Playlists.xaml.cpp">
+      <DependentUpon>Playlists.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="PromotionItemVM.cpp" />
+    <ClCompile Include="Rising.xaml.cpp">
+      <DependentUpon>Rising.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Settings.xaml.cpp">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Shell.xaml.cpp">
+      <DependentUpon>Shell.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Videos.xaml.cpp">
+      <DependentUpon>Videos.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="WrapPanel.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="SQLite.UAP.2015, Version=3.9.1" />
+    <SDKReference Include="WindowsMobile, Version=10.0.10586.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\dependancies\cpprestsdk\Release\src\build\vs14.uwp\cpprestsdk140.uwp.staticlib.vcxproj">
+      <Project>{47a5cfdc-c244-45a6-9830-38cb303cb495}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\dependancies\UWP-LocalDB-CPP\Build\LocalDB\LocalDB.vcxproj">
+      <Project>{47b2b80f-6b2f-42e1-802e-8fd509c3bdcd}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\BackgroundAudio\BackgroundAudio.vcxproj">
+      <Project>{1404bfb3-f806-4ea7-a8b6-e994295ba93d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{0b3b05b6-8216-491a-b3e7-e03bc38230f7}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Assets\TIDAL-Logo-Icons.ttf" />
+    <Font Include="Assets\WiMP-Icons.ttf" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\Win2D.uwp.1.9.0\build\native\Win2D.uwp.targets" Condition="Exists('..\packages\Win2D.uwp.1.9.0\build\native\Win2D.uwp.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Win2D.uwp.1.9.0\build\native\Win2D.uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.uwp.1.9.0\build\native\Win2D.uwp.targets'))" />
+  </Target>
+</Project>

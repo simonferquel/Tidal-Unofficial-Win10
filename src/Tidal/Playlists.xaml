@@ -1,0 +1,194 @@
+﻿<Page
+    x:Class="Tidal.Playlists"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="OnPageLoaded"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <Style TargetType="GridViewItem" x:Key="GridViewItemMedium">
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="TabNavigation" Value="Local"/>
+            <Setter Property="IsHoldingEnabled" Value="True"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="12"/>
+            <Setter Property="MinWidth" Value="{ThemeResource GridViewItemMinWidth}"/>
+            <Setter Property="MinHeight" Value="{ThemeResource GridViewItemMinHeight}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridViewItem">
+                        <ListViewItemPresenter CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" ContentMargin="{TemplateBinding Padding}" CheckMode="Overlay" ContentTransitions="{TemplateBinding ContentTransitions}" CheckBoxBrush="{ThemeResource SystemControlBackgroundChromeMediumBrush}" DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}" FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" PointerOverForeground="{ThemeResource SystemControlForegroundBaseHighBrush}" PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}" ReorderHintOffset="{ThemeResource GridViewItemReorderHintThemeOffset}" SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}" SelectionCheckMarkVisualEnabled="True" SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}" SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}" SelectedBackground="{ThemeResource SystemControlHighlightAccentBrush}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <DataTemplate x:DataType="local:SublistItemVM" x:Key="MoodTemplateExtraLarge">
+            <Grid Width="148" Height="148">
+                <Image Source="{x:Bind ImageUrl}" />
+                <Rectangle Fill="Black" Opacity="0.6" />
+                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Text="{x:Bind Name}" />
+
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:DataType="local:SublistItemVM" x:Key="MoodTemplateLarge">
+            <Grid Width="128" Height="128">
+                <Image Source="{x:Bind ImageUrl}" />
+                <Rectangle Fill="Black" Opacity="0.6" />
+                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Text="{x:Bind Name}" FontSize="14.667" />
+
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:DataType="local:SublistItemVM" x:Key="MoodTemplateNarrow">
+            <Grid Width="96" Height="96">
+                <Image Source="{x:Bind ImageUrl}" />
+                <Rectangle Fill="Black" Opacity="0.6" />
+                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Text="{x:Bind Name}" FontSize="13.333" />
+
+            </Grid>
+        </DataTemplate>
+        <Style x:Key="moodsItemContainerStyle" TargetType="GridViewItem">
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="TabNavigation" Value="Local"/>
+            <Setter Property="IsHoldingEnabled" Value="True"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,4,4"/>
+            <Setter Property="MinWidth" Value="{ThemeResource GridViewItemMinWidth}"/>
+            <Setter Property="MinHeight" Value="{ThemeResource GridViewItemMinHeight}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridViewItem">
+                        <ListViewItemPresenter CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" ContentMargin="{TemplateBinding Padding}" CheckMode="Overlay" ContentTransitions="{TemplateBinding ContentTransitions}" CheckBoxBrush="{ThemeResource SystemControlBackgroundChromeMediumBrush}" DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}" FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" PointerOverForeground="{ThemeResource SystemControlForegroundBaseHighBrush}" PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}" ReorderHintOffset="{ThemeResource GridViewItemReorderHintThemeOffset}" SelectionCheckMarkVisualEnabled="True" SelectedForeground="{StaticResource TidalAccentBrush}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptativeStates">
+                <VisualState x:Name="Narrow"/>
+                <VisualState x:Name="Large">
+
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="500"/>
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="moodsGV.ItemTemplate" Value="{StaticResource MoodTemplateLarge}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ExtraLarge">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1000"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="moodsGV.ItemTemplate" Value="{StaticResource MoodTemplateExtraLarge}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Border  Height="48" BorderThickness="1,1,0,1" BorderBrush="Black" Background="#FF171717">
+            <TextBlock Style="{StaticResource PageTitleStyle}" FontSize="16">PLAYLISTS</TextBlock>
+        </Border>
+        <GridView x:Name="playlistGV" Grid.Row="1"  local:BindableSizeHelper.Enabled="True" SelectionMode="None" IsItemClickEnabled="True" ItemClick="OnPlaylistItemClick">
+        <GridView.Resources>
+
+            <local:MetricsHelper x:Key="MetricsMedium" DesiredItemSize="156" ItemMargin="12" ViewportSize="{Binding (local:BindableSizeHelper.BindableWidth), Mode=OneWay,ElementName=playlistGV}"/>
+            <local:FactorConverter x:Key="FactorMedium" Factor="0.66875" />
+            <local:FactorConverter x:Key="FactorBand" Factor="0.1611328125" />
+        </GridView.Resources>
+        <GridView.ItemContainerStyle>
+            <StaticResource ResourceKey="GridViewItemMedium"/>
+        </GridView.ItemContainerStyle>
+        <GridView.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <GridView x:Name="moodsGV" HorizontalAlignment="Center" ItemTemplate="{StaticResource MoodTemplateNarrow}" ItemContainerStyle="{StaticResource moodsItemContainerStyle}" SelectionChanged="OnSelectedMoodChanged" >
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid MaximumRowsOrColumns="4" Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                </GridView>
+                <local:SublistFilterControl Grid.Row="1" x:Name="allPlaylistsFilter" SelectedSublistChanged="OnAllPlaylistsFilterSelectionChanged" />
+                <Grid Grid.Row="2" x:Name="moodHeaderZone" Visibility="Collapsed" 
+                      Height="{Binding (local:BindableSizeHelper.BindableWidth), ElementName=playlistGV, Converter={StaticResource FactorBand}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Image x:Name="moodHeaderImage" Stretch="Uniform"  Grid.RowSpan="3"  Source="https://resources.wimpmusic.com/images/b589ddb1/ef3a/457e/9e00/84b475196ee2/2048x330.jpg" />
+                    <Border Grid.RowSpan="3" BorderThickness="0,1,0,0" BorderBrush="#FF343434" >
+                        <Border.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#99000000" Offset="0"/>
+                                <GradientStop Color="Black" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <TextBlock Grid.Row="1" Margin="12,0" x:Name="moodHeaderTxt"  FontSize="21.333"/>
+                </Grid>
+            </Grid>
+        </GridView.Header>
+
+        <GridView.ItemTemplate>
+            <DataTemplate x:DataType="local:PlaylistResumeItemVM">
+                <StackPanel  Width="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}}"
+                                  >
+
+                    <Image Height="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}, Converter={StaticResource FactorMedium}}">
+                        <Image.Source>
+                            <BitmapImage DecodePixelType="Logical" DecodePixelWidth="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}}" 
+                                                         DecodePixelHeight="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}, Converter={StaticResource FactorMedium}}"
+                                         UriSource="{x:Bind ImageUrl}" />
+                        </Image.Source>
+                    </Image>
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock  TextTrimming="CharacterEllipsis" Margin="0,4,0,0" FontSize="13.333">
+                				<Run Text="{x:Bind Title}"/>
+                        </TextBlock>
+                        <TextBlock Grid.Row="1"  TextTrimming="CharacterEllipsis" Margin="0,0,8,0" Foreground="#FF999999" FontSize="12">
+                				<Hyperlink Foreground="#FF999999"  Click="{x:Bind GoToArtist}">
+                                    <Run>Created by </Run>
+                                        <Run Text="{x:Bind ArtistName}" />
+                                </Hyperlink>
+                        </TextBlock>
+                    </Grid>
+                </StackPanel>
+            </DataTemplate>
+        </GridView.ItemTemplate>
+    </GridView>
+    </Grid>
+</Page>
