@@ -16,6 +16,7 @@ namespace Tidal {
 		property Platform::String^ AlbumTitle;
 		property Platform::String^ ArtistName;
 		property Platform::String^ DurationText;
+		property double Opacity;
 		property Windows::UI::Xaml::Visibility PlayButtonVisibility {Windows::UI::Xaml::Visibility get(); void set(Windows::UI::Xaml::Visibility value); }
 		property Windows::UI::Xaml::Visibility PauseButtonVisibility {Windows::UI::Xaml::Visibility get() {
 			return _playButtonVisibility == Windows::UI::Xaml::Visibility::Visible ?

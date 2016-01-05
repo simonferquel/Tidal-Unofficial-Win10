@@ -25,6 +25,7 @@ void Tidal::TrackItemVM::GoToAlbum()
 }
 Tidal::TrackItemVM::TrackItemVM(const TrackInfo & info, bool includeTrackNumberInTitle) : _trackInfo(info)
 {
+	Opacity = info.allowStreaming ? 1.0 : 0.5;
 	_playButtonVisibility = Windows::UI::Xaml::Visibility::Visible;
 	Id = info.id;
 	AlbumId = info.album.id;

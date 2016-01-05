@@ -262,6 +262,7 @@
     <ClInclude Include="localdata\GetImportedAlbum.h" />
     <ClInclude Include="localdata\GetLocalAlbumsQuery.h" />
     <ClInclude Include="localdata\GetNextTrackImportJobQuery.h" />
+    <ClInclude Include="localdata\GetTrackImportQueueQuery.h" />
     <ClInclude Include="localdata\TidalSchema.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SoundQuality.h" />
@@ -318,6 +319,7 @@
     <ClCompile Include="localdata\GetImportedAlbum.cpp" />
     <ClCompile Include="localdata\GetLocalAlbumsQuery.cpp" />
     <ClCompile Include="localdata\GetNextTrackImportJobQuery.cpp" />
+    <ClCompile Include="localdata\GetTrackImportQueueQuery.cpp" />
     <ClCompile Include="localdata\TidalSchema.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

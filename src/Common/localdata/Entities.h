@@ -70,13 +70,14 @@ namespace localdata {
 		std::int64_t quality;
 		std::int64_t last_playpack_time;
 		std::int64_t album_id;
+		std::wstring album_title;
 		std::wstring cover;
 		std::wstring title;
 		std::wstring artist;
 		std::wstring json;
 		std::int64_t import_timestamp;
 		static std::string getOrderedColumnsForSelect() {
-			return "id, quality, last_playpack_time, album_id, cover, title, artist, json, import_timestamp";
+			return "id, quality, last_playpack_time, album_id, album_title, cover, title, artist, json, import_timestamp";
 		}
 		static imported_track createFromSqlRecord(sqlite3_stmt* stmt) {
 			imported_track data;
@@ -84,11 +85,12 @@ namespace localdata {
 			data.quality = sqlite3_column_int64(stmt, 1);
 			data.last_playpack_time = sqlite3_column_int64(stmt, 2);
 			data.album_id = sqlite3_column_int64(stmt, 3);
-			data.cover = LocalDB::sqlite3_column_wstring(stmt, 4);
-			data.title = LocalDB::sqlite3_column_wstring(stmt, 5);
-			data.artist = LocalDB::sqlite3_column_wstring(stmt, 6);
-			data.json = LocalDB::sqlite3_column_wstring(stmt, 7);
-			data.import_timestamp = sqlite3_column_int64(stmt, 8);
+			data.album_title = LocalDB::sqlite3_column_wstring(stmt, 4);
+			data.cover = LocalDB::sqlite3_column_wstring(stmt, 5);
+			data.title = LocalDB::sqlite3_column_wstring(stmt, 6);
+			data.artist = LocalDB::sqlite3_column_wstring(stmt, 7);
+			data.json = LocalDB::sqlite3_column_wstring(stmt, 8);
+			data.import_timestamp = sqlite3_column_int64(stmt, 9);
 			return data;
 		}
 	};
@@ -98,13 +100,14 @@ namespace localdata {
 	protected:
 		virtual std::string identifier() override { return "gen-imported_track-insert"; }
 		virtual std::string sql(int) override {
-			return "insert into imported_track(id, quality, last_playpack_time, album_id, cover, title, artist, json, import_timestamp) values (@id, @quality, @last_playpack_time, @album_id, @cover, @title, @artist, @json, @import_timestamp)";
+			return "insert into imported_track(id, quality, last_playpack_time, album_id, album_title, cover, title, artist, json, import_timestamp) values (@id, @quality, @last_playpack_time, @album_id, @album_title, @cover, @title, @artist, @json, @import_timestamp)";
 		}
 		virtual  void bindParameters(int, sqlite3*, sqlite3_stmt* statement) override {
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@id"), _entity.id);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@quality"), _entity.quality);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@last_playpack_time"), _entity.last_playpack_time);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@album_id"), _entity.album_id);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@album_title"), _entity.album_title);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@cover"), _entity.cover);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@title"), _entity.title);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@artist"), _entity.artist);
@@ -120,13 +123,14 @@ namespace localdata {
 	protected:
 		virtual std::string identifier() override { return "gen-imported_track-update"; }
 		virtual std::string sql(int) override {
-			return "update imported_track SET quality = @quality, last_playpack_time = @last_playpack_time, album_id = @album_id, cover = @cover, title = @title, artist = @artist, json = @json, import_timestamp = @import_timestamp WHERE id = @id";
+			return "update imported_track SET quality = @quality, last_playpack_time = @last_playpack_time, album_id = @album_id, album_title = @album_title, cover = @cover, title = @title, artist = @artist, json = @json, import_timestamp = @import_timestamp WHERE id = @id";
 		}
 		virtual  void bindParameters(int, sqlite3*, sqlite3_stmt* statement) override {
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@id"), _entity.id);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@quality"), _entity.quality);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@last_playpack_time"), _entity.last_playpack_time);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@album_id"), _entity.album_id);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@album_title"), _entity.album_title);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@cover"), _entity.cover);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@title"), _entity.title);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@artist"), _entity.artist);
@@ -200,27 +204,25 @@ namespace localdata {
 		imported_albumUpdateDbQuery(const LocalDB::DBContext& ctx, const imported_album& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity) {}
 	};
 	struct imported_playlist {
-		std::int64_t id;
+		std::wstring id;
 		std::wstring cover;
 		std::wstring title;
-		std::wstring artist;
 		std::wstring json;
 		std::wstring tracks_json;
 		std::int64_t updated_at;
 		std::int64_t import_timestamp;
 		static std::string getOrderedColumnsForSelect() {
-			return "id, cover, title, artist, json, tracks_json, updated_at, import_timestamp";
+			return "id, cover, title, json, tracks_json, updated_at, import_timestamp";
 		}
 		static imported_playlist createFromSqlRecord(sqlite3_stmt* stmt) {
 			imported_playlist data;
-			data.id = sqlite3_column_int64(stmt, 0);
+			data.id = LocalDB::sqlite3_column_wstring(stmt, 0);
 			data.cover = LocalDB::sqlite3_column_wstring(stmt, 1);
 			data.title = LocalDB::sqlite3_column_wstring(stmt, 2);
-			data.artist = LocalDB::sqlite3_column_wstring(stmt, 3);
-			data.json = LocalDB::sqlite3_column_wstring(stmt, 4);
-			data.tracks_json = LocalDB::sqlite3_column_wstring(stmt, 5);
-			data.updated_at = sqlite3_column_int64(stmt, 6);
-			data.import_timestamp = sqlite3_column_int64(stmt, 7);
+			data.json = LocalDB::sqlite3_column_wstring(stmt, 3);
+			data.tracks_json = LocalDB::sqlite3_column_wstring(stmt, 4);
+			data.updated_at = sqlite3_column_int64(stmt, 5);
+			data.import_timestamp = sqlite3_column_int64(stmt, 6);
 			return data;
 		}
 	};
@@ -230,13 +232,12 @@ namespace localdata {
 	protected:
 		virtual std::string identifier() override { return "gen-imported_playlist-insert"; }
 		virtual std::string sql(int) override {
-			return "insert into imported_playlist(id, cover, title, artist, json, tracks_json, updated_at, import_timestamp) values (@id, @cover, @title, @artist, @json, @tracks_json, @updated_at, @import_timestamp)";
+			return "insert into imported_playlist(id, cover, title, json, tracks_json, updated_at, import_timestamp) values (@id, @cover, @title, @json, @tracks_json, @updated_at, @import_timestamp)";
 		}
 		virtual  void bindParameters(int, sqlite3*, sqlite3_stmt* statement) override {
-			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@id"), _entity.id);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@id"), _entity.id);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@cover"), _entity.cover);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@title"), _entity.title);
-			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@artist"), _entity.artist);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@json"), _entity.json);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@tracks_json"), _entity.tracks_json);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@updated_at"), _entity.updated_at);
@@ -251,13 +252,12 @@ namespace localdata {
 	protected:
 		virtual std::string identifier() override { return "gen-imported_playlist-update"; }
 		virtual std::string sql(int) override {
-			return "update imported_playlist SET cover = @cover, title = @title, artist = @artist, json = @json, tracks_json = @tracks_json, updated_at = @updated_at, import_timestamp = @import_timestamp WHERE id = @id";
+			return "update imported_playlist SET cover = @cover, title = @title, json = @json, tracks_json = @tracks_json, updated_at = @updated_at, import_timestamp = @import_timestamp WHERE id = @id";
 		}
 		virtual  void bindParameters(int, sqlite3*, sqlite3_stmt* statement) override {
-			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@id"), _entity.id);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@id"), _entity.id);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@cover"), _entity.cover);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@title"), _entity.title);
-			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@artist"), _entity.artist);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@json"), _entity.json);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@tracks_json"), _entity.tracks_json);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@updated_at"), _entity.updated_at);
@@ -276,7 +276,7 @@ namespace localdata {
 		std::wstring artist;
 		std::int64_t import_timestamp;
 		std::int64_t owning_albumid;
-		std::int64_t owning_playlistid;
+		std::wstring owning_playlistid;
 		std::int64_t quality;
 		static std::string getOrderedColumnsForSelect() {
 			return "id, server_timestamp, server_size, local_size, cover, title, artist, import_timestamp, owning_albumid, owning_playlistid, quality";
@@ -292,7 +292,7 @@ namespace localdata {
 			data.artist = LocalDB::sqlite3_column_wstring(stmt, 6);
 			data.import_timestamp = sqlite3_column_int64(stmt, 7);
 			data.owning_albumid = sqlite3_column_int64(stmt, 8);
-			data.owning_playlistid = sqlite3_column_int64(stmt, 9);
+			data.owning_playlistid = LocalDB::sqlite3_column_wstring(stmt, 9);
 			data.quality = sqlite3_column_int64(stmt, 10);
 			return data;
 		}
@@ -315,7 +315,7 @@ namespace localdata {
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@artist"), _entity.artist);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@import_timestamp"), _entity.import_timestamp);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@owning_albumid"), _entity.owning_albumid);
-			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@owning_playlistid"), _entity.owning_playlistid);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@owning_playlistid"), _entity.owning_playlistid);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@quality"), _entity.quality);
 		}
 	public:
@@ -339,7 +339,7 @@ namespace localdata {
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@artist"), _entity.artist);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@import_timestamp"), _entity.import_timestamp);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@owning_albumid"), _entity.owning_albumid);
-			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@owning_playlistid"), _entity.owning_playlistid);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@owning_playlistid"), _entity.owning_playlistid);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@quality"), _entity.quality);
 		}
 	public:

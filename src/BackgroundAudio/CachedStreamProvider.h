@@ -1,6 +1,7 @@
 #pragma once
 #include <ppltasks.h>
 #include <cstdint>
+class track_unavailable_for_streaming{};
 struct cached_stream_info {
 	Platform::String^ contentType;
 	Windows::Storage::Streams::IRandomAccessStream^ stream;

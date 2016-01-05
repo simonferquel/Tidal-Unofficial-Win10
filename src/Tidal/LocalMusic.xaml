@@ -5,9 +5,65 @@
     xmlns:local="using:Tidal"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="OnViewLoaded"
     mc:Ignorable="d">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
 
+                <local:TrackTemplatesWithCover/>
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="TrackListViewItemStyle" TargetType="ListViewItem">
+                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+                <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                <Setter Property="TabNavigation" Value="Local"/>
+                <Setter Property="IsHoldingEnabled" Value="True"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+                <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListViewItem">
+                            <ListViewItemPresenter CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" ContentMargin="{TemplateBinding Padding}" CheckMode="Inline" ContentTransitions="{TemplateBinding ContentTransitions}" CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}" FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}" PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}" ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}" SelectionCheckMarkVisualEnabled="True" SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}" SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}" SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+
+    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="rootGrid" local:BindableSizeHelper.Enabled="True">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptativeStates">
+                <VisualState x:Name="Narrow"/>
+                <VisualState x:Name="Large">
+
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="500"/>
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="tracksHeaderGrid.ColumnDefinitions[4].Width" Value="1*" />
+                        <Setter Target="tracksLV.ItemTemplate" Value="{StaticResource TrackItemTemplateLarge}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ExtraLarge">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1000"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="tracksHeaderGrid.ColumnDefinitions[3].Width" Value="1*" />
+                        <Setter Target="tracksHeaderGrid.ColumnDefinitions[4].Width" Value="1*" />
+                        <Setter Target="tracksHeaderGrid.ColumnDefinitions[5].Width" Value="72" />
+                        <Setter Target="tracksLV.ItemTemplate" Value="{StaticResource TrackItemTemplateExtraLarge}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid.Resources>
             <local:MetricsHelper x:Key="MetricsSmall" DesiredItemSize="96" ItemMargin="12" ViewportSize="{Binding (local:BindableSizeHelper.BindableWidth), Mode=OneWay,ElementName=rootGrid}" />
             <local:MetricsHelper x:Key="MetricsMedium" DesiredItemSize="156" ItemMargin="12" ViewportSize="{Binding (local:BindableSizeHelper.BindableWidth), Mode=OneWay,ElementName=rootGrid}"/>
@@ -135,6 +191,40 @@
                         <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="PLAYLISTS"/>
                     </StackPanel>
                 </PivotItem.Header>
+                <GridView Grid.Row="1"  x:Name="playlistsGV"  SelectionMode="None" IsItemClickEnabled="True" Padding="0"
+                	ItemContainerStyle="{StaticResource GridViewItemMedium}" ItemClick="OnPlaylistClick">
+
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="local:PlaylistResumeItemVM">
+                            <StackPanel  Width="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}}"
+                                  >
+
+                                <Image Height="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}, Converter={StaticResource FactorMedium}}">
+                                    <Image.Source>
+                                        <BitmapImage DecodePixelType="Logical" DecodePixelWidth="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}}" 
+                                                         DecodePixelHeight="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}, Converter={StaticResource FactorMedium}}"
+                                         UriSource="{x:Bind ImageUrl}" />
+                                    </Image.Source>
+                                </Image>
+                                <Grid >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock  TextTrimming="CharacterEllipsis" Margin="0,4,0,0" FontSize="13.333">
+                				<Run Text="{x:Bind Title}"/>
+                                    </TextBlock>
+                                    <TextBlock Grid.Row="1"  TextTrimming="CharacterEllipsis" Margin="0,0,8,0" Foreground="#FF999999" FontSize="12">
+                				<Hyperlink  Foreground="#FF999999"  Click="{x:Bind GoToArtist}">
+                                    <Run>Created by </Run>
+                                        <Run Text="{x:Bind ArtistName}" />
+                                </Hyperlink>
+                                    </TextBlock>
+                                </Grid>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
             </PivotItem>
 
             <PivotItem Margin="0">
@@ -144,6 +234,56 @@
                         <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="ALL TRACKS"/>
                     </StackPanel>
                 </PivotItem.Header>
+                <ListView x:Name="tracksLV" Grid.Row="1"  ItemContainerStyle="{StaticResource TrackListViewItemStyle}" ItemTemplate="{StaticResource TrackItemTemplateNarrow}"
+                          SelectionMode="None"
+                          IsItemClickEnabled="True"
+                          ItemClick="OnTrackClick">
+                    <ListView.Header>
+                        <StackPanel>
+                            <Button Margin="12,4" Padding="0" Background="Transparent"
+                                    Click="PlayAll">
+                                <StackPanel Orientation="Horizontal">
+                                    <SymbolIcon Symbol="Play" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Play all"  VerticalAlignment="Center"
+                                               Margin="4"/>
+                                </StackPanel>
+                            </Button>
+                        <Border Background="#FF171717" BorderBrush="Black" BorderThickness="1,1,0,1" Margin="0,0,0,0">
+                            <Grid x:Name="tracksHeaderGrid" Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition Width="48" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="0" />
+                                    <ColumnDefinition Width="0" />
+                                    <ColumnDefinition Width="0" />
+                                    <ColumnDefinition Width="84" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Grid.Column="1"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="G" FontSize="24" HorizontalAlignment="Right" />
+                                <TextBlock Margin="8,0,0,0"  Grid.Column="2" VerticalAlignment="Center">TITLE</TextBlock>
+                                <StackPanel Orientation="Horizontal" Margin="8,0,0,0"  
+                                    Grid.Column="3">
+
+                                    <FontIcon Grid.Column="1"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="J" FontSize="24" />
+                                    <TextBlock VerticalAlignment="Center">ARTIST</TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="8,0,0,0"  
+                                    Grid.Column="4">
+
+                                    <FontIcon Grid.Column="1"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="A" FontSize="24" />
+                                    <TextBlock VerticalAlignment="Center">ALBUM</TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"  Margin="0,0,8,0"  
+                                    Grid.Column="5">
+
+                                    <FontIcon Grid.Column="1"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="F" FontSize="24" />
+
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        </StackPanel>
+                    </ListView.Header>
+                </ListView>
             </PivotItem>
 
             <PivotItem Margin="0">
@@ -153,6 +293,30 @@
                         <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="DOWNLOADS"/>
                     </StackPanel>
                 </PivotItem.Header>
+                <ListView ItemContainerStyle="{StaticResource TrackListViewItemStyle}" ItemsSource="{x:Bind DownloadQueue}" >
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="local:DownloadItemVM">
+                            <Border Background="#FF171717" BorderBrush="Black" BorderThickness="1,1,0,1" Margin="0,0,0,0">
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="12" />
+                                        <ColumnDefinition Width="48" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+
+                                    <Image Grid.Column="1" Grid.RowSpan="2"  Source="{x:Bind ImageUrl}" />
+                                    <TextBlock Grid.Column="2" VerticalAlignment="Bottom" Margin ="4" Text="{x:Bind Title}" />
+                                    <ProgressBar Margin="4,0"  Grid.Column="2" Grid.Row="1" Maximum="{x:Bind ServerSize,Mode=OneWay}" Value="{x:Bind LocalSize,Mode=OneWay}" Visibility="{x:Bind ProgressVisibility, Mode=OneWay}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </PivotItem>
         </Pivot>
     </Grid>

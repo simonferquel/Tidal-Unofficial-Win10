@@ -120,7 +120,7 @@
                     </local:SearchResultTemplateSelector.VideoTemplate>
                     <local:SearchResultTemplateSelector.TrackTemplate>
                         <DataTemplate x:DataType="local:TrackItemVM">
-                            <Grid Height="48">
+                            <Grid Height="48" Opacity="{x:Bind Opacity}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="58" />
                                     <ColumnDefinition Width="*" />

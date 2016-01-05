@@ -37,23 +37,23 @@ web::json::value api::TrackInfo::toJson() const
 {
 	auto jobj = web::json::value::object();
 	jobj[L"album"] = album.toJson();
-	jobj[L"allowStreaming"] = allowStreaming;
+	jobj[L"allowStreaming"] = web::json::value(allowStreaming);
 	jobj[L"artist"] = artist.toJson();
 	jobj[L"copyright"] = web::json::value( copyright);
-	jobj[L"duration"] = duration.count();
-	jobj[L"explicit"] = is_explicit;
-	jobj[L"id"] = id;
-	jobj[L"peak"] = peak;
-	jobj[L"popularity"] = popularity;
-	jobj[L"premiumStreamingOnly"] = premiumStreamingOnly;
-	jobj[L"replayGain"] = replayGain;
-	jobj[L"streamReady"] = streamReady;
+	jobj[L"duration"] = web::json::value(duration.count());
+	jobj[L"explicit"] = web::json::value(is_explicit);
+	jobj[L"id"] = web::json::value(id);
+	jobj[L"peak"] = web::json::value(peak);
+	jobj[L"popularity"] = web::json::value(popularity);
+	jobj[L"premiumStreamingOnly"] = web::json::value(premiumStreamingOnly);
+	jobj[L"replayGain"] = web::json::value(replayGain);
+	jobj[L"streamReady"] = web::json::value(streamReady);
 	jobj[L"streamStartDate"] = api::toJson(streamStartDate);
 	jobj[L"title"] = web::json::value( title);
-	jobj[L"trackNumber"] = trackNumber;
+	jobj[L"trackNumber"] = web::json::value(trackNumber);
 	jobj[L"url"] = web::json::value(url);
 	jobj[L"version"] = web::json::value(version);
-	jobj[L"volumeNumber"] = volumeNumber;
+	jobj[L"volumeNumber"] = web::json::value(volumeNumber);
 	auto jarr = web::json::value::array();
 	for (auto& a : artists) {
 		jarr[jarr.size()] = a.toJson();

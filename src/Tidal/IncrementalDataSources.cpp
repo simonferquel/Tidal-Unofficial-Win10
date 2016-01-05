@@ -553,7 +553,53 @@ Tidal::IncrementalLoadingCollection ^ getLocalAlbumsDataSource()
 			
 			for (auto& article : *data) {
 				api::AlbumResume r(web::json::value::parse(article.json));
-				toFill->Append(ref new Tidal::AlbumResumeItemVM(r));
+				toFill->Append(ref new Tidal::AlbumResumeItemVM(r, true));
+			}
+			return data->size() > 0;
+		}
+		catch (...) {
+		}
+
+		// something wron append.
+		// delay and retry on next scroll event
+		await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
+		return true;
+
+	});
+}
+
+Tidal::IncrementalLoadingCollection ^ getLocalPlaylistsDataSource()
+{
+	return ref new Tidal::IncrementalLoadingCollection([](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
+		try {
+			auto data = await localdata::getImportedPlaylistsAsync(toFill->Size, desiredCount, cancelToken);
+
+			for (auto& article : *data) {
+				api::PlaylistResume r(web::json::value::parse(article.json));
+				toFill->Append(ref new Tidal::PlaylistResumeItemVM(r, true));
+			}
+			return data->size() > 0;
+		}
+		catch (...) {
+		}
+
+		// something wron append.
+		// delay and retry on next scroll event
+		await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
+		return true;
+
+	});
+}
+
+Tidal::IncrementalLoadingCollection ^ getLocalTracksDataSource()
+{
+	return ref new Tidal::IncrementalLoadingCollection([](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
+		try {
+			auto data = await localdata::getImportedTracksAsync(toFill->Size, desiredCount, cancelToken);
+
+			for (auto& article : *data) {
+				api::TrackInfo r(web::json::value::parse(article.json));
+				toFill->Append(ref new Tidal::TrackItemVM(r, false));
 			}
 			return data->size() > 0;
 		}

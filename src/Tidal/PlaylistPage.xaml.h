@@ -23,6 +23,7 @@ namespace Tidal
 		std::vector<RegistrationToken> _mediatorRegistrations;
 		tools::ScopedEventRegistrations _eventRegistrations;
 		Platform::Collections::Vector<TrackItemVM^>^ _tracks;
+		std::wstring _playlistId;
 	public:
 		PlaylistPage();
 	protected:
@@ -41,5 +42,6 @@ namespace Tidal
 		void OnPauseFromTrack(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		concurrency::task<void> LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs^ args);
 		void OnPlayAll(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void OnContextMenuClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

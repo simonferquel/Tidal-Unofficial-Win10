@@ -19,5 +19,6 @@ namespace api {
 		std::wstring uuid;
 		PlaylistResume() = default;
 		PlaylistResume(const web::json::value& json);
+		web::json::value toJson() const;
 	};
 }

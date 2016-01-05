@@ -59,6 +59,7 @@
     <ClCompile Include="TrackTemplatesWithCover.xaml.cpp" />
     <ClCompile Include="DownloadService.cpp" />
     <ClCompile Include="MenuFlyouts.cpp" />
+    <ClCompile Include="LocalMusic.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -114,6 +115,7 @@
     <ClInclude Include="TrackTemplatesWithCover.xaml.h" />
     <ClInclude Include="DownloadService.h" />
     <ClInclude Include="MenuFlyouts.h" />
+    <ClInclude Include="LocalMusic.xaml.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png">

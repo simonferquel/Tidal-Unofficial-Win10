@@ -12,7 +12,7 @@
             <DataTemplate x:Key="TrackItemTemplateExtraLarge"
                       x:DataType="local:TrackItemVM">
                 <Border Height="49" BorderThickness="1,0,0,1" BorderBrush="Black" Background="#ff171717">
-                    <Grid x:Name="tracksHeaderGrid" >
+                    <Grid x:Name="tracksHeaderGrid" Opacity="{x:Bind Opacity}" >
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="12" />
                             <ColumnDefinition Width="48" />
@@ -65,7 +65,7 @@
             <DataTemplate x:Key="TrackItemTemplateLarge"
                       x:DataType="local:TrackItemVM">
                 <Border Height="49" BorderThickness="1,0,0,1" BorderBrush="Black" Background="#ff171717">
-                    <Grid x:Name="tracksHeaderGrid" >
+                    <Grid x:Name="tracksHeaderGrid" Opacity="{x:Bind Opacity}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="12" />
                             <ColumnDefinition Width="48" />
@@ -119,7 +119,7 @@
             <DataTemplate x:Key="TrackItemTemplateNarrow"
                       x:DataType="local:TrackItemVM">
                 <Border Height="49" BorderThickness="1,0,0,1" BorderBrush="Black" Background="#ff171717">
-                    <Grid x:Name="tracksHeaderGrid" >
+                    <Grid x:Name="tracksHeaderGrid" Opacity="{x:Bind Opacity}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="12" />
                             <ColumnDefinition Width="48" />

@@ -82,6 +82,9 @@ void BackgroundAudio::BackgroundAudioTask::OnMessageReceivedFromForeground(Platf
 				_musicPlayer->resetPlayqueue(startIndex);
 			}
 		}
+		else if (request == L"play_all_local") {
+			_musicPlayer->playAllLocalMusic();
+		}
 		else if (request == L"play") {
 			auto startIndexBox = dynamic_cast<Platform::IBox<int>^>(args->Data->Lookup(L"index"));
 			int startIndex = 0;

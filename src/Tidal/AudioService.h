@@ -18,4 +18,5 @@ public:
 	void onResuming();
 	void onBackgroundAudioFailureDetected();
 	concurrency::task<void> wakeupDownloaderAsync(concurrency::cancellation_token cancelToken);
+	concurrency::task<void> playAllLocalMusicAsync();
 };

@@ -56,6 +56,7 @@
     <ClCompile Include="Api\GetTrackInfoQuery.cpp" />
     <ClCompile Include="localdata\GetImportedAlbum.cpp" />
     <ClCompile Include="localdata\GetLocalAlbumsQuery.cpp" />
+    <ClCompile Include="localdata\GetTrackImportQueueQuery.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -119,5 +120,6 @@
     <ClInclude Include="Api\GetTrackInfoQuery.h" />
     <ClInclude Include="localdata\GetImportedAlbum.h" />
     <ClInclude Include="localdata\GetLocalAlbumsQuery.h" />
+    <ClInclude Include="localdata\GetTrackImportQueueQuery.h" />
   </ItemGroup>
 </Project>

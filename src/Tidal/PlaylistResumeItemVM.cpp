@@ -6,6 +6,7 @@
 #include "PlaylistPage.xaml.h"
 #include "ArtistPage.xaml.h"
 #include "Shell.xaml.h"
+#include <Api/CoverCache.h>
 
 void Tidal::PlaylistResumeItemVM::Go()
 {
@@ -23,12 +24,18 @@ void Tidal::PlaylistResumeItemVM::GoToArtist()
 	}
 }
 
-Tidal::PlaylistResumeItemVM::PlaylistResumeItemVM(const api::PlaylistResume & info)
+Tidal::PlaylistResumeItemVM::PlaylistResumeItemVM(const api::PlaylistResume & info, bool offline)
 {
 	ArtistId = info.creator.id;
 	Uuid = tools::strings::toWindowsString(info.uuid);
-	ImageUrl = api::resolveImageUri(info.image, 320, 214);
-	SearchImageUrl = api::resolveImageUri(info.image, 160,107);
+	if (offline) {
+		ImageUrl = api::getPlaylistOfflineCoverUrl(info.uuid, 320, 214);
+		SearchImageUrl = api::getPlaylistOfflineCoverUrl(info.uuid, 160, 107);
+	}
+	else {
+		ImageUrl = api::resolveImageUri(info.image, 320, 214);
+		SearchImageUrl = api::resolveImageUri(info.image, 160, 107);
+	}
 	Title = tools::strings::toWindowsString(info.title);
 	if (info.creator.name.size() == 0) {
 		ArtistName = L"TIDAL";

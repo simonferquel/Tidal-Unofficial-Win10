@@ -16,6 +16,6 @@ namespace Tidal {
 		virtual void Go();
 		void GoToArtist();
 	internal:
-		PlaylistResumeItemVM(const api::PlaylistResume& info);
+		PlaylistResumeItemVM(const api::PlaylistResume& info, bool offline = false);
 	};
 }

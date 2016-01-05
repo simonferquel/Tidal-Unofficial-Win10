@@ -47,7 +47,10 @@ api::QueryBase::QueryBase(Platform::String ^ sessionId, Platform::String^ countr
 
 concurrency::task<Platform::String^> api::QueryBase::getAsync(concurrency::cancellation_token cancelToken)
 {
-	auto client = ref new HttpClient();
+	auto filter = ref new Windows::Web::Http::Filters::HttpBaseProtocolFilter();
+	filter->AllowUI = false;
+	auto client = ref new HttpClient(filter);
+	
 	std::wstring urlBuilder(config::apiLocationPrefix()->Data());
 	urlBuilder.append(url());
 	if (_queryString && _queryString->Size > 0) {
@@ -68,7 +71,7 @@ concurrency::task<Platform::String^> api::QueryBase::getAsync(concurrency::cance
 	auto timeoutProvider = std::make_shared<tools::async::TimeoutCancelTokenProvider>(timeout());
 	auto combinedTokens = tools::async::combineCancelTokens(cancelToken, timeoutProvider->get_token());
 	try {
-		auto response = await create_task(client->GetAsync(ref new Uri(tools::strings::toWindowsString(urlBuilder))), combinedTokens);
+		auto response = await create_task(client->SendRequestAsync(ref new HttpRequestMessage(HttpMethod::Get, ref new Uri(tools::strings::toWindowsString(urlBuilder)))), combinedTokens);
 		auto contentString = await create_task(response->Content->ReadAsStringAsync(), combinedTokens);
 		if (!response->IsSuccessStatusCode) {
 			throw statuscode_exception(urlBuilder, response->StatusCode, contentString);

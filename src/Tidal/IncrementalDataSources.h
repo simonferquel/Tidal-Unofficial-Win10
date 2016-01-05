@@ -18,3 +18,5 @@ concurrency::task<Windows::UI::Xaml::Data::ICollectionView^> searchAllAsync(Plat
 Tidal::IncrementalLoadingCollection^ getFilteredSearchSource(Platform::String^ query, Platform::String^ filter);
 
 Tidal::IncrementalLoadingCollection^ getLocalAlbumsDataSource();
+Tidal::IncrementalLoadingCollection^ getLocalPlaylistsDataSource();
+Tidal::IncrementalLoadingCollection^ getLocalTracksDataSource();

@@ -12,6 +12,7 @@
     <ClCompile Include="CachedStreamProvider.cpp" />
     <ClCompile Include="MusicPlayer.cpp" />
     <ClCompile Include="BackgroundDownloader.cpp" />
+    <ClCompile Include="WebStream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -19,5 +20,6 @@
     <ClInclude Include="CachedStreamProvider.h" />
     <ClInclude Include="MusicPlayer.h" />
     <ClInclude Include="BackgroundDownloader.h" />
+    <ClInclude Include="WebStream.h" />
   </ItemGroup>
 </Project>

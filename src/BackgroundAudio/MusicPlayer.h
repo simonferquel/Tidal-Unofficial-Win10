@@ -18,11 +18,12 @@ private:
 	void onWmpMediaOpened();
 	void onWmpMediaEnded();
 	void onWmpMediaFailed(Windows::Media::Playback::MediaPlayerFailedEventArgs^ args);
+
 public:
 	void initialize();
 	void resetPlayqueueAndPlay(int index);
 	void resetPlayqueue(int index);
-
+	void playAllLocalMusic();
 	void playAtIndex(int index);
 	void shutdown();
 	void moveNext();

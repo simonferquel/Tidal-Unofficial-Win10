@@ -222,6 +222,21 @@ concurrency::task<void> AudioService::wakeupDownloaderAsync(concurrency::cancell
 	await _connection->sendAndWaitResponseAsync(values);
 }
 
+concurrency::task<void> AudioService::playAllLocalMusicAsync()
+{
+	std::set<std::int64_t> albumIds;
+
+	if (!_connection) {
+		_connection = std::make_shared<BackgroundAudioConnection>();
+		_connection->Initialize();
+	}
+	
+	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
+	resetPlayListValues->Insert(L"request", L"play_all_local");
+	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+}
+
 AudioService & getAudioService()
 {
 	static AudioService instance;

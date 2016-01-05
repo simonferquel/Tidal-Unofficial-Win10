@@ -93,6 +93,7 @@ concurrency::task<void> localdata::transformTrackImportJobToImportedTrackAsync(L
 		auto job = jobset->at(0);
 		localdata::imported_track trk;
 		trk.album_id = ti->album.id;
+		trk.album_title = ti->album.title;
 		trk.artist = ti->artists[0].name;
 		trk.cover = ti->album.cover;
 		trk.id = id;

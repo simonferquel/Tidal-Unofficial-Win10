@@ -11,7 +11,7 @@
             <DataTemplate x:Key="TrackItemTemplateExtraLarge"
                       x:DataType="local:TrackItemVM">
                 <Border Height="49" BorderThickness="1,0,0,1">
-                    <Grid x:Name="tracksHeaderGrid" >
+                    <Grid x:Name="tracksHeaderGrid" Opacity="{x:Bind Opacity}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="12" />
                             <ColumnDefinition Width="48" />
@@ -64,7 +64,7 @@
             <DataTemplate x:Key="TrackItemTemplateLarge"
                       x:DataType="local:TrackItemVM">
                 <Border Height="49" BorderThickness="1,0,0,1">
-                    <Grid x:Name="tracksHeaderGrid" >
+                    <Grid x:Name="tracksHeaderGrid" Opacity="{x:Bind Opacity}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="12" />
                             <ColumnDefinition Width="48" />
@@ -118,7 +118,7 @@
             <DataTemplate x:Key="TrackItemTemplateNarrow"
                       x:DataType="local:TrackItemVM">
                 <Border Height="49" BorderThickness="1,0,0,1">
-                    <Grid x:Name="tracksHeaderGrid" >
+                    <Grid x:Name="tracksHeaderGrid" Opacity="{x:Bind Opacity}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="12" />
                             <ColumnDefinition Width="48" />
@@ -293,7 +293,8 @@
 
                             <Button  VerticalAlignment="Center"
                                         Background="Transparent"
-                                         Margin="4,4,0,0" Padding="0">
+                                         Margin="4,4,0,0" Padding="0"
+                                     Click="OnContextMenuClick">
                                 <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="#" />
                             </Button>
                         </StackPanel>

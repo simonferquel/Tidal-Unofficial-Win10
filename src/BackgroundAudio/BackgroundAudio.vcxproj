@@ -233,6 +233,7 @@
     <ClInclude Include="BackgroundDownloader.h" />
     <ClInclude Include="MusicPlayer.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="WebStream.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BackgroundAudioTask.cpp" />
@@ -247,6 +248,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="WebStream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\dependancies\cpprestsdk\Release\src\build\vs14.uwp\cpprestsdk140.uwp.staticlib.vcxproj">

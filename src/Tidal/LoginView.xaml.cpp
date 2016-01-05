@@ -9,7 +9,8 @@
 #include "AuthenticationService.h"
 #include "LoginDialog.xaml.h"
 #include "FacebookLoginFlyout.xaml.h"
-
+#include <Api/ImageUriResolver.h>
+#include <tools/StringUtils.h>
 using namespace Tidal;
 
 using namespace Platform;
@@ -56,7 +57,7 @@ void Tidal::LoginView::UpdateForAuthenticationState(const AuthenticationState & 
 	if (authState.isAuthenticated()) {
 
 		if (authState.userPicture() && authState.userPicture()->Length() > 0) {
-			auto bmp = ref new BitmapImage(ref new Uri(authState.userPicture()));
+			auto bmp = ref new BitmapImage(ref new Uri(api::resolveImageUri(tools::strings::toStdString( authState.userPicture()), 210,210)));
 			auto bmpBrush = ref new ImageBrush();
 			bmpBrush->Stretch = Stretch::UniformToFill;
 			bmpBrush->ImageSource = bmp;

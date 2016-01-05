@@ -6,6 +6,7 @@
 #include <Api/TrackInfo.h>
 #include <CachedStreamProvider.h>
 #include <Api/CoverCache.h>
+#include <localdata/GetLocalAlbumsQuery.h>
 
 using namespace Windows::Media::Playback;
 using namespace Windows::Media;
@@ -40,9 +41,41 @@ void MusicPlayer::onWmpMediaFailed(Windows::Media::Playback::MediaPlayerFailedEv
 {
 }
 
+void SetMusicStateChanging() {
+	auto smtc = Windows::Media::Playback::BackgroundMediaPlayer::Current->SystemMediaTransportControls;
+	smtc->PlaybackStatus = Windows::Media::MediaPlaybackStatus::Changing;
+}
+
 concurrency::task<String^> loadPlaylistJsonAsync() {
 	auto file = await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFileAsync(L"current_playlist.json", Windows::Storage::CreationCollisionOption::OpenIfExists));
 	auto json = await concurrency::create_task(Windows::Storage::FileIO::ReadTextAsync(file));
+	return json;
+}
+concurrency::task<String^> loadAllMusicPlaylistJsonAsync() {
+	std::wstring result = L"[";
+	bool first = true;
+	int skip = 0;
+	while (true) {
+		auto batch = await localdata::getImportedTracksAsync(skip, 30, concurrency::cancellation_token::none());
+		if (batch->size() == 0) {
+			break;
+		}
+		for (auto&& item : *batch) {
+			if (first) {
+				first = false;
+			}
+			else {
+				result.push_back(L',');
+			}
+			result.append(item.json);
+		}
+
+		skip += 30;
+	}
+	result.push_back(L']');
+	auto json = tools::strings::toWindowsString(result);
+	auto file = await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFileAsync(L"current_playlist.json", Windows::Storage::CreationCollisionOption::OpenIfExists));
+	await concurrency::create_task(Windows::Storage::FileIO::WriteTextAsync(file, json));
 	return json;
 }
 
@@ -71,6 +104,11 @@ MediaBinder^ createMediaBinderForTrack(const api::TrackInfo& info) {
 
 					deferral->Complete();
 				});
+			}).then([deferral](concurrency::task<void > t) {
+				try { t.get(); }
+				catch (track_unavailable_for_streaming&) {
+					deferral->Complete();
+				}
 			});
 
 		}, tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(500)), cancelToken)
@@ -154,7 +192,7 @@ void MusicPlayer::initialize()
 	_currentCts.cancel();
 
 	_currentCts = cancellation_token_source();
-	auto cancelToken = _currentCts.get_token();
+	/*auto cancelToken = _currentCts.get_token();
 	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
 	int64_t currentPlayedId = -1;
 	auto currentPlayedIdBox = dynamic_cast<IBox<int64_t>^>(settingsValues->Lookup(L"CurrentPlaybackTrackId"));
@@ -185,7 +223,7 @@ void MusicPlayer::initialize()
 			that->_currentPlayList = playList;
 			that->_wmp->Source = playList;
 		}
-	});
+	});*/
 
 }
 
@@ -194,6 +232,9 @@ void MusicPlayer::resetPlayqueueAndPlay(int index)
 	rec_lockguard _(_mutex);
 	_currentCts.cancel();
 	_currentCts = cancellation_token_source();
+	_wmp->Source = ref new Windows::Media::Playback::MediaPlaybackList();
+	_currentPlayList = nullptr;
+	SetMusicStateChanging();
 	auto cancelToken = _currentCts.get_token();
 	loadPlaylistJsonAsync()
 		.then([weakThis = weak_ptr<MusicPlayer>(shared_from_this()), index](Platform::String^ playlistJson){
@@ -228,6 +269,9 @@ void MusicPlayer::resetPlayqueue(int index)
 	rec_lockguard _(_mutex);
 	_currentCts.cancel();
 	_currentCts = cancellation_token_source();
+	_wmp->Source = ref new Windows::Media::Playback::MediaPlaybackList();
+	_currentPlayList = nullptr;
+	SetMusicStateChanging();
 	auto cancelToken = _currentCts.get_token();
 	loadPlaylistJsonAsync()
 		.then([weakThis = weak_ptr<MusicPlayer>(shared_from_this()), index](Platform::String^ playlistJson){
@@ -256,9 +300,45 @@ void MusicPlayer::resetPlayqueue(int index)
 	});
 }
 
+void MusicPlayer::playAllLocalMusic()
+{
+	rec_lockguard _(_mutex);
+	_currentCts.cancel();
+	_wmp->Source = ref new Windows::Media::Playback::MediaPlaybackList();
+	_currentPlayList = nullptr;
+	SetMusicStateChanging();
+	_currentCts = cancellation_token_source();
+	auto cancelToken = _currentCts.get_token();
+	loadAllMusicPlaylistJsonAsync()
+		.then([weakThis = weak_ptr<MusicPlayer>(shared_from_this())](Platform::String^ playlistJson){
+		auto playList = ref new Windows::Media::Playback::MediaPlaybackList();
+		playList->CurrentItemChanged += ref new Windows::Foundation::TypedEventHandler<Windows::Media::Playback::MediaPlaybackList ^, Windows::Media::Playback::CurrentMediaPlaybackItemChangedEventArgs ^>(&OnCurrentPlaylistItemChanged);
+		playList->MaxPrefetchTime = tools::time::ToWindowsTimeSpan(std::chrono::seconds(30));
+		if (playlistJson->Length() > 0) {
+			tools::strings::WindowsWIStream stream(playlistJson);
+			auto jval = web::json::value::parse(stream);
+			auto& jarr = jval.as_array();
+			for (auto& jitem : jarr) {
+
+				api::TrackInfo info(jitem);
+				auto item = ref new MediaPlaybackItem(MediaSource::CreateFromMediaBinder(createMediaBinderForTrack(info)));
+				playList->Items->Append(item);
+			}
+		}
+		playList->ShuffleEnabled = true;
+		auto that = weakThis.lock();
+		if (that) {
+			that->_currentPlayList = playList;
+			that->_wmp->Source = playList;
+			that->_wmp->Play();
+		}
+	});
+}
+
 void MusicPlayer::playAtIndex(int index)
 {
 	rec_lockguard _(_mutex);
+	SetMusicStateChanging();
 	if (_currentPlayList) {
 		if (_currentPlayList->CurrentItemIndex != index) {
 			_currentPlayList->MoveTo(index);
@@ -283,6 +363,7 @@ void MusicPlayer::shutdown()
 void MusicPlayer::moveNext()
 {
 	if (_currentPlayList) {
+		SetMusicStateChanging();
 		_currentPlayList->MoveNext();
 	}
 }
@@ -290,6 +371,7 @@ void MusicPlayer::moveNext()
 void MusicPlayer::movePrevious()
 {
 	if (_currentPlayList) {
+		SetMusicStateChanging();
 		_currentPlayList->MovePrevious();
 	}
 }
