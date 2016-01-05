@@ -116,3 +116,8 @@ concurrency::task<void> localdata::transformTrackImportJobToImportedTrackAsync(L
 		trans.commit();
 	});
 }
+
+concurrency::task<void> localdata::cancelTrackImportJobAsync(LocalDB::DBContext & context, std::int64_t id, concurrency::cancellation_token cancelToken)
+{
+	return LocalDB::executeAsyncWithCancel<DeleteTrackImportJobCommand>(context, cancelToken, id);
+}

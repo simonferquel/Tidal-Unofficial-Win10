@@ -24,9 +24,15 @@ concurrency::task<Windows::Storage::Streams::IBuffer^> WebStream::DoReadAsync(Wi
 	asyncOp->Progress = ref new Windows::Foundation::AsyncOperationProgressHandler<IBuffer^, unsigned int>([reporter](Windows::Foundation::IAsyncOperationWithProgress<IBuffer^, unsigned int>^ asyncInfo, unsigned int progressInfo) {
 		reporter.report(progressInfo);
 	});
-	auto result = await create_task(asyncOp, cancelToken);
-	_position += result->Length;
-	return result;
+	try {
+		auto result = await create_task(asyncOp, cancelToken);
+		_position += result->Length;
+		return result;
+	}
+	catch (...) {
+		_currentStream = nullptr;
+		throw;
+	}
 }
 
 Windows::Foundation::IAsyncOperationWithProgress<Windows::Storage::Streams::IBuffer ^, unsigned int> ^ WebStream::ReadAsync(Windows::Storage::Streams::IBuffer ^buffer, unsigned int count, Windows::Storage::Streams::InputStreamOptions options)

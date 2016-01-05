@@ -24,6 +24,7 @@ concurrency::task<void> handleJobAsync(localdata::track_import_job job, concurre
 			importQualityTxt = L"LOSSLESS";
 		}
 		auto importQuality = parseSoundQuality(importQualityTxt);
+		bool unauthorized = false;
 		api::GetTrackStreamUrlQuery q(dynamic_cast<Platform::String^>(settingsValues->Lookup(L"SessionId")), dynamic_cast<Platform::String^>(settingsValues->Lookup(L"CountryCode")), job.id, importQualityTxt, true);
 		try {
 			auto urlInfo = await q.executeAsync(cancelToken);
@@ -74,9 +75,11 @@ concurrency::task<void> handleJobAsync(localdata::track_import_job job, concurre
 		}
 		catch (api::statuscode_exception& ex) {
 			if (ex.getStatusCode() == Windows::Web::Http::HttpStatusCode::Unauthorized) {
-				localdata::transformTrackImportJobToImportedTrackAsync(localdata::getDb(), job.id, cancelToken).get();
-				localdata::deleteImportedTrackAsync(localdata::getDb(), job.id, cancelToken).get();
+				unauthorized = true;
 			}
+		}
+		if (unauthorized) {
+			await localdata::cancelTrackImportJobAsync(localdata::getDb(), job.id, cancelToken);
 		}
 	}
 

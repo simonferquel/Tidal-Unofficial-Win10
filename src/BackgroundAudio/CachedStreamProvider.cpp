@@ -136,10 +136,18 @@ private:
 				that = nullptr;
 				IBuffer^ resultBuffer = nullptr;
 				try {
-					resultBuffer = await concurrency::create_task(_webStream->ReadAsync(buffer, 128*1024, InputStreamOptions::ReadAhead), cancelToken);
+
+					auto timeoutProvider = std::make_shared<tools::async::TimeoutCancelTokenProvider>(tools::time::ToWindowsTimeSpan(std::chrono::seconds(5)));
+
+					resultBuffer = await concurrency::create_task(_webStream->ReadAsync(buffer, 128*1024, InputStreamOptions::ReadAhead), tools::async::combineCancelTokens(cancelToken, timeoutProvider->get_token()));
 				}
 				catch (concurrency::task_canceled&) {
-					throw;
+					if (cancelToken.is_canceled()) {
+						throw;
+					}
+					else {
+						throw track_download_timeout();
+					}
 				}
 				catch (...)
 				{
@@ -217,11 +225,13 @@ public:
 	concurrency::task<void> initializeAsync(concurrency::cancellation_token cancelToken) {
 		auto that = shared_from_this();
 		auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
+		auto timeoutProvider = std::make_shared<tools::async::TimeoutCancelTokenProvider>(tools::time::ToWindowsTimeSpan(std::chrono::seconds(3)));
+
 
 		api::GetTrackStreamUrlQuery q(dynamic_cast<Platform::String^>(settingsValues->Lookup(L"SessionId")), dynamic_cast<Platform::String^>(settingsValues->Lookup(L"CountryCode")), _track.id, toString(_soundQuality));
 		try {
 			auto urlInfo = await q.executeAsync(cancelToken);
-			auto webStream = await WebStream::CreateWebStreamAsync(tools::strings::toWindowsString(urlInfo->url), cancelToken);
+			auto webStream = await WebStream::CreateWebStreamAsync(tools::strings::toWindowsString(urlInfo->url), tools::async::combineCancelTokens(cancelToken, timeoutProvider->get_token()));
 			if (_track.server_size != webStream->Size || _track.quality != static_cast<std::uint32_t>(_soundQuality) || _track.server_timestamp != webStream->Modified.UniversalTime) {
 				_track.server_size = webStream->Size;
 				_track.local_size = 0;
@@ -231,16 +241,25 @@ public:
 			}
 			_webStream = webStream;
 		}
+		catch (concurrency::task_canceled&) {
+			if (cancelToken.is_canceled()) {
+				throw;
+			}
+			else {
+				throw track_download_timeout();
+			}
+		}
 		catch (api::statuscode_exception& ex) {
 			if (ex.getStatusCode() == Windows::Web::Http::HttpStatusCode::Unauthorized) {
 				throw track_unavailable_for_streaming();
 			}
+			throw;
 		}
 
 	}
 	void Start() {
 		std::weak_ptr<HttpCacheStateMachine> weakThis(shared_from_this());
-		/*_downloadTask =
+		_downloadTask =
 			tools::async::retryWithDelays([weakThis]() {
 			auto that = weakThis.lock();
 			if (that) {
@@ -258,9 +277,9 @@ public:
 
 			}
 			catch (Platform::OperationCanceledException^) {}
-		});*/
+		});
 
-		_downloadTask = continueDownloadingAsync(weakThis).then([](concurrency::task<void>t) {
+		/*_downloadTask = continueDownloadingAsync(weakThis).then([](concurrency::task<void>t) {
 			try {
 				t.get();
 			}
@@ -268,7 +287,7 @@ public:
 
 			}
 			catch (Platform::OperationCanceledException^) {}
-		});
+		});*/
 
 	}
 };

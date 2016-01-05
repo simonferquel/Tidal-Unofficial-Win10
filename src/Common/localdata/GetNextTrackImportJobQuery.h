@@ -17,6 +17,7 @@ namespace localdata {
 	concurrency::task<void> deleteImportedTrackAsync(LocalDB::DBContext& context, std::int64_t id, concurrency::cancellation_token cancelToken);
 
 	concurrency::task<void> transformTrackImportJobToImportedTrackAsync(LocalDB::DBContext& context, std::int64_t id, concurrency::cancellation_token cancelToken);
+	concurrency::task<void> cancelTrackImportJobAsync(LocalDB::DBContext& context, std::int64_t id, concurrency::cancellation_token cancelToken);
 
 	
 }

@@ -155,7 +155,11 @@ void OnCurrentPlaylistItemChanged(MediaPlaybackList^ playList, CurrentMediaPlayb
 	tools::strings::WindowsWIStream stream(json);
 	auto jval = web::json::value::parse(stream);
 	api::TrackInfo info(jval);
-	showTrackDisplayInfo(info, playList->CurrentItemIndex < playList->Items->Size - 1, playList->CurrentItemIndex>0, BackgroundMediaPlayer::Current->SystemMediaTransportControls);
+	unsigned itemIndex = playList->CurrentItemIndex;
+	if (playList->ShuffleEnabled) {
+		playList->ShuffledItems->IndexOf(playList->CurrentItem, &itemIndex);
+	}
+	showTrackDisplayInfo(info, itemIndex < playList->Items->Size - 1, itemIndex>0, BackgroundMediaPlayer::Current->SystemMediaTransportControls);
 
 }
 
