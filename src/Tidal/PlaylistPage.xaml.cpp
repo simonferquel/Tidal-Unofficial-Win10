@@ -13,6 +13,7 @@
 #include "MenuFlyouts.h"
 #include <Api/CoverCache.h>
 #include "AudioService.h"
+#include "FavoritesService.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -135,6 +136,12 @@ concurrency::task<void> Tidal::PlaylistPage::LoadAsync(Windows::UI::Xaml::Naviga
 {
 	auto idPlat = dynamic_cast<String^>(args->Parameter);
 	auto id = tools::strings::toStdString(idPlat);
+	if (getFavoriteService().isPlaylistFavorite(id)) {
+		addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	}
+	else {
+		removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	}
 	_playlistId = id;
 	auto playlistInfo = await  playlists::getPlaylistAsync(id, concurrency::cancellation_token::none());
 	pageHeader->Text = tools::strings::toWindowsString(playlistInfo->title);
@@ -181,4 +188,30 @@ void Tidal::PlaylistPage::OnContextMenuClick(Platform::Object^ sender, Windows::
 	auto flyout = getPlaylistMenuFlyout(_playlistId);
 	auto fe = dynamic_cast<FrameworkElement^>(sender);
 	flyout->ShowAt(fe, Point(0, fe->ActualHeight));
+}
+
+
+void Tidal::PlaylistPage::AddFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	getFavoriteService().addPlaylistAsync(_playlistId).then([](concurrency::task<void> t) {
+		try {
+			t.get();
+		}
+		catch (...) {}
+	});
+	addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void Tidal::PlaylistPage::RemoveFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	getFavoriteService().removePlaylistAsync(_playlistId).then([](concurrency::task<void> t) {
+		try {
+			t.get();
+		}
+		catch (...) {}
+	});
+	addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Visible;
+	removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }

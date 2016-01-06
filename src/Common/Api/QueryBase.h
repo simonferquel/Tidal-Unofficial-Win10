@@ -15,6 +15,7 @@ namespace api {
 		QueryBase();
 		QueryBase(Platform::String^ sessionId, Platform::String^ countryCode);
 		concurrency::task<Platform::String^> getAsync(concurrency::cancellation_token cancelToken);
+		concurrency::task<Platform::String^> deleteAsync(concurrency::cancellation_token cancelToken);
 		concurrency::task<Platform::String^> postAsync(concurrency::cancellation_token cancelToken);
 		virtual ~QueryBase() = default;
 	};

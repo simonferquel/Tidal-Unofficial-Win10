@@ -9,21 +9,29 @@
 #include <Api/GetTrackStreamUrlQuery.h>
 #include <Api/UrlInfo.h>
 #include <Api/ApiErrors.h>
+#include <localdata/GetTrackImportQueueQuery.h>
 #include "WebStream.h"
 
 concurrency::task<void> handleJobAsync(localdata::track_import_job job, concurrency::cancellation_token cancelToken) {
+	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
+	auto importQualityTxt = dynamic_cast<Platform::String^>(settingsValues->Lookup(L"importQuality"));
+	if (!importQualityTxt) {
+		importQualityTxt = L"LOSSLESS";
+	}
+	auto importQuality = parseSoundQuality(importQualityTxt);
 
-	await localdata::deleteImportedTrackAsync(localdata::getDb(), job.id, cancelToken);
+	auto existing = await localdata::getExistingImportedTrackIfExistsAsync(localdata::getDb(), job.id, cancelToken);
+	if (existing) {
+		if (existing->quality == static_cast<std::int32_t>(importQuality)) {
+			return;
+		}
+		await localdata::deleteImportedTrackAsync(localdata::getDb(), job.id, cancelToken);
+	}
 	if (job.local_size == job.server_size && job.server_size != 0) {
 		await localdata::transformTrackImportJobToImportedTrackAsync(localdata::getDb(), job.id, cancelToken);
 	}
 	else {
-		auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
-		auto importQualityTxt = dynamic_cast<Platform::String^>(settingsValues->Lookup(L"importQuality"));
-		if (!importQualityTxt) {
-			importQualityTxt = L"LOSSLESS";
-		}
-		auto importQuality = parseSoundQuality(importQualityTxt);
+		
 		bool unauthorized = false;
 		api::GetTrackStreamUrlQuery q(dynamic_cast<Platform::String^>(settingsValues->Lookup(L"SessionId")), dynamic_cast<Platform::String^>(settingsValues->Lookup(L"CountryCode")), job.id, importQualityTxt, true);
 		try {

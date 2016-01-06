@@ -3,6 +3,7 @@
 #include "GetExistingTrackImportJobQuery.h"
 #include "GetCachedTrackInfoQuery.h"
 #include <Api/GetTrackInfoQuery.h>
+
 using namespace localdata;
 std::string localdata::GetNextTrackImportJobQuery::identifier()
 {
@@ -81,6 +82,17 @@ concurrency::task<void> localdata::deleteImportedTrackAsync(LocalDB::DBContext &
 	return LocalDB::executeAsyncWithCancel<DeleteImportedTrackCommand>(context, cancelToken, id);
 }
 
+concurrency::task<std::shared_ptr<imported_track>> localdata::getExistingImportedTrackIfExistsAsync(LocalDB::DBContext & context, std::int64_t id, concurrency::cancellation_token cancelToken)
+{
+	auto result = await LocalDB::executeAsyncWithCancel<GetImportedTrackInfoQuery>(context, cancelToken, id);
+	if (result->size() == 0) {
+		return std::shared_ptr<imported_track>();
+	}
+	else {
+		return std::make_shared<imported_track>(result->at(0));
+	}
+}
+
 concurrency::task<void> localdata::transformTrackImportJobToImportedTrackAsync(LocalDB::DBContext& context, std::int64_t id, concurrency::cancellation_token cancelToken)
 {
 	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
@@ -102,6 +114,7 @@ concurrency::task<void> localdata::transformTrackImportJobToImportedTrackAsync(L
 		trk.last_playpack_time = 0;
 		trk.quality = job.quality;
 		trk.title = job.title;
+		trk.size = job.server_size;
 		
 		auto existing = LocalDB::executeSynchronouslyWithCancel<localdata::GetImportedTrackInfoQuery>(ctx, db, cancelToken, id);
 		if (existing->size() == 0) {

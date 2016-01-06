@@ -48,8 +48,11 @@
         				<Run Text="{x:Bind DurationText}"/>
                         </TextBlock>
                         <StackPanel Grid.Column="6"   Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center" >
-                            <AppBarButton Padding="0" Margin="0"  Width="36"  >
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind AddFavoriteVisibility, Mode=OneWay}" Click="{x:Bind AddFavorite}" >
                                 <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
+                            </AppBarButton>
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind RemoveFavoriteVisibility, Mode=OneWay}" Click="{x:Bind RemoveFavorite}" >
+                                <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€"  Foreground="{StaticResource TidalAccentBrush}" />
                             </AppBarButton>
                             <AppBarButton Padding="0" Margin="0"  Width="36"  >
                                 <FontIcon  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="U" />
@@ -102,8 +105,11 @@
                              </Hyperlink>
                         </TextBlock>
                         <StackPanel Grid.Column="4" Grid.RowSpan="2"  Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center" >
-                            <AppBarButton Padding="0" Margin="0"  Width="36"  >
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind AddFavoriteVisibility, Mode=OneWay}" Click="{x:Bind AddFavorite}" >
                                 <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
+                            </AppBarButton>
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind RemoveFavoriteVisibility, Mode=OneWay}" Click="{x:Bind RemoveFavorite}" >
+                                <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€"  Foreground="{StaticResource TidalAccentBrush}" />
                             </AppBarButton>
                             <AppBarButton Padding="0" Margin="0"  Width="36"  >
                                 <FontIcon  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="U" />
@@ -151,8 +157,11 @@
                         </TextBlock>
 
                         <StackPanel Grid.Column="3" Grid.RowSpan="2"  Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center" >
-                            <AppBarButton Padding="0" Margin="0"  Width="36"  >
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind AddFavoriteVisibility, Mode=OneWay}" Click="{x:Bind AddFavorite}" >
                                 <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
+                            </AppBarButton>
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind RemoveFavoriteVisibility, Mode=OneWay}" Click="{x:Bind RemoveFavorite}" >
+                                <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€"  Foreground="{StaticResource TidalAccentBrush}" />
                             </AppBarButton>
                             <AppBarButton Padding="0" Margin="0"  Width="36"  >
                                 <FontIcon  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="U" />
@@ -186,141 +195,15 @@
                 </Setter>
             </Style>
 
-            <Style TargetType="ItemsWrapGrid">
-                <Setter Property="Background" Value="Black" />
-            </Style>
             <Style TargetType="GridViewHeaderItem">
-                <Setter Property="Background" Value="Black" />
                 <Setter Property="Padding" Value="12,8,12,4" />
                 <Setter Property="Margin" Value="0" />
             </Style>
-            <Style TargetType="ScrollViewer">
-                <Setter Property="HorizontalScrollMode" Value="Auto"/>
-                <Setter Property="VerticalScrollMode" Value="Auto"/>
-                <Setter Property="IsHorizontalRailEnabled" Value="True"/>
-                <Setter Property="IsVerticalRailEnabled" Value="True"/>
-                <Setter Property="IsTabStop" Value="False"/>
-                <Setter Property="ZoomMode" Value="Disabled"/>
-                <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                <Setter Property="VerticalContentAlignment" Value="Top"/>
-                <Setter Property="VerticalScrollBarVisibility" Value="Visible"/>
-                <Setter Property="Padding" Value="0"/>
-                <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="BorderBrush" Value="Transparent"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="ScrollViewer">
-                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup x:Name="ScrollingIndicatorStates">
-                                        <VisualStateGroup.Transitions>
-                                            <VisualTransition From="MouseIndicator" To="NoIndicator">
-                                                <Storyboard>
-                                                    <FadeOutThemeAnimation BeginTime="0:0:3" TargetName="ScrollBarSeparator"/>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="IndicatorMode" Storyboard.TargetName="VerticalScrollBar">
-                                                        <DiscreteObjectKeyFrame KeyTime="0:0:3">
-                                                            <DiscreteObjectKeyFrame.Value>
-                                                                <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
-                                                            </DiscreteObjectKeyFrame.Value>
-                                                        </DiscreteObjectKeyFrame>
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="IndicatorMode" Storyboard.TargetName="HorizontalScrollBar">
-                                                        <DiscreteObjectKeyFrame KeyTime="0:0:3">
-                                                            <DiscreteObjectKeyFrame.Value>
-                                                                <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
-                                                            </DiscreteObjectKeyFrame.Value>
-                                                        </DiscreteObjectKeyFrame>
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualTransition>
-                                            <VisualTransition From="TouchIndicator" To="NoIndicator">
-                                                <Storyboard>
-                                                    <FadeOutThemeAnimation TargetName="ScrollBarSeparator"/>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="IndicatorMode" Storyboard.TargetName="VerticalScrollBar">
-                                                        <DiscreteObjectKeyFrame KeyTime="0:0:0.5">
-                                                            <DiscreteObjectKeyFrame.Value>
-                                                                <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
-                                                            </DiscreteObjectKeyFrame.Value>
-                                                        </DiscreteObjectKeyFrame>
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="IndicatorMode" Storyboard.TargetName="HorizontalScrollBar">
-                                                        <DiscreteObjectKeyFrame KeyTime="0:0:0.5">
-                                                            <DiscreteObjectKeyFrame.Value>
-                                                                <ScrollingIndicatorMode>None</ScrollingIndicatorMode>
-                                                            </DiscreteObjectKeyFrame.Value>
-                                                        </DiscreteObjectKeyFrame>
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualTransition>
-                                        </VisualStateGroup.Transitions>
-                                        <VisualState x:Name="NoIndicator">
-                                            <Storyboard>
-                                                <FadeOutThemeAnimation TargetName="ScrollBarSeparator"/>
-                                            </Storyboard>
-                                        </VisualState>
-                                        <VisualState x:Name="TouchIndicator">
-                                            <Storyboard>
-                                                <FadeOutThemeAnimation TargetName="ScrollBarSeparator"/>
-                                                <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetProperty="IndicatorMode" Storyboard.TargetName="VerticalScrollBar">
-                                                    <DiscreteObjectKeyFrame KeyTime="0">
-                                                        <DiscreteObjectKeyFrame.Value>
-                                                            <ScrollingIndicatorMode>TouchIndicator</ScrollingIndicatorMode>
-                                                        </DiscreteObjectKeyFrame.Value>
-                                                    </DiscreteObjectKeyFrame>
-                                                </ObjectAnimationUsingKeyFrames>
-                                                <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetProperty="IndicatorMode" Storyboard.TargetName="HorizontalScrollBar">
-                                                    <DiscreteObjectKeyFrame KeyTime="0">
-                                                        <DiscreteObjectKeyFrame.Value>
-                                                            <ScrollingIndicatorMode>TouchIndicator</ScrollingIndicatorMode>
-                                                        </DiscreteObjectKeyFrame.Value>
-                                                    </DiscreteObjectKeyFrame>
-                                                </ObjectAnimationUsingKeyFrames>
-                                            </Storyboard>
-                                        </VisualState>
-                                        <VisualState x:Name="MouseIndicator">
-                                            <Storyboard>
-                                                <FadeInThemeAnimation TargetName="ScrollBarSeparator"/>
-                                                <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetProperty="IndicatorMode" Storyboard.TargetName="VerticalScrollBar">
-                                                    <DiscreteObjectKeyFrame KeyTime="0">
-                                                        <DiscreteObjectKeyFrame.Value>
-                                                            <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
-                                                        </DiscreteObjectKeyFrame.Value>
-                                                    </DiscreteObjectKeyFrame>
-                                                </ObjectAnimationUsingKeyFrames>
-                                                <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetProperty="IndicatorMode" Storyboard.TargetName="HorizontalScrollBar">
-                                                    <DiscreteObjectKeyFrame KeyTime="0">
-                                                        <DiscreteObjectKeyFrame.Value>
-                                                            <ScrollingIndicatorMode>MouseIndicator</ScrollingIndicatorMode>
-                                                        </DiscreteObjectKeyFrame.Value>
-                                                    </DiscreteObjectKeyFrame>
-                                                </ObjectAnimationUsingKeyFrames>
-                                            </Storyboard>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <ScrollContentPresenter x:Name="ScrollContentPresenter" Grid.ColumnSpan="2" ContentTemplate="{TemplateBinding ContentTemplate}" Margin="{TemplateBinding Padding}" Grid.RowSpan="2"/>
-                                    <ScrollBar x:Name="VerticalScrollBar" Grid.Column="1" HorizontalAlignment="Right" IsTabStop="False" Maximum="{TemplateBinding ScrollableHeight}" Orientation="Vertical" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{TemplateBinding VerticalOffset}" ViewportSize="{TemplateBinding ViewportHeight}"/>
-                                    <ScrollBar x:Name="HorizontalScrollBar" IsTabStop="False" Maximum="{TemplateBinding ScrollableWidth}" Orientation="Horizontal" Grid.Row="1" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{TemplateBinding HorizontalOffset}" ViewportSize="{TemplateBinding ViewportWidth}"/>
-                                    <Border x:Name="ScrollBarSeparator" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Column="1" Grid.Row="1"/>
-                                </Grid>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
+          
             <Style TargetType="GridViewItem" >
                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
                 <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-                <Setter Property="Background" Value="Black"/>
+                <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
                 <Setter Property="TabNavigation" Value="Local"/>
                 <Setter Property="IsHoldingEnabled" Value="True"/>
@@ -371,65 +254,17 @@
         </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="208" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Border BorderThickness="1,1,0,1" BorderBrush="Black" Background="#FF171717" Height="48">
             <TextBlock x:Name="pageHeader" VerticalAlignment="Center" Style="{StaticResource PageTitleStyle}" FontSize="16"></TextBlock>
         </Border>
 
-        <Grid x:Name="HeaderPanel" Grid.Row="1"  >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <win2D:CanvasAnimatedControl Grid.ColumnSpan="2" Grid.RowSpan="2" x:Name="headerImage" Draw="OnDrawHeaderImage" />
-            <Ellipse Grid.RowSpan="2" Width="128" Height="128"
-                     Margin="12,48,12,32" Stroke="White" StrokeThickness="2">
-                <Ellipse.Fill>
-                    <ImageBrush Stretch="UniformToFill" x:Name="headerImageRound" />
-                </Ellipse.Fill>
-            </Ellipse>
-            <TextBlock Grid.Column="1" VerticalAlignment="Bottom" FontStyle="Italic" FontSize="16" Margin="12" x:Name="headerArtistName"></TextBlock>
-            <local:WrapPanel Grid.Column="1" Grid.Row="1" Margin="4,4,4,24" HorizontalAlignment="Left">
-                <Button Background="Transparent" Margin="4,0" Padding="0">
-                    <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Play"/>
-                        <TextBlock Text="Popular tracks" />
-                    </StackPanel>
-                </Button>
-                <Button x:Name="headerFavoriteBtn" Background="Transparent" Margin="4,0" Padding="0">
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
-                        <TextBlock VerticalAlignment="Center">Favorite</TextBlock>
-                    </StackPanel>
-                </Button>
+        <win2D:CanvasAnimatedControl  Grid.Row="1" x:Name="headerImage" Draw="OnDrawHeaderImage" 
+                                      VerticalAlignment="Top" Height="380"/>
 
-                <Button x:Name="headerShareBtn"
-                                        Background="Transparent"
-                                       Margin="4,0" Padding="0">
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="R" />
-                        <TextBlock VerticalAlignment="Center">Share</TextBlock>
-                    </StackPanel>
-                </Button>
-                <Button
-                                        Background="Transparent"
-                                       Margin="4,0" Padding="0">
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="H" />
-                        <TextBlock VerticalAlignment="Center">Radio</TextBlock>
-                    </StackPanel>
-                </Button>
-            </local:WrapPanel>
-
-        </Grid>
-        <Pivot x:Name="pivot"  Grid.Row="1" Grid.RowSpan="2"   Background="{x:Null}"  >
-            <PivotItem  Header="Discography" Margin="0" Background="{x:Null}">
+        <Pivot x:Name="pivot"  Grid.Row="1" Grid.RowSpan="2"     >
+            <PivotItem  Header="Discography" Margin="0" >
                 <GridView x:Name="discoGridView" SelectionMode="None" IsItemClickEnabled="True" ItemClick="OnAlbumClick">
                     <GridView.Resources>
                         <local:MetricsHelper x:Key="MetricsSmall" DesiredItemSize="96" ItemMargin="12" ViewportSize="{Binding (local:BindableSizeHelper.BindableWidth), Mode=OneWay,ElementName=rootGrid}" />
@@ -444,18 +279,76 @@
                             </GroupStyle.HeaderTemplate>
                             <GroupStyle.Panel>
                                 <ItemsPanelTemplate>
-                                    <ItemsWrapGrid Background="Black"/>
+                                    <ItemsWrapGrid />
                                 </ItemsPanelTemplate>
                             </GroupStyle.Panel>
                         </GroupStyle>
                     </GridView.GroupStyle>
                     <GridView.Header>
-                        <ListView x:Name="popularTracksLV" ItemContainerStyle="{StaticResource TrackListViewItemStyle}" ItemTemplate="{StaticResource TrackItemTemplateNarrow}"
+                        <StackPanel>
+                            <Grid x:Name="HeaderPanel" Grid.Row="1" Height="208" Margin="0,-48,0,0"  >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Ellipse Grid.RowSpan="2" Width="128" Height="128"
+                     Margin="12,48,12,32" Stroke="White" StrokeThickness="2">
+                                    <Ellipse.Fill>
+                                        <ImageBrush Stretch="UniformToFill" x:Name="headerImageRound" />
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <TextBlock Grid.Column="1" VerticalAlignment="Bottom" FontStyle="Italic" FontSize="16" Margin="12" x:Name="headerArtistName"></TextBlock>
+                                <local:WrapPanel Grid.Column="1" Grid.Row="1" Margin="4,4,4,24" HorizontalAlignment="Left">
+                                    <Button Background="Transparent" Margin="4,0" Padding="0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <SymbolIcon Symbol="Play"/>
+                                            <TextBlock Text="Popular tracks" />
+                                        </StackPanel>
+                                    </Button>
+                                    <Button x:Name="addFavoriteButton" Background="Transparent" Margin="4,0" Padding="0"
+                        Click="OnAddFavoriteClick">
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
+                                            <TextBlock VerticalAlignment="Center">Favorite</TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button x:Name="removeFavoriteButton" Background="Transparent" Margin="4,0" Padding="0" Foreground="{StaticResource TidalAccentBrush}"
+                        Click="OnRemoveFavoriteClick">
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€" />
+                                            <TextBlock VerticalAlignment="Center">Favorite</TextBlock>
+                                        </StackPanel>
+                                    </Button>
+
+                                    <Button x:Name="headerShareBtn"
+                                        Background="Transparent"
+                                       Margin="4,0" Padding="0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="R" />
+                                            <TextBlock VerticalAlignment="Center">Share</TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button
+                                        Background="Transparent"
+                                       Margin="4,0" Padding="0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="H" />
+                                            <TextBlock VerticalAlignment="Center">Radio</TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                </local:WrapPanel>
+
+                            </Grid>
+                            <ListView x:Name="popularTracksLV" ItemContainerStyle="{StaticResource TrackListViewItemStyle}" ItemTemplate="{StaticResource TrackItemTemplateNarrow}"
                                  >
                             <ListView.Header>
                                 <StackPanel>
                                    
-                                    <Rectangle Height="160" IsHitTestVisible="False" />
+                                    
                                     <Border Background="#FF171717" BorderBrush="Black" BorderThickness="1,1,0,1" Margin="0,0,0,0">
                                         <StackPanel Orientation="Horizontal" Margin="12,4">
                                             <FontIcon Grid.Column="1"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="G" FontSize="30" HorizontalAlignment="Right" />
@@ -499,6 +392,8 @@
                                 </StackPanel>
                             </ListView.Header>
                         </ListView>
+
+                        </StackPanel>
                     </GridView.Header>
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="local:AlbumResumeItemVM">
@@ -531,16 +426,13 @@
                     </GridView.ItemTemplate>
                 </GridView>
             </PivotItem>
-            <PivotItem Margin="0" Header="Videos" Background="{x:Null}">
+            <PivotItem Margin="0" Header="Videos" >
                 <GridView x:Name="videosGV" SelectionMode="None" IsItemClickEnabled="True" ItemClick="OnVideoClicked">
                     <GridView.Resources>
 
                         <local:MetricsHelper x:Key="MetricsMedium" DesiredItemSize="156" ItemMargin="12" ViewportSize="{Binding (local:BindableSizeHelper.BindableWidth), Mode=OneWay,ElementName=rootGrid}"/>
                         <local:FactorConverter x:Key="FactorMedium" Factor="0.66875" />
                     </GridView.Resources>
-                    <GridView.Header>
-                        <Rectangle Height="160" IsHitTestVisible="False" />
-                    </GridView.Header>
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="local:VideoItemVM">
                             <StackPanel Width="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}}"
@@ -578,9 +470,9 @@
                     </GridView.ItemTemplate>
                 </GridView>
             </PivotItem>
-            <PivotItem x:Name="bioPivotItem"  Margin="0" Header="Biography" Background="{x:Null}">
+            <PivotItem x:Name="bioPivotItem"  Margin="0" Header="Biography" >
                 <ScrollViewer>
-                    <Grid Margin="0,160,0,0" Background="Black">
+                    <Grid Margin="0,0,0,0" >
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -590,16 +482,14 @@
                     </Grid>
                 </ScrollViewer>
             </PivotItem>
-            <PivotItem Margin="0" Header="Similar artists" Background="{x:Null}">
+            <PivotItem Margin="0" Header="Similar artists" >
                 <GridView x:Name="similarArtistsGV"  SelectionMode="None" IsItemClickEnabled="True" ItemClick="OnSimilarArtistClicked">
                     <GridView.Resources>
 
                         <local:MetricsHelper x:Key="MetricsMedium" DesiredItemSize="156" ItemMargin="12" ViewportSize="{Binding (local:BindableSizeHelper.BindableWidth), Mode=OneWay,ElementName=rootGrid}"/>
                         <local:FactorConverter x:Key="FactorMedium" Factor="0.66875" />
                     </GridView.Resources>
-                    <GridView.Header>
-                        <Rectangle Height="160" IsHitTestVisible="False" />
-                    </GridView.Header>
+                    
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="local:ArtistItemVM">
                             <StackPanel Width="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}}"

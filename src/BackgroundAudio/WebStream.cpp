@@ -6,9 +6,12 @@ using namespace Windows::Web::Http;
 using namespace concurrency;
 using namespace Windows::Storage::Streams;
 
-concurrency::task<Windows::Storage::Streams::IBuffer^> WebStream::DoReadAsync(Windows::Storage::Streams::IBuffer ^ buffer, unsigned int count, Windows::Storage::Streams::InputStreamOptions options, progress_reporter<unsigned int> reporter, concurrency::cancellation_token cancelToken)
+concurrency::task<Windows::Storage::Streams::IInputStream^> WebStream::EnsureInputStreamAsync(concurrency::cancellation_token cancelToken)
 {
-	if (!_currentStream) {
+	if (_currentStream) {
+		return concurrency::task_from_result(_currentStream);
+	}
+	else {
 		auto message = ref new HttpRequestMessage(HttpMethod::Get, _uri);
 		if (_position != 0) {
 			std::wstring headerValue = L"bytes=";
@@ -17,22 +20,37 @@ concurrency::task<Windows::Storage::Streams::IBuffer^> WebStream::DoReadAsync(Wi
 			message->Headers->Append(L"Range", ref new Platform::String(headerValue.c_str()));
 		}
 		auto client = ref new HttpClient();
-		auto response = await create_task(client->SendRequestAsync(message, HttpCompletionOption::ResponseHeadersRead), cancelToken);
-		_currentStream = await create_task(response->Content->ReadAsInputStreamAsync(), cancelToken);
+		return  create_task(client->SendRequestAsync(message, HttpCompletionOption::ResponseHeadersRead), cancelToken)
+			.then([this, cancelToken](HttpResponseMessage^ response) {
+			return create_task(response->Content->ReadAsInputStreamAsync(), cancelToken)
+				.then([this](IInputStream^ result) {
+				_currentStream = result;
+				return result;
+			});
+		});
 	}
-	auto asyncOp = _currentStream->ReadAsync(buffer, count, options);
-	asyncOp->Progress = ref new Windows::Foundation::AsyncOperationProgressHandler<IBuffer^, unsigned int>([reporter](Windows::Foundation::IAsyncOperationWithProgress<IBuffer^, unsigned int>^ asyncInfo, unsigned int progressInfo) {
-		reporter.report(progressInfo);
+}
+
+concurrency::task<Windows::Storage::Streams::IBuffer^> WebStream::DoReadAsync(Windows::Storage::Streams::IBuffer ^ buffer, unsigned int count, Windows::Storage::Streams::InputStreamOptions options, progress_reporter<unsigned int> reporter, concurrency::cancellation_token cancelToken)
+{
+	return EnsureInputStreamAsync(cancelToken).then([this, cancelToken, buffer, count, options, reporter](IInputStream^ stream) {
+		auto asyncOp = _currentStream->ReadAsync(buffer, count, options);
+		asyncOp->Progress = ref new Windows::Foundation::AsyncOperationProgressHandler<IBuffer^, unsigned int>([reporter](Windows::Foundation::IAsyncOperationWithProgress<IBuffer^, unsigned int>^ asyncInfo, unsigned int progressInfo) {
+			reporter.report(progressInfo);
+		});
+		return create_task(asyncOp, cancelToken).then([this](concurrency::task<IBuffer^> resultTask) {
+			try {
+				auto result = resultTask.get();
+				_position += result->Length;
+				return result;
+			}
+			catch (...) {
+				_currentStream = nullptr;
+				throw;
+			}
+		});
 	});
-	try {
-		auto result = await create_task(asyncOp, cancelToken);
-		_position += result->Length;
-		return result;
-	}
-	catch (...) {
-		_currentStream = nullptr;
-		throw;
-	}
+	
 }
 
 Windows::Foundation::IAsyncOperationWithProgress<Windows::Storage::Streams::IBuffer ^, unsigned int> ^ WebStream::ReadAsync(Windows::Storage::Streams::IBuffer ^buffer, unsigned int count, Windows::Storage::Streams::InputStreamOptions options)

@@ -19,4 +19,11 @@ public:
 	void onBackgroundAudioFailureDetected();
 	concurrency::task<void> wakeupDownloaderAsync(concurrency::cancellation_token cancelToken);
 	concurrency::task<void> playAllLocalMusicAsync();
+	concurrency::task<void> resumeAsync();
+	concurrency::task<void> pauseAsync();
+	concurrency::task<void> nextAsync();
+	concurrency::task<void> previousAsync();
+
+	concurrency::task<void> shuffleChangeAsync();
+	concurrency::task<void> repeatChangeAsync();
 };

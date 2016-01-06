@@ -49,8 +49,11 @@
         				<Run Text="{x:Bind DurationText}"/>
                         </TextBlock>
                         <StackPanel Grid.Column="6"   Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center" >
-                            <AppBarButton Padding="0" Margin="0"  Width="36"  >
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind AddFavoriteVisibility, Mode=OneWay}" Click="{x:Bind AddFavorite}" >
                                 <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
+                            </AppBarButton>
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind RemoveFavoriteVisibility, Mode=OneWay}" Click="{x:Bind RemoveFavorite}" >
+                                <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€" Foreground="{StaticResource TidalAccentBrush}" />
                             </AppBarButton>
                             <AppBarButton Padding="0" Margin="0"  Width="36"  >
                                 <FontIcon  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="U" />
@@ -103,8 +106,11 @@
                              </Hyperlink>
                         </TextBlock>
                         <StackPanel Grid.Column="4" Grid.RowSpan="2"  Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center" >
-                            <AppBarButton Padding="0" Margin="0"  Width="36"  >
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind AddFavoriteVisibility, Mode=OneWay}" Click="{x:Bind AddFavorite}" >
                                 <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
+                            </AppBarButton>
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind RemoveFavoriteVisibility, Mode=OneWay}" Click="{x:Bind RemoveFavorite}" >
+                                <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€" Foreground="{StaticResource TidalAccentBrush}"  />
                             </AppBarButton>
                             <AppBarButton Padding="0" Margin="0"  Width="36"  >
                                 <FontIcon  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="U" />
@@ -152,8 +158,11 @@
                         </TextBlock>
 
                         <StackPanel Grid.Column="3" Grid.RowSpan="2"  Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center" >
-                            <AppBarButton Padding="0" Margin="0"  Width="36"  >
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind AddFavoriteVisibility, Mode=OneWay}" Click="{x:Bind AddFavorite}" >
                                 <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
+                            </AppBarButton>
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind RemoveFavoriteVisibility, Mode=OneWay}" Click="{x:Bind RemoveFavorite}" >
+                                <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€" Foreground="{StaticResource TidalAccentBrush}"  />
                             </AppBarButton>
                             <AppBarButton Padding="0" Margin="0"  Width="36"  >
                                 <FontIcon  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="U" />
@@ -251,14 +260,26 @@
                                 </TextBlock>
                                 <TextBlock RelativePanel.Below="headerPlay"
                                        RelativePanel.AlignLeftWith="headerPlay" FontSize="12" x:Name="headerTracksAndDuration"></TextBlock>
-                                <Button x:Name="headerFavoriteBtn" Background="Transparent"
+                                <Grid x:Name="headerFavoriteBtn" 
                                         RelativePanel.Below="headerTracksAndDuration"
-                                        RelativePanel.AlignLeftWith="headerPlay" Margin="-4,4,0,0" Padding="0">
-                                    <StackPanel Orientation="Horizontal">
-                                        <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
-                                        <TextBlock VerticalAlignment="Center">Favorite</TextBlock>
-                                    </StackPanel>
-                                </Button>
+                                        RelativePanel.AlignLeftWith="headerPlay" >
+                                    <Button Background="Transparent" Margin="-4,4,0,0" Padding="0"
+                                            x:Name="addFavoriteButton"
+                                            Click="OnAddFavoriteClick">
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
+                                            <TextBlock VerticalAlignment="Center">Favorite</TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Background="Transparent" Margin="-4,4,0,0" Padding="0" Foreground="{StaticResource TidalAccentBrush}"
+                                            Click="OnRemoveFavoriteClick"
+                                            x:Name="removeFavoriteButton">
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€" />
+                                            <TextBlock VerticalAlignment="Center">Favorite</TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                </Grid>
 
                                 <Button x:Name="headerShareBtn"
                                         Background="Transparent"

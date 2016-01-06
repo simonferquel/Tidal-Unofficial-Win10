@@ -30,5 +30,7 @@ public:
 	void movePrevious();
 	void resume();
 	void pause();
+	void onRepeatModeChanged();
+	void onShuffleModeChanged();
 	~MusicPlayer();
 };

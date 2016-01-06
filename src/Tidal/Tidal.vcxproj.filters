@@ -60,6 +60,7 @@
     <ClCompile Include="DownloadService.cpp" />
     <ClCompile Include="MenuFlyouts.cpp" />
     <ClCompile Include="LocalMusic.xaml.cpp" />
+    <ClCompile Include="FavoritesService.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -116,6 +117,7 @@
     <ClInclude Include="DownloadService.h" />
     <ClInclude Include="MenuFlyouts.h" />
     <ClInclude Include="LocalMusic.xaml.h" />
+    <ClInclude Include="FavoritesService.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png">
@@ -173,6 +175,7 @@
     <Page Include="TrackTemplatesWithCover.xaml" />
     <Page Include="SearchView.xaml" />
     <Page Include="LocalMusic.xaml" />
+    <Page Include="MiniPlayerView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\WiMP-Icons.ttf" />

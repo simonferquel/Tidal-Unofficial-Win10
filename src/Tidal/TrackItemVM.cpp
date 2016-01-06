@@ -7,6 +7,7 @@
 #include "Shell.xaml.h"
 #include "ArtistPage.xaml.h"
 #include "AlbumPage.xaml.h"
+#include "FavoritesService.h"
 
 using namespace api;
 void Tidal::TrackItemVM::GoToArtist()
@@ -23,8 +24,38 @@ void Tidal::TrackItemVM::GoToAlbum()
 		shell->Frame->Navigate(AlbumPage::typeid, _trackInfo.album.id.ToString());
 	}
 }
+void Tidal::TrackItemVM::AddFavorite()
+{
+	getFavoriteService().addTrackAsync(Id).then([](concurrency::task<void> t) {
+		try {
+			t.get();
+		}
+		catch (...) {}
+	});
+	AddFavoriteVisibility = Windows::UI::Xaml::Visibility::Collapsed;
+	RemoveFavoriteVisibility = Windows::UI::Xaml::Visibility::Visible;
+}
+void Tidal::TrackItemVM::RemoveFavorite()
+{
+	getFavoriteService().removeTrackAsync(Id).then([](concurrency::task<void> t) {
+		try {
+			t.get();
+		}
+		catch (...) {}
+	});
+	AddFavoriteVisibility = Windows::UI::Xaml::Visibility::Visible;
+	RemoveFavoriteVisibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
 Tidal::TrackItemVM::TrackItemVM(const TrackInfo & info, bool includeTrackNumberInTitle) : _trackInfo(info)
 {
+	if (getFavoriteService().isTrackFavorite(info.id)) {
+		_addFavoriteVisibility = Windows::UI::Xaml::Visibility::Collapsed;
+		_removeFavoriteVisibility = Windows::UI::Xaml::Visibility::Visible;
+	}
+	else {
+		_addFavoriteVisibility = Windows::UI::Xaml::Visibility::Visible;
+		_removeFavoriteVisibility = Windows::UI::Xaml::Visibility::Collapsed;
+	}
 	Opacity = info.allowStreaming ? 1.0 : 0.5;
 	_playButtonVisibility = Windows::UI::Xaml::Visibility::Visible;
 	Id = info.id;

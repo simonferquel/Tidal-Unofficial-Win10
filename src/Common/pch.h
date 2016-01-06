@@ -13,3 +13,5 @@
 #undef min
 #undef max
 
+#include "tools/StringUtils.h"
+#include "tools/TimeUtils.h"

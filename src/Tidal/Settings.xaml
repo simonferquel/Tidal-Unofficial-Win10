@@ -17,18 +17,53 @@
             <TextBlock x:Name="pageHeader" Style="{StaticResource PageTitleStyle}" FontSize="16">SETTINGS</TextBlock>
 
         </Border>
-        <ScrollViewer Grid.Row="1">
-            <StackPanel>
-                <TextBlock Margin="12">Streaming quality</TextBlock>
-                <RadioButton Margin="12,0" Tag="LOW" x:Name="streamLow" GroupName="StreamingQuality" Checked="OnStreamingQualityChecked">Low</RadioButton>
-                <RadioButton Margin="12,0" Tag="HIGH" x:Name="streamHigh" GroupName="StreamingQuality" Checked="OnStreamingQualityChecked">High</RadioButton>
-                <RadioButton Margin="12,0" Tag="LOSSLESS" x:Name="streamLossless" GroupName="StreamingQuality" Checked="OnStreamingQualityChecked">Lossless</RadioButton>
+        <Pivot Grid.Row="1">
+            <PivotItem Header="Sound quality" Margin="0">
 
-                <TextBlock Margin="12">Import quality</TextBlock>
-                <RadioButton x:Name="importLow" Margin="12,0" Tag="LOW" GroupName="ImportQuality" Checked="OnImportQualityChecked">Low</RadioButton>
-                <RadioButton x:Name="importHigh" Margin="12,0" Tag="HIGH" GroupName="ImportQuality" Checked="OnImportQualityChecked">High</RadioButton>
-                <RadioButton x:Name="importLossless" Margin="12,0" Tag="LOSSLESS" GroupName="ImportQuality" Checked="OnImportQualityChecked">Lossless</RadioButton>
-            </StackPanel>
-        </ScrollViewer>
+                <ScrollViewer>
+                    <StackPanel>
+                        <TextBlock Margin="12">Streaming quality</TextBlock>
+                        <RadioButton Margin="12,0" Tag="LOW" x:Name="streamLow" GroupName="StreamingQuality" Checked="OnStreamingQualityChecked">Low</RadioButton>
+                        <RadioButton Margin="12,0" Tag="HIGH" x:Name="streamHigh" GroupName="StreamingQuality" Checked="OnStreamingQualityChecked">High</RadioButton>
+                        <RadioButton Margin="12,0" Tag="LOSSLESS" x:Name="streamLossless" GroupName="StreamingQuality" Checked="OnStreamingQualityChecked">Lossless</RadioButton>
+
+                        <TextBlock Margin="12">Import quality</TextBlock>
+                        <RadioButton x:Name="importLow" Margin="12,0" Tag="LOW" GroupName="ImportQuality" Checked="OnImportQualityChecked">Low</RadioButton>
+                        <RadioButton x:Name="importHigh" Margin="12,0" Tag="HIGH" GroupName="ImportQuality" Checked="OnImportQualityChecked">High</RadioButton>
+                        <RadioButton x:Name="importLossless" Margin="12,0" Tag="LOSSLESS" GroupName="ImportQuality" Checked="OnImportQualityChecked">Lossless</RadioButton>
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="Storage" Margin="0">
+                <ScrollViewer>
+                    <StackPanel>
+                        <TextBlock Margin="12" Text="Cached tracks" />
+                        <TextBlock Margin="12,0" Style="{StaticResource CaptionTextBlockStyle}">
+                            <Run Text="total size: " />
+                            <Run x:Name="cacheTotal" />
+                            <LineBreak/>
+                            <Run Text="not played for 8 days: " />
+                            <Run x:Name="cache8Days" />
+                        </TextBlock>
+                        <StackPanel Orientation="Horizontal" Margin="12,4">
+                            <Button Content="Clear all" />
+                            <Button Margin="4,0" Content="Clear not played for 8 days" />
+                        </StackPanel>
+                        <TextBlock Margin="12" Text="Imported tracks" />
+                        <TextBlock Margin="12,0" Style="{StaticResource CaptionTextBlockStyle}">
+                            <Run Text="total size: " />
+                            <Run x:Name="importTotal" />
+                            <LineBreak/>
+                            <Run Text="not played for 8 days: " />
+                            <Run x:Name="import8Days" />
+                        </TextBlock>
+                        <StackPanel Orientation="Horizontal" Margin="12,4">
+                            <Button Content="Clear all" />
+                            <Button Margin="4,0" Content="Clear not played for 8 days" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+        </Pivot>
     </Grid>
 </Page>

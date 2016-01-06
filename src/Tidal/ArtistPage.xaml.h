@@ -19,7 +19,7 @@ namespace Tidal
 	public ref class ArtistPage sealed
 	{
 	private:
-
+		std::int64_t _artistId;
 		Microsoft::Graphics::Canvas::CanvasBitmap^ _albumBmp;
 	public:
 		ArtistPage();
@@ -37,5 +37,7 @@ namespace Tidal
 		void OnAlbumClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
 		void OnVideoClicked(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
 		void OnSimilarArtistClicked(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
+		void OnAddFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void OnRemoveFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

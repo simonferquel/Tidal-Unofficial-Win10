@@ -369,6 +369,8 @@ concurrency::task<cached_stream_info> getCompleteStreamAsync(localdata::cached_t
 
 	cached_stream_info result;
 	result.stream = stream;
+	result.isImport = false;
+	result.soundQuality = static_cast<SoundQuality>(track.quality);
 	result.contentType = track.quality >= static_cast<std::int32_t>(SoundQuality::Lossless) ? L"audio/flac" : L"audio/mp4";
 	return result;
 }
@@ -387,6 +389,9 @@ concurrency::task<cached_stream_info> getPartialStreamAsync(localdata::cached_tr
 	await sm->initializeAsync(cancelToken);
 	sm->Start();
 	cached_stream_info result;
+
+	result.isImport = false;
+	result.soundQuality = static_cast<SoundQuality>(track.quality);
 	result.stream = ref new RandomAccessStreamOverHttpCacheStateMachine(sm);
 	result.contentType = track.quality >= static_cast<std::int32_t>(SoundQuality::Lossless) ? L"audio/flac" : L"audio/mp4";
 	return result;
@@ -406,6 +411,8 @@ concurrency::task<cached_stream_info> resolveCachedStreamAsync(std::int64_t id, 
 		result.stream = stream;
 		result.contentType = importState->at(0).quality >= static_cast<int32>(SoundQuality::Lossless) ?
 			L"audio/flac" : L"audio/mp4";
+		result.isImport = true;
+		result.soundQuality = static_cast<SoundQuality>(importState->at(0).quality);
 		return result;
 	}
 

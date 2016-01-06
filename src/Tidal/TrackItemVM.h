@@ -7,7 +7,8 @@ namespace Tidal {
 	private:
 		api::TrackInfo _trackInfo;
 		Windows::UI::Xaml::Visibility _playButtonVisibility;
-
+		Windows::UI::Xaml::Visibility _addFavoriteVisibility;
+		Windows::UI::Xaml::Visibility _removeFavoriteVisibility;
 	public:
 		property std::int64_t Id;
 		property std::int64_t AlbumId;
@@ -26,11 +27,37 @@ namespace Tidal {
 			return _playButtonVisibility == Windows::UI::Xaml::Visibility::Visible ?
 				Windows::UI::Text::FontWeights::Normal : Windows::UI::Text::FontWeights::Bold;
 		}}
+
+		property Windows::UI::Xaml::Visibility AddFavoriteVisibility {
+			Windows::UI::Xaml::Visibility get() {
+				return _addFavoriteVisibility;
+			}
+			void set(Windows::UI::Xaml::Visibility value) {
+				if (value != _addFavoriteVisibility) {
+					_addFavoriteVisibility = value;
+					PropertyChanged(this, ref new Windows::UI::Xaml::Data::PropertyChangedEventArgs(L"AddFavoriteVisibility"));
+				}
+			}
+		}
+
+		property Windows::UI::Xaml::Visibility RemoveFavoriteVisibility {
+			Windows::UI::Xaml::Visibility get() {
+				return _removeFavoriteVisibility;
+			}
+			void set(Windows::UI::Xaml::Visibility value) {
+				if (value != _removeFavoriteVisibility) {
+					_removeFavoriteVisibility = value;
+					PropertyChanged(this, ref new Windows::UI::Xaml::Data::PropertyChangedEventArgs(L"RemoveFavoriteVisibility"));
+				}
+			}
+		}
 		virtual event Windows::UI::Xaml::Data::PropertyChangedEventHandler ^ PropertyChanged;
 
 		void GoToArtist();
-		
+
 		void GoToAlbum();
+		void AddFavorite();
+		void RemoveFavorite();
 	internal:
 		const api::TrackInfo& trackInfo() {
 			return _trackInfo;

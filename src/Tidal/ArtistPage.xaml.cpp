@@ -15,6 +15,7 @@
 #include <Api/ApiErrors.h>
 #include <Shell.xaml.h>
 #include "AlbumPage.xaml.h"
+#include "FavoritesService.h"
 #include "VideoItemVM.h"
 using namespace Tidal;
 
@@ -100,6 +101,13 @@ void parseBio(TextBlock^ txtBlock, std::wstring bioText) {
 concurrency::task<void> Tidal::ArtistPage::LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ args)
 {
 	auto id = dynamic_cast<IBox<std::int64_t>^>(args->Parameter)->Value;
+	_artistId = id;
+	if (getFavoriteService().isArtistFavorite(id)) {
+		addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	}
+	else {
+		removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	}
 	auto info = await artists::getArtistInfoAsync(id, concurrency::cancellation_token::none());
 	videosGV->ItemsSource = getArtistVideosDataSource(id);
 	similarArtistsGV->ItemsSource = getSimilarArtistsDataSource(id);
@@ -269,4 +277,30 @@ void Tidal::ArtistPage::OnSimilarArtistClicked(Platform::Object^ sender, Windows
 	if (item) {
 		item->Go();
 	}
+}
+
+
+void Tidal::ArtistPage::OnAddFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	getFavoriteService().addArtistAsync(_artistId).then([](concurrency::task<void> t) {
+		try {
+			t.get();
+		}
+		catch (...) {}
+	});
+	addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void Tidal::ArtistPage::OnRemoveFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	getFavoriteService().removeArtistAsync(_artistId).then([](concurrency::task<void> t) {
+		try {
+			t.get();
+		}
+		catch (...) {}
+	});
+	addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Visible;
+	removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }

@@ -15,6 +15,7 @@
 #include "ArtistPage.xaml.h"
 #include "MenuFlyouts.h"
 #include <Api/CoverCache.h>
+#include "FavoritesService.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -121,6 +122,15 @@ void Tidal::AlbumPage::ReevaluateTracksPlayingStates()
 
 concurrency::task<void> Tidal::AlbumPage::LoadAsync(std::int64_t id)
 {
+	if (getFavoriteService().isAlbumFavorite(id)) {
+		addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+		removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Visible;
+	}
+	else {
+		addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Visible;
+		removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+
+	}
 	auto albumInfo = await albums::getAlbumResumeAsync(id, concurrency::cancellation_token::none());
 	_artistId = albumInfo->artist.id;
 	pageHeader->Text = tools::strings::toWindowsString(albumInfo->title);
@@ -269,4 +279,30 @@ void Tidal::AlbumPage::OnMenuClick(Platform::Object^ sender, Windows::UI::Xaml::
 	auto flyout = getAlbumMenuFlyout(_albumId);
 	auto fe = dynamic_cast<FrameworkElement^>(sender);
 	flyout->ShowAt(fe, Point(0, fe->ActualHeight));
+}
+
+
+void Tidal::AlbumPage::OnAddFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	getFavoriteService().addAlbumAsync(_albumId).then([](concurrency::task<void> t) {
+		try {
+			t.get();
+		}
+		catch (...) {}
+	});
+	addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+	removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void Tidal::AlbumPage::OnRemoveFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	getFavoriteService().removeAlbumAsync(_albumId).then([](concurrency::task<void> t) {
+		try {
+			t.get();
+		}
+		catch (...) {}
+	});
+	addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Visible;
+	removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }

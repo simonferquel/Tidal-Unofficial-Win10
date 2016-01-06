@@ -3,6 +3,7 @@
 #include <cpprest/json.h>
 #include <cstdint>
 #include "JsonHelpers.h"
+#include <chrono>
 namespace api {
 	template<typename T>
 	struct PaginatedList {
@@ -23,6 +24,19 @@ namespace api {
 				}
 			}
 			
+		}
+	};
+
+
+	template <typename T>
+	struct TimestampedEntity{
+		std::chrono::system_clock::time_point created;
+		T item;
+
+		TimestampedEntity() = default;
+		TimestampedEntity(const web::json::value& json)  {
+			parseJson(&json, L"created", created);
+			parseJson(&json, L"item", item);
 		}
 	};
 }

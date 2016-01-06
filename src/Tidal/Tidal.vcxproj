@@ -210,6 +210,7 @@
     <ClInclude Include="AudioService.h" />
     <ClInclude Include="DownloadService.h" />
     <ClInclude Include="FactorConverter.h" />
+    <ClInclude Include="FavoritesService.h" />
     <ClInclude Include="GenrePage.xaml.h">
       <DependentUpon>GenrePage.xaml</DependentUpon>
     </ClInclude>
@@ -219,6 +220,9 @@
       <DependentUpon>LocalMusic.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="MenuFlyouts.h" />
+    <ClInclude Include="MiniPlayerView.xaml.h">
+      <DependentUpon>MiniPlayerView.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="PlaylistPage.xaml.h">
       <DependentUpon>PlaylistPage.xaml</DependentUpon>
     </ClInclude>
@@ -313,6 +317,9 @@
     <Page Include="LocalMusic.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="MiniPlayerView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="PlaylistPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -399,6 +406,7 @@
     <ClCompile Include="AudioService.cpp" />
     <ClCompile Include="DownloadService.cpp" />
     <ClCompile Include="FactorConverter.cpp" />
+    <ClCompile Include="FavoritesService.cpp" />
     <ClCompile Include="GenrePage.xaml.cpp">
       <DependentUpon>GenrePage.xaml</DependentUpon>
     </ClCompile>
@@ -406,6 +414,9 @@
       <DependentUpon>LocalMusic.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="MenuFlyouts.cpp" />
+    <ClCompile Include="MiniPlayerView.xaml.cpp">
+      <DependentUpon>MiniPlayerView.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="PlaylistPage.xaml.cpp">
       <DependentUpon>PlaylistPage.xaml</DependentUpon>
     </ClCompile>

@@ -11,7 +11,7 @@ private:
 	_uri(uri), _size(size), _modified(modified){
 
 	}
-
+	concurrency::task<Windows::Storage::Streams::IInputStream^> EnsureInputStreamAsync(concurrency::cancellation_token cancelToken);
 	concurrency::task<Windows::Storage::Streams::IBuffer^> DoReadAsync(Windows::Storage::Streams::IBuffer ^buffer, unsigned int count, Windows::Storage::Streams::InputStreamOptions options, concurrency::progress_reporter<unsigned int> reporter, concurrency::cancellation_token cancelToken);
 public:
 	property Windows::Foundation::DateTime Modified { Windows::Foundation::DateTime get(){ return _modified; }}

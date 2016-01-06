@@ -18,6 +18,7 @@ namespace Tidal
 	public:
 		Settings();
 	private:
+		concurrency::task<void> loadStorageStatisticsAsync();
 		void OnPageLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnStreamingQualityChecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnImportQualityChecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

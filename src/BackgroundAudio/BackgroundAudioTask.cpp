@@ -96,6 +96,21 @@ void BackgroundAudio::BackgroundAudioTask::OnMessageReceivedFromForeground(Platf
 		else if (request == L"pause") {
 			_musicPlayer->pause();
 		}
+		else if (request == L"resume") {
+			_musicPlayer->resume();
+		}
+		else if (request == L"next") {
+			_musicPlayer->moveNext();
+		}
+		else if (request == L"previous") {
+			_musicPlayer->movePrevious();
+		}
+		else if (request == L"shuffle_change") {
+			_musicPlayer->onShuffleModeChanged();
+		}
+		else if (request == L"repeat_change") {
+			_musicPlayer->onRepeatModeChanged();
+		}
 		else if (request == L"ping") {
 			auto pongSet = ref new Windows::Foundation::Collections::ValueSet();
 			pongSet->Insert(L"request", L"pong");

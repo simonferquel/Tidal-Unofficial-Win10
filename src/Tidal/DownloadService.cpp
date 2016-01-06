@@ -51,7 +51,7 @@ concurrency::task<void> DownloadService::StartDownloadAlbumAsync(std::int64_t id
 		}
 		importedAlbum.tracks_json = jarr.serialize();
 		
-		LocalDB::executeSynchronously<localdata::imported_albumInsertDbQuery>(localCtx, db, importedAlbum);
+		LocalDB::executeSynchronously<localdata::imported_albumInsertOrReplaceDbQuery>(localCtx, db, importedAlbum);
 		for (auto&& ti : tracks->items) {
 			localdata::track_import_job job;
 			job.artist = ti.artists[0].name;
@@ -80,8 +80,8 @@ concurrency::task<void> DownloadService::StartDownloadAlbumAsync(std::int64_t id
 concurrency::task<void> DownloadService::StartDownloadPlaylistAsync(const std::wstring& idRef)
 {
 	std::wstring id = idRef;
-	auto playlist = await playlists::getPlaylistAsync(id, concurrency::cancellation_token::none());
-	auto tracks = await playlists::getPlaylistTracksAsync(id, playlist->numberOfTracks, concurrency::cancellation_token::none());
+	auto playlist = await playlists::getPlaylistAsync(id, concurrency::cancellation_token::none(), true);
+	auto tracks = await playlists::getPlaylistTracksAsync(id, playlist->numberOfTracks, concurrency::cancellation_token::none(), true);
 	std::map<std::int64_t, std::wstring> albumCovers;
 	for (auto trk : tracks->items) {
 		albumCovers.insert(std::make_pair(trk.album.id, trk.album.cover));
@@ -116,7 +116,7 @@ concurrency::task<void> DownloadService::StartDownloadPlaylistAsync(const std::w
 		}
 		importedPlaylist.tracks_json = jarr.serialize();
 
-		LocalDB::executeSynchronously<localdata::imported_playlistInsertDbQuery>(localCtx, db, importedPlaylist);
+		LocalDB::executeSynchronously<localdata::imported_playlistInsertOrReplaceDbQuery>(localCtx, db, importedPlaylist);
 		for (auto&& ti : tracks->items) {
 			localdata::track_import_job job;
 			job.artist = ti.artists[0].name;

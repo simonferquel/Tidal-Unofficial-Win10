@@ -46,6 +46,25 @@ namespace localdata {
 	public:
 		cached_trackInsertDbQuery(const LocalDB::DBContext& ctx, const cached_track& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity) {}
 	};
+	class cached_trackInsertOrReplaceDbQuery : public LocalDB::NoResultDBQuery {
+	private:
+		cached_track _entity;
+	protected:
+		virtual std::string identifier() override { return "gen-cached_track-insertorreplace"; }
+		virtual std::string sql(int) override {
+			return "insert or replace into cached_track(id, quality, server_timestamp, server_size, local_size, last_playpack_time) values (@id, @quality, @server_timestamp, @server_size, @local_size, @last_playpack_time)";
+		}
+		virtual  void bindParameters(int, sqlite3*, sqlite3_stmt* statement) override {
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@id"), _entity.id);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@quality"), _entity.quality);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@server_timestamp"), _entity.server_timestamp);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@server_size"), _entity.server_size);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@local_size"), _entity.local_size);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@last_playpack_time"), _entity.last_playpack_time);
+		}
+	public:
+		cached_trackInsertOrReplaceDbQuery(const LocalDB::DBContext& ctx, const cached_track& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity) {}
+	};
 	class cached_trackUpdateDbQuery : public LocalDB::NoResultDBQuery {
 	private:
 		cached_track _entity;
@@ -76,8 +95,9 @@ namespace localdata {
 		std::wstring artist;
 		std::wstring json;
 		std::int64_t import_timestamp;
+		std::int64_t size;
 		static std::string getOrderedColumnsForSelect() {
-			return "id, quality, last_playpack_time, album_id, album_title, cover, title, artist, json, import_timestamp";
+			return "id, quality, last_playpack_time, album_id, album_title, cover, title, artist, json, import_timestamp, size";
 		}
 		static imported_track createFromSqlRecord(sqlite3_stmt* stmt) {
 			imported_track data;
@@ -91,6 +111,7 @@ namespace localdata {
 			data.artist = LocalDB::sqlite3_column_wstring(stmt, 7);
 			data.json = LocalDB::sqlite3_column_wstring(stmt, 8);
 			data.import_timestamp = sqlite3_column_int64(stmt, 9);
+			data.size = sqlite3_column_int64(stmt, 10);
 			return data;
 		}
 	};
@@ -100,7 +121,7 @@ namespace localdata {
 	protected:
 		virtual std::string identifier() override { return "gen-imported_track-insert"; }
 		virtual std::string sql(int) override {
-			return "insert into imported_track(id, quality, last_playpack_time, album_id, album_title, cover, title, artist, json, import_timestamp) values (@id, @quality, @last_playpack_time, @album_id, @album_title, @cover, @title, @artist, @json, @import_timestamp)";
+			return "insert into imported_track(id, quality, last_playpack_time, album_id, album_title, cover, title, artist, json, import_timestamp, size) values (@id, @quality, @last_playpack_time, @album_id, @album_title, @cover, @title, @artist, @json, @import_timestamp, @size)";
 		}
 		virtual  void bindParameters(int, sqlite3*, sqlite3_stmt* statement) override {
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@id"), _entity.id);
@@ -113,9 +134,34 @@ namespace localdata {
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@artist"), _entity.artist);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@json"), _entity.json);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@import_timestamp"), _entity.import_timestamp);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@size"), _entity.size);
 		}
 	public:
 		imported_trackInsertDbQuery(const LocalDB::DBContext& ctx, const imported_track& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity) {}
+	};
+	class imported_trackInsertOrReplaceDbQuery : public LocalDB::NoResultDBQuery {
+	private:
+		imported_track _entity;
+	protected:
+		virtual std::string identifier() override { return "gen-imported_track-insertorreplace"; }
+		virtual std::string sql(int) override {
+			return "insert or replace into imported_track(id, quality, last_playpack_time, album_id, album_title, cover, title, artist, json, import_timestamp, size) values (@id, @quality, @last_playpack_time, @album_id, @album_title, @cover, @title, @artist, @json, @import_timestamp, @size)";
+		}
+		virtual  void bindParameters(int, sqlite3*, sqlite3_stmt* statement) override {
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@id"), _entity.id);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@quality"), _entity.quality);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@last_playpack_time"), _entity.last_playpack_time);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@album_id"), _entity.album_id);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@album_title"), _entity.album_title);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@cover"), _entity.cover);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@title"), _entity.title);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@artist"), _entity.artist);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@json"), _entity.json);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@import_timestamp"), _entity.import_timestamp);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@size"), _entity.size);
+		}
+	public:
+		imported_trackInsertOrReplaceDbQuery(const LocalDB::DBContext& ctx, const imported_track& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity) {}
 	};
 	class imported_trackUpdateDbQuery : public LocalDB::NoResultDBQuery {
 	private:
@@ -123,7 +169,7 @@ namespace localdata {
 	protected:
 		virtual std::string identifier() override { return "gen-imported_track-update"; }
 		virtual std::string sql(int) override {
-			return "update imported_track SET quality = @quality, last_playpack_time = @last_playpack_time, album_id = @album_id, album_title = @album_title, cover = @cover, title = @title, artist = @artist, json = @json, import_timestamp = @import_timestamp WHERE id = @id";
+			return "update imported_track SET quality = @quality, last_playpack_time = @last_playpack_time, album_id = @album_id, album_title = @album_title, cover = @cover, title = @title, artist = @artist, json = @json, import_timestamp = @import_timestamp, size = @size WHERE id = @id";
 		}
 		virtual  void bindParameters(int, sqlite3*, sqlite3_stmt* statement) override {
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@id"), _entity.id);
@@ -136,6 +182,7 @@ namespace localdata {
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@artist"), _entity.artist);
 			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@json"), _entity.json);
 			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@import_timestamp"), _entity.import_timestamp);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@size"), _entity.size);
 		}
 	public:
 		imported_trackUpdateDbQuery(const LocalDB::DBContext& ctx, const imported_track& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity) {}
@@ -182,6 +229,26 @@ namespace localdata {
 		}
 	public:
 		imported_albumInsertDbQuery(const LocalDB::DBContext& ctx, const imported_album& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity) {}
+	};
+	class imported_albumInsertOrReplaceDbQuery : public LocalDB::NoResultDBQuery {
+	private:
+		imported_album _entity;
+	protected:
+		virtual std::string identifier() override { return "gen-imported_album-insertorreplace"; }
+		virtual std::string sql(int) override {
+			return "insert or replace into imported_album(id, cover, title, artist, json, tracks_json, import_timestamp) values (@id, @cover, @title, @artist, @json, @tracks_json, @import_timestamp)";
+		}
+		virtual  void bindParameters(int, sqlite3*, sqlite3_stmt* statement) override {
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@id"), _entity.id);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@cover"), _entity.cover);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@title"), _entity.title);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@artist"), _entity.artist);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@json"), _entity.json);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@tracks_json"), _entity.tracks_json);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@import_timestamp"), _entity.import_timestamp);
+		}
+	public:
+		imported_albumInsertOrReplaceDbQuery(const LocalDB::DBContext& ctx, const imported_album& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity) {}
 	};
 	class imported_albumUpdateDbQuery : public LocalDB::NoResultDBQuery {
 	private:
@@ -245,6 +312,26 @@ namespace localdata {
 		}
 	public:
 		imported_playlistInsertDbQuery(const LocalDB::DBContext& ctx, const imported_playlist& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity) {}
+	};
+	class imported_playlistInsertOrReplaceDbQuery : public LocalDB::NoResultDBQuery {
+	private:
+		imported_playlist _entity;
+	protected:
+		virtual std::string identifier() override { return "gen-imported_playlist-insertorreplace"; }
+		virtual std::string sql(int) override {
+			return "insert or replace into imported_playlist(id, cover, title, json, tracks_json, updated_at, import_timestamp) values (@id, @cover, @title, @json, @tracks_json, @updated_at, @import_timestamp)";
+		}
+		virtual  void bindParameters(int, sqlite3*, sqlite3_stmt* statement) override {
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@id"), _entity.id);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@cover"), _entity.cover);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@title"), _entity.title);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@json"), _entity.json);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@tracks_json"), _entity.tracks_json);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@updated_at"), _entity.updated_at);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@import_timestamp"), _entity.import_timestamp);
+		}
+	public:
+		imported_playlistInsertOrReplaceDbQuery(const LocalDB::DBContext& ctx, const imported_playlist& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity) {}
 	};
 	class imported_playlistUpdateDbQuery : public LocalDB::NoResultDBQuery {
 	private:
@@ -320,6 +407,30 @@ namespace localdata {
 		}
 	public:
 		track_import_jobInsertDbQuery(const LocalDB::DBContext& ctx, const track_import_job& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity) {}
+	};
+	class track_import_jobInsertOrReplaceDbQuery : public LocalDB::NoResultDBQuery {
+	private:
+		track_import_job _entity;
+	protected:
+		virtual std::string identifier() override { return "gen-track_import_job-insertorreplace"; }
+		virtual std::string sql(int) override {
+			return "insert or replace into track_import_job(id, server_timestamp, server_size, local_size, cover, title, artist, import_timestamp, owning_albumid, owning_playlistid, quality) values (@id, @server_timestamp, @server_size, @local_size, @cover, @title, @artist, @import_timestamp, @owning_albumid, @owning_playlistid, @quality)";
+		}
+		virtual  void bindParameters(int, sqlite3*, sqlite3_stmt* statement) override {
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@id"), _entity.id);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@server_timestamp"), _entity.server_timestamp);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@server_size"), _entity.server_size);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@local_size"), _entity.local_size);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@cover"), _entity.cover);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@title"), _entity.title);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@artist"), _entity.artist);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@import_timestamp"), _entity.import_timestamp);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@owning_albumid"), _entity.owning_albumid);
+			LocalDB::sqlite3_bind_string(statement, sqlite3_bind_parameter_index(statement, "@owning_playlistid"), _entity.owning_playlistid);
+			sqlite3_bind_int64(statement, sqlite3_bind_parameter_index(statement, "@quality"), _entity.quality);
+		}
+	public:
+		track_import_jobInsertOrReplaceDbQuery(const LocalDB::DBContext& ctx, const track_import_job& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity) {}
 	};
 	class track_import_jobUpdateDbQuery : public LocalDB::NoResultDBQuery {
 	private:

@@ -57,6 +57,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="48"/>
@@ -183,6 +184,7 @@
                 <SymbolIcon Symbol="Find" />
             </Button>
         </SplitView>
+        <local:MiniPlayerView Grid.Row="2" Grid.ColumnSpan="2" />
     </Grid>
 
 

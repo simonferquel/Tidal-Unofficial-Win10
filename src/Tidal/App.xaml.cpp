@@ -9,7 +9,7 @@
 #include "AudioService.h"
 #include "Mediators.h"
 #include <localdata/db.h>
-
+#include "FavoritesService.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -56,6 +56,13 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 		DebugSettings->EnableFrameRateCounter = true;
 	}
 #endif
+
+	getFavoriteService().refreshAsync().then([](concurrency::task<void>t) {
+		try {
+			t.get();
+		}
+		catch (...) {}
+	});
 
 	localdata::initializeDbAsync().then([e]() {
 		getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
@@ -131,6 +138,13 @@ void App::OnNavigationFailed(Platform::Object ^sender, Windows::UI::Xaml::Naviga
 
 void Tidal::App::OnResuming(Platform::Object ^sender, Platform::Object ^args)
 {
+
+	getFavoriteService().refreshAsync().then([](concurrency::task<void>t) {
+		try {
+			t.get();
+		}
+		catch (...) {}
+	});
 	getAudioService().onResuming();
 	getAppResumingMediator().raise(true);
 }

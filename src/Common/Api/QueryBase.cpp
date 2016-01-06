@@ -86,6 +86,47 @@ concurrency::task<Platform::String^> api::QueryBase::getAsync(concurrency::cance
 	}
 }
 
+concurrency::task<Platform::String^> api::QueryBase::deleteAsync(concurrency::cancellation_token cancelToken)
+{
+	auto filter = ref new Windows::Web::Http::Filters::HttpBaseProtocolFilter();
+	filter->AllowUI = false;
+	auto client = ref new HttpClient(filter);
+
+	std::wstring urlBuilder(config::apiLocationPrefix()->Data());
+	urlBuilder.append(url());
+	if (_queryString && _queryString->Size > 0) {
+		urlBuilder.push_back(L'?');
+		bool first = true;
+		for (auto&& p : _queryString) {
+			if (first) {
+				first = false;
+			}
+			else {
+				urlBuilder.push_back(L'&');
+			}
+			urlBuilder.append(Uri::EscapeComponent(p->Key)->Data());
+			urlBuilder.push_back(L'=');
+			urlBuilder.append(Uri::EscapeComponent(p->Value)->Data());
+		}
+	}
+	auto timeoutProvider = std::make_shared<tools::async::TimeoutCancelTokenProvider>(timeout());
+	auto combinedTokens = tools::async::combineCancelTokens(cancelToken, timeoutProvider->get_token());
+	try {
+		auto response = await create_task(client->SendRequestAsync(ref new HttpRequestMessage(HttpMethod::Delete, ref new Uri(tools::strings::toWindowsString(urlBuilder)))), combinedTokens);
+		auto contentString = await create_task(response->Content->ReadAsStringAsync(), combinedTokens);
+		if (!response->IsSuccessStatusCode) {
+			throw statuscode_exception(urlBuilder, response->StatusCode, contentString);
+		}
+		return contentString;
+	}
+	catch (task_canceled&) {
+		if (!cancelToken.is_canceled()) {
+			throw timeout_exception(urlBuilder);
+		}
+		throw;
+	}
+}
+
 concurrency::task<Platform::String^> api::QueryBase::postAsync(concurrency::cancellation_token cancelToken)
 {
 	auto client = ref new HttpClient();

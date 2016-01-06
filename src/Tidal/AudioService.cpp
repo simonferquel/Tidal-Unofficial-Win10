@@ -237,6 +237,84 @@ concurrency::task<void> AudioService::playAllLocalMusicAsync()
 	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
 }
 
+concurrency::task<void> AudioService::resumeAsync()
+{
+	if (!_connection) {
+		_connection = std::make_shared<BackgroundAudioConnection>();
+		_connection->Initialize();
+	}
+
+	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
+	resetPlayListValues->Insert(L"request", L"resume");
+	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+}
+
+concurrency::task<void> AudioService::pauseAsync()
+{
+	if (!_connection) {
+		_connection = std::make_shared<BackgroundAudioConnection>();
+		_connection->Initialize();
+	}
+
+	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
+	resetPlayListValues->Insert(L"request", L"pause");
+	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+}
+
+concurrency::task<void> AudioService::nextAsync()
+{
+	if (!_connection) {
+		_connection = std::make_shared<BackgroundAudioConnection>();
+		_connection->Initialize();
+	}
+
+	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
+	resetPlayListValues->Insert(L"request", L"next");
+	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+}
+
+concurrency::task<void> AudioService::previousAsync()
+{
+	if (!_connection) {
+		_connection = std::make_shared<BackgroundAudioConnection>();
+		_connection->Initialize();
+	}
+
+	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
+	resetPlayListValues->Insert(L"request", L"previous");
+	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+}
+
+concurrency::task<void> AudioService::shuffleChangeAsync()
+{
+	if (!_connection) {
+		_connection = std::make_shared<BackgroundAudioConnection>();
+		_connection->Initialize();
+	}
+
+	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
+	resetPlayListValues->Insert(L"request", L"shuffle_change");
+	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+}
+
+concurrency::task<void> AudioService::repeatChangeAsync()
+{
+	if (!_connection) {
+		_connection = std::make_shared<BackgroundAudioConnection>();
+		_connection->Initialize();
+	}
+
+	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
+	resetPlayListValues->Insert(L"request", L"repeat_change");
+	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+}
+
 AudioService & getAudioService()
 {
 	static AudioService instance;

@@ -62,6 +62,10 @@ void localdata::TidalSchema::BuildSchema(SchemaBuilder & builder)
 				.nullable(false)
 		.defaultValue("0")
 			.endColumn()
+			.column("size", SqliteType::Int64, 9)
+				.nullable(false)
+				.defaultValue("0")
+			.endColumn()
 		.endTable()
 		.index("imported_track_natural_sort", "imported_track",8)
 			.addColumn("artist")
@@ -167,7 +171,7 @@ void localdata::TidalSchema::BuildSchema(SchemaBuilder & builder)
 		.index("track_import_job_by_timestamp", "track_import_job", 7)
 			.addColumn("import_timestamp")
 		.endIndex();
-		/*	
-			auto entities = LocalDB::SchemaDefinition::generateEntitiesClasses(builder.definition(), { "localdata" });
-			OutputDebugStringA(entities.c_str());*/
+			
+			//auto entities = LocalDB::SchemaDefinition::generateEntitiesClasses(builder.definition(), { "localdata" });
+			//OutputDebugStringA(entities.c_str());
 }

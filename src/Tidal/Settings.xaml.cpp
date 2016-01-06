@@ -5,7 +5,7 @@
 
 #include "pch.h"
 #include "Settings.xaml.h"
-
+#include <localdata/StorageStatistics.h>
 using namespace Tidal;
 
 using namespace Platform;
@@ -26,6 +26,28 @@ Settings::Settings()
 	InitializeComponent();
 }
 
+String^ bytesToString(std::int64_t bytes) {
+	if (bytes < 1024) {
+		return bytes.ToString() + " B";
+	}
+	if (bytes < 1024 * 1024) {
+		return (bytes / 1024.0).ToString() + " KB";
+	}
+	if (bytes < 1024 * 1024 * 1024) {
+		return (bytes / (1024 * 1024.0)).ToString() + " MB";
+	}
+	return (bytes / (1024 * 1024 * 1024.0)).ToString() + " GB";
+}
+
+
+concurrency::task<void> Tidal::Settings::loadStorageStatisticsAsync()
+{
+	auto stats = await localdata::getStorageStatisticsAsync(concurrency::cancellation_token::none());
+	cacheTotal->Text = bytesToString(stats->totalCacheSize);
+	cache8Days->Text = bytesToString(stats->cachedNotPlayedFor8DaysSize);
+	importTotal->Text = bytesToString(stats->totalImportSize);
+	import8Days->Text = bytesToString(stats->importNotPlayedFor8DaysSize);
+}
 
 void Tidal::Settings::OnPageLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
@@ -63,6 +85,7 @@ void Tidal::Settings::OnPageLoaded(Platform::Object^ sender, Windows::UI::Xaml::
 	else if (importQuality == L"LOSSLESS") {
 		importLossless->IsChecked = true;
 	}
+	loadStorageStatisticsAsync();
 }
 
 

@@ -18,6 +18,22 @@ using namespace std::chrono;
 using namespace concurrency;
 
 using rec_lockguard = lock_guard<recursive_mutex>;
+
+bool getRepeatMode() {
+	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
+	if (!settingsValues->HasKey(L"RepeatMode")) {
+		return false;
+	}
+	return dynamic_cast<IBox<bool>^>(settingsValues->Lookup(L"RepeatMode"))->Value;
+}
+
+bool getShuffleMode() {
+	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
+	if (!settingsValues->HasKey(L"ShuffleMode")) {
+		return false;
+	}
+	return dynamic_cast<IBox<bool>^>(settingsValues->Lookup(L"ShuffleMode"))->Value;
+}
 void MusicPlayer::onWmpStateChanged()
 {
 	if (_wmp->CurrentState == MediaPlayerState::Playing) {
@@ -52,25 +68,33 @@ concurrency::task<String^> loadPlaylistJsonAsync() {
 	return json;
 }
 concurrency::task<String^> loadAllMusicPlaylistJsonAsync() {
-	std::wstring result = L"[";
-	bool first = true;
+	
 	int skip = 0;
+	std::vector<std::wstring> toRandomize;
 	while (true) {
 		auto batch = await localdata::getImportedTracksAsync(skip, 30, concurrency::cancellation_token::none());
 		if (batch->size() == 0) {
 			break;
 		}
 		for (auto&& item : *batch) {
-			if (first) {
-				first = false;
-			}
-			else {
-				result.push_back(L',');
-			}
-			result.append(item.json);
+			
+			toRandomize.push_back(item.json);
 		}
 
 		skip += 30;
+	}
+	std::srand(std::chrono::system_clock::now().time_since_epoch().count());
+	std::random_shuffle(toRandomize.begin(), toRandomize.end());
+	bool first = true;
+	std::wstring result = L"[";
+	for (auto& item : toRandomize) {
+		if (first) {
+			first = false;
+		}
+		else {
+			result.push_back(L',');
+		}
+		result.append(std::move(item));
 	}
 	result.push_back(L']');
 	auto json = tools::strings::toWindowsString(result);
@@ -101,6 +125,8 @@ MediaBinder^ createMediaBinderForTrack(const api::TrackInfo& info) {
 					.then([deferral, e, info](const cached_stream_info& info) {
 					e->SetStream(info.stream, info.contentType);
 					e->MediaBinder->Source->CustomProperties->Insert(L"info", e->MediaBinder->Token);
+					e->MediaBinder->Source->CustomProperties->Insert(L"isImport", info.isImport);
+					e->MediaBinder->Source->CustomProperties->Insert(L"quality", static_cast<std::int32_t>(info.soundQuality));
 
 					deferral->Complete();
 				});
@@ -125,7 +151,7 @@ MediaBinder^ createMediaBinderForTrack(const api::TrackInfo& info) {
 	return binder;
 }
 
-void showTrackDisplayInfo(const api::TrackInfo& trackInfo, bool canGoNext, bool canGoBack, SystemMediaTransportControls^ smtc) {
+void showTrackDisplayInfo(const api::TrackInfo& trackInfo, bool canGoNext, bool canGoBack, SystemMediaTransportControls^ smtc, Windows::Foundation::Collections::ValueSet^ customProperties) {
 	smtc->IsEnabled = true;
 	smtc->IsPauseEnabled = true;
 	smtc->IsPlayEnabled = true;
@@ -141,6 +167,10 @@ void showTrackDisplayInfo(const api::TrackInfo& trackInfo, bool canGoNext, bool 
 
 	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
 	settingsValues->Insert(L"CurrentPlaybackTrackId", trackInfo.id);
+	settingsValues->Insert(L"CurrentPlaybackTrack", tools::strings::toWindowsString( trackInfo.toJson().serialize()));
+
+	settingsValues->Insert(L"CurrentPlaybackTrackIsImport", customProperties->Lookup(L"isImport"));
+	settingsValues->Insert(L"CurrentPlaybackTrackQuality", customProperties->Lookup(L"quality"));
 	auto ackSet = ref new Windows::Foundation::Collections::ValueSet();
 	ackSet->Insert(L"request", L"current_playback_item_changed");
 	ackSet->Insert(L"track_id", trackInfo.id);
@@ -159,7 +189,7 @@ void OnCurrentPlaylistItemChanged(MediaPlaybackList^ playList, CurrentMediaPlayb
 	if (playList->ShuffleEnabled) {
 		playList->ShuffledItems->IndexOf(playList->CurrentItem, &itemIndex);
 	}
-	showTrackDisplayInfo(info, itemIndex < playList->Items->Size - 1, itemIndex>0, BackgroundMediaPlayer::Current->SystemMediaTransportControls);
+	showTrackDisplayInfo(info, itemIndex < playList->Items->Size - 1 || playList->AutoRepeatEnabled, itemIndex>0 || playList->AutoRepeatEnabled, BackgroundMediaPlayer::Current->SystemMediaTransportControls, args->NewItem->Source->CustomProperties);
 
 }
 
@@ -261,6 +291,8 @@ void MusicPlayer::resetPlayqueueAndPlay(int index)
 		}
 		auto that = weakThis.lock();
 		if (that) {
+			playList->AutoRepeatEnabled = getRepeatMode();
+			playList->ShuffleEnabled = getShuffleMode();
 			that->_currentPlayList = playList;
 			that->_wmp->Source = playList;
 			that->_wmp->Play();
@@ -298,6 +330,8 @@ void MusicPlayer::resetPlayqueue(int index)
 		}
 		auto that = weakThis.lock();
 		if (that) {
+			playList->AutoRepeatEnabled = getRepeatMode();
+			playList->ShuffleEnabled = getShuffleMode();
 			that->_currentPlayList = playList;
 			that->_wmp->Source = playList;
 		}
@@ -329,9 +363,10 @@ void MusicPlayer::playAllLocalMusic()
 				playList->Items->Append(item);
 			}
 		}
-		playList->ShuffleEnabled = true;
 		auto that = weakThis.lock();
 		if (that) {
+			playList->AutoRepeatEnabled = getRepeatMode();
+			playList->ShuffleEnabled = getShuffleMode();
 			that->_currentPlayList = playList;
 			that->_wmp->Source = playList;
 			that->_wmp->Play();
@@ -382,9 +417,56 @@ void MusicPlayer::movePrevious()
 
 void MusicPlayer::resume()
 {
-	auto p = _wmp;
-	if (p) {
-		p->Play();
+	if (_currentPlayList) {
+		auto p = _wmp;
+		if (p) {
+			p->Play();
+		}
+	}
+	else {
+		rec_lockguard _(_mutex);
+		_currentCts.cancel();
+		_wmp->Source = ref new Windows::Media::Playback::MediaPlaybackList();
+		_currentPlayList = nullptr;
+		SetMusicStateChanging();
+		_currentCts = cancellation_token_source();
+		auto cancelToken = _currentCts.get_token();
+		loadPlaylistJsonAsync()
+			.then([weakThis = weak_ptr<MusicPlayer>(shared_from_this())](Platform::String^ playlistJson){
+
+			auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
+			std::int64_t resumeId = -1;
+			if (settingsValues->HasKey(L"CurrentPlaybackTrackId")) {
+				resumeId = dynamic_cast<IBox<std::int64_t>^>(settingsValues->Lookup(L"CurrentPlaybackTrackId"))->Value;
+			}
+
+			auto playList = ref new Windows::Media::Playback::MediaPlaybackList();
+			playList->CurrentItemChanged += ref new Windows::Foundation::TypedEventHandler<Windows::Media::Playback::MediaPlaybackList ^, Windows::Media::Playback::CurrentMediaPlaybackItemChangedEventArgs ^>(&OnCurrentPlaylistItemChanged);
+			playList->MaxPrefetchTime = tools::time::ToWindowsTimeSpan(std::chrono::seconds(30));
+			if (playlistJson->Length() > 0) {
+				tools::strings::WindowsWIStream stream(playlistJson);
+				auto jval = web::json::value::parse(stream);
+				auto& jarr = jval.as_array();
+				for (auto& jitem : jarr) {
+
+					api::TrackInfo info(jitem);
+					auto item = ref new MediaPlaybackItem(MediaSource::CreateFromMediaBinder(createMediaBinderForTrack(info)));
+					playList->Items->Append(item);
+					if (info.id == resumeId) {
+						playList->StartingItem = item;
+					}
+				}
+			}
+			auto that = weakThis.lock();
+			if (that) {
+
+				playList->AutoRepeatEnabled = getRepeatMode();
+				playList->ShuffleEnabled = getShuffleMode();
+				that->_currentPlayList = playList;
+				that->_wmp->Source = playList;
+				that->_wmp->Play();
+			}
+		});
 	}
 }
 
@@ -393,6 +475,22 @@ void MusicPlayer::pause()
 	auto p = _wmp;
 	if (p) {
 		p->Pause();
+	}
+}
+
+void MusicPlayer::onRepeatModeChanged()
+{
+	auto playlist = _currentPlayList;
+	if (playlist) {
+		playlist->AutoRepeatEnabled = getRepeatMode();
+	}
+}
+
+void MusicPlayer::onShuffleModeChanged()
+{
+	auto playlist = _currentPlayList;
+	if (playlist) {
+		playlist->ShuffleEnabled = getShuffleMode();
 	}
 }
 
