@@ -1,0 +1,25 @@
+﻿<UserControl
+    x:Class="Tidal.PlayerSeekBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded"
+    mc:Ignorable="d"
+    d:DesignHeight="60"
+    d:DesignWidth="400">
+
+    <Grid>
+        <TextBlock x:Name="durationText" Text="01:00 / 02:34" VerticalAlignment="Bottom" Margin="0,0,0,4"  FontSize="9.333" />
+        <Rectangle x:Name="sliderBG" Height="16" Fill="{ThemeResource SliderTrackBackgroundThemeBrush}" 
+                   PointerPressed="OnSliderPressed" PointerReleased="OnSliderReleased" PointerMoved="OnSliderMoved"/>
+        <Rectangle x:Name="sliderFG" IsHitTestVisible="False" Height="16" 
+                   Fill="{StaticResource TidalAccentBrush}" >
+            <Rectangle.RenderTransform>
+                <ScaleTransform  x:Name="sliderScale" CenterX="0" CenterY="0" ScaleX="0" ScaleY="1" />
+            </Rectangle.RenderTransform>
+        </Rectangle>
+    </Grid>
+</UserControl>

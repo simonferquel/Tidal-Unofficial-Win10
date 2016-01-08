@@ -116,6 +116,12 @@
                                 </local:ShellMenuItem.Icon>
                             </local:ShellMenuItem>
 
+                            <local:ShellMenuItem Label="current playlist" PageType="local:CurrentPlaylistPage" >
+                                <local:ShellMenuItem.Icon>
+                                    <SymbolIcon Symbol="Play" />
+                                </local:ShellMenuItem.Icon>
+                            </local:ShellMenuItem>
+
                             <local:ShellMenuItem Label="TIDAL Rising" PageType="local:Rising" >
                                 <local:ShellMenuItem.Icon>
                                     <FontIcon FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="N" />

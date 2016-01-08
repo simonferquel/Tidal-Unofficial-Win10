@@ -170,6 +170,29 @@ concurrency::task<void> AudioService::resetPlaylistAndPlay(const std::vector<api
 	
 }
 
+concurrency::task<void> AudioService::moveToIndex(int startIndex, concurrency::cancellation_token cancelToken)
+{
+	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
+	resetPlayListValues->Insert(L"request", L"move_to_index");
+	resetPlayListValues->Insert(L"index", startIndex);
+	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+}
+
+concurrency::task<std::shared_ptr<std::vector<api::TrackInfo>>> AudioService::getCurrentPlaylistAsync()
+{
+	auto file = await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFileAsync(L"current_playlist.json", Windows::Storage::CreationCollisionOption::OpenIfExists));
+	auto text = await concurrency::create_task(Windows::Storage::FileIO::ReadTextAsync(file));
+	auto result = std::make_shared<std::vector<api::TrackInfo>>();
+	if (text->Length() > 0) {	
+		tools::strings::WindowsWIStream stream(text);
+		auto jsonVal = web::json::value::parse(stream);
+		for (auto&& item : jsonVal.as_array()) {
+			result->push_back(api::TrackInfo(item));
+		}
+	}
+	return result;
+}
+
 std::int64_t AudioService::getCurrentPlaybackTrackId() const
 {
 

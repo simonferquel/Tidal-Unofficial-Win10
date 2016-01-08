@@ -15,6 +15,7 @@ concurrency::task<std::shared_ptr<api::AlbumResume>> albums::getAlbumResumeAsync
 	if (!authSvc.authenticationState().isAuthenticated()) {
 		api::GetAlbumResumeQuery q(id, L"US");
 		return await q.executeAsync(cancelToken);
+
 	}
 	else {
 		api::GetAlbumResumeQuery q(id, authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode());

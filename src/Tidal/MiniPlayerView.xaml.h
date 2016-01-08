@@ -21,6 +21,7 @@ namespace Tidal
 	public:
 		MiniPlayerView();
 	private:
+		void UpdateAdaptiveState();
 		void UpdateState();
 		void AttachToPlayerEvents();
 		void DettachFromPlayerEvents();
@@ -35,5 +36,9 @@ namespace Tidal
 		void OnPrevious(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnShuffleClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnRepeatClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void OnSizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e);
+		void OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void OnToggleChecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void OnToggleUnchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

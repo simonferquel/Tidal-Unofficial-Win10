@@ -23,9 +23,6 @@ struct AsyncRetryWithDelaysStateMachine : public std::enable_shared_from_this<As
 				t.get();
 				that->_tce.set();
 			}
-			catch (task_canceled&) {
-				that->_tce.set_exception(std::current_exception());
-			}
 			catch (...) {
 				if (that->_cancelToken.is_canceled()) {
 					that->_tce.set_exception(task_canceled());

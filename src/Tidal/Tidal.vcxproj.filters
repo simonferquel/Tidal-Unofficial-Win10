@@ -61,6 +61,9 @@
     <ClCompile Include="MenuFlyouts.cpp" />
     <ClCompile Include="LocalMusic.xaml.cpp" />
     <ClCompile Include="FavoritesService.cpp" />
+    <ClCompile Include="CurrentPlaylistPage.xaml.cpp" />
+    <ClCompile Include="MiniPlayerView.xaml.cpp" />
+    <ClCompile Include="PlayerSeekBar.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -118,30 +121,63 @@
     <ClInclude Include="MenuFlyouts.h" />
     <ClInclude Include="LocalMusic.xaml.h" />
     <ClInclude Include="FavoritesService.h" />
+    <ClInclude Include="CurrentPlaylistPage.xaml.h" />
+    <ClInclude Include="MiniPlayerView.xaml.h" />
+    <ClInclude Include="PlayerSeekBar.xaml.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Assets\LockScreenLogo.scale-200.png">
+    <Image Include="Assets\tidal-logo-large.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\SplashScreen.scale-200.png">
+    <Image Include="Assets\Square150x150Logo.scale-400.png">
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\Square150x150Logo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\Square150x150Logo.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-400.png">
+      <Filter>Assets</Filter>
+    </Image>
     <Image Include="Assets\Square44x44Logo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+    <Image Include="Assets\Square44x44Logo.scale-100.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\StoreLogo.png">
+    <Image Include="Assets\StoreLogo.scale-400.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-150.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-125.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-400.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-400.png">
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\tidal-logo-large.png">
+    <Image Include="Assets\Wide310x150Logo.scale-100.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>
@@ -176,6 +212,8 @@
     <Page Include="SearchView.xaml" />
     <Page Include="LocalMusic.xaml" />
     <Page Include="MiniPlayerView.xaml" />
+    <Page Include="PlayerSeekBar.xaml" />
+    <Page Include="CurrentPlaylistPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\WiMP-Icons.ttf" />

@@ -111,6 +111,14 @@ void BackgroundAudio::BackgroundAudioTask::OnMessageReceivedFromForeground(Platf
 		else if (request == L"repeat_change") {
 			_musicPlayer->onRepeatModeChanged();
 		}
+		else if (request == L"move_to_index") {
+			auto startIndexBox = dynamic_cast<Platform::IBox<int>^>(args->Data->Lookup(L"index"));
+			int startIndex = 0;
+			if (startIndexBox) {
+				startIndex = startIndexBox->Value;
+			}
+			_musicPlayer->playAtIndex(startIndex);
+		}
 		else if (request == L"ping") {
 			auto pongSet = ref new Windows::Foundation::Collections::ValueSet();
 			pongSet->Insert(L"request", L"pong");

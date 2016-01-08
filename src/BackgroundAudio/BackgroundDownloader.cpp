@@ -16,18 +16,23 @@ concurrency::task<void> handleJobAsync(localdata::track_import_job job, concurre
 	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
 	auto importQualityTxt = dynamic_cast<Platform::String^>(settingsValues->Lookup(L"importQuality"));
 	if (!importQualityTxt) {
-		importQualityTxt = L"LOSSLESS";
+		importQualityTxt = L"LOSSLESS"; 
 	}
 	auto importQuality = parseSoundQuality(importQualityTxt);
 
 	auto existing = await localdata::getExistingImportedTrackIfExistsAsync(localdata::getDb(), job.id, cancelToken);
-	if (existing) {
-		if (existing->quality == static_cast<std::int32_t>(importQuality)) {
-			return;
-		}
+	bool existingValid = false;
+	if (existing && existing->quality == static_cast<std::int32_t>(importQuality)) {
+		
+	}
+	else if (existing) {
+
 		await localdata::deleteImportedTrackAsync(localdata::getDb(), job.id, cancelToken);
 	}
-	if (job.local_size == job.server_size && job.server_size != 0) {
+	if (existingValid) {
+
+	}
+	else if (job.local_size == job.server_size && job.server_size != 0) {
 		await localdata::transformTrackImportJobToImportedTrackAsync(localdata::getDb(), job.id, cancelToken);
 	}
 	else {
@@ -84,6 +89,9 @@ concurrency::task<void> handleJobAsync(localdata::track_import_job job, concurre
 		catch (api::statuscode_exception& ex) {
 			if (ex.getStatusCode() == Windows::Web::Http::HttpStatusCode::Unauthorized) {
 				unauthorized = true;
+			}
+			else {
+				throw;
 			}
 		}
 		if (unauthorized) {

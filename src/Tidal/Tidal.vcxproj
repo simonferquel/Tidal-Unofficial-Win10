@@ -208,6 +208,9 @@
       <DependentUpon>ArtistPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="AudioService.h" />
+    <ClInclude Include="CurrentPlaylistPage.xaml.h">
+      <DependentUpon>CurrentPlaylistPage.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="DownloadService.h" />
     <ClInclude Include="FactorConverter.h" />
     <ClInclude Include="FavoritesService.h" />
@@ -222,6 +225,9 @@
     <ClInclude Include="MenuFlyouts.h" />
     <ClInclude Include="MiniPlayerView.xaml.h">
       <DependentUpon>MiniPlayerView.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="PlayerSeekBar.xaml.h">
+      <DependentUpon>PlayerSeekBar.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="PlaylistPage.xaml.h">
       <DependentUpon>PlaylistPage.xaml</DependentUpon>
@@ -311,6 +317,9 @@
     <Page Include="ArtistPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="CurrentPlaylistPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="GenrePage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -318,6 +327,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MiniPlayerView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PlayerSeekBar.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="PlaylistPage.xaml">
@@ -383,14 +395,58 @@
     <None Include="Tidal_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Assets\LockScreenLogo.scale-200.png" />
-    <Image Include="Assets\SplashScreen.scale-200.png" />
-    <Image Include="Assets\Square150x150Logo.scale-200.png" />
-    <Image Include="Assets\Square44x44Logo.scale-200.png" />
-    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Image Include="Assets\StoreLogo.png" />
+    <Image Include="Assets\SplashScreen.scale-100.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-200.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-400.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-100.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-200.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-400.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-100.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-200.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-400.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-100.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-125.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-150.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-200.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-400.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="Assets\tidal-logo-large.png" />
-    <Image Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Image Include="Assets\Wide310x150Logo.scale-100.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-200.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-400.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AlbumDataSources.cpp" />
@@ -404,6 +460,9 @@
       <DependentUpon>ArtistPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="AudioService.cpp" />
+    <ClCompile Include="CurrentPlaylistPage.xaml.cpp">
+      <DependentUpon>CurrentPlaylistPage.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="DownloadService.cpp" />
     <ClCompile Include="FactorConverter.cpp" />
     <ClCompile Include="FavoritesService.cpp" />
@@ -416,6 +475,9 @@
     <ClCompile Include="MenuFlyouts.cpp" />
     <ClCompile Include="MiniPlayerView.xaml.cpp">
       <DependentUpon>MiniPlayerView.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="PlayerSeekBar.xaml.cpp">
+      <DependentUpon>PlayerSeekBar.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="PlaylistPage.xaml.cpp">
       <DependentUpon>PlaylistPage.xaml</DependentUpon>
