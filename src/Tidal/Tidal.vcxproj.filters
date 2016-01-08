@@ -64,6 +64,7 @@
     <ClCompile Include="CurrentPlaylistPage.xaml.cpp" />
     <ClCompile Include="MiniPlayerView.xaml.cpp" />
     <ClCompile Include="PlayerSeekBar.xaml.cpp" />
+    <ClCompile Include="SmtcService.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -124,6 +125,7 @@
     <ClInclude Include="CurrentPlaylistPage.xaml.h" />
     <ClInclude Include="MiniPlayerView.xaml.h" />
     <ClInclude Include="PlayerSeekBar.xaml.h" />
+    <ClInclude Include="SmtcService.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\tidal-logo-large.png">

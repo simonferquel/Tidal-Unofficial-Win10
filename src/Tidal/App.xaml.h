@@ -6,6 +6,8 @@
 #pragma once
 
 #include "App.g.h"
+#include "SmtcService.h"
+#include <memory>
 
 namespace Tidal
 {
@@ -14,6 +16,8 @@ namespace Tidal
 	/// </summary>
 	ref class App sealed
 	{
+	private:
+		std::unique_ptr<SmtcService> _smtcService;
 	protected:
 		virtual void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs^ e) override;
 		virtual void OnActivated(Windows::ApplicationModel::Activation::IActivatedEventArgs^ e) override;

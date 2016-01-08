@@ -32,7 +32,6 @@ void BackgroundAudio::BackgroundAudioTask::Run(Windows::ApplicationModel::Backgr
 	_backgroundDownloader->initialize();
 	auto player = Windows::Media::Playback::BackgroundMediaPlayer::Current;
 	auto smtc = player->SystemMediaTransportControls;
-	smtc->IsEnabled = true;
 	smtc->IsPauseEnabled = true;
 	smtc->IsPlayEnabled = true;
 	smtc->IsNextEnabled = true;

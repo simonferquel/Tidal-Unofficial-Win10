@@ -239,6 +239,7 @@
     <ClInclude Include="SearchView.xaml.h">
       <DependentUpon>SearchView.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="SmtcService.h" />
     <ClInclude Include="SublistFilterControl.xaml.h">
       <DependentUpon>SublistFilterControl.xaml</DependentUpon>
     </ClInclude>
@@ -488,6 +489,7 @@
     <ClCompile Include="SearchView.xaml.cpp">
       <DependentUpon>SearchView.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="SmtcService.cpp" />
     <ClCompile Include="SublistFilterControl.xaml.cpp">
       <DependentUpon>SublistFilterControl.xaml</DependentUpon>
     </ClCompile>

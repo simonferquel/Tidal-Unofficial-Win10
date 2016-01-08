@@ -104,6 +104,11 @@ Platform::String ^ api::getOfflineCoverUrl(std::int64_t id, int width, int heigh
 	return ref new Platform::String(L"ms-appdata:///local/covers/") + fileName;
 }
 
+Platform::String ^ api::getOfflineCoverUrl(std::int64_t id)
+{
+	return ref new Platform::String(L"ms-appdata:///local/covers/") + id.ToString() + L".jpg";
+}
+
 concurrency::task<Platform::String^> api::EnsurePlaylistCoverInCacheAsync(const std::wstring & id, Platform::String ^ imageId, int width, int height, concurrency::cancellation_token cancelToken)
 {
 	auto fileName = tools::strings::toWindowsString(id) + L"." + width.ToString() + L"x" + height.ToString() + L".jpg";

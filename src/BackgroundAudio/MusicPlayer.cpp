@@ -152,17 +152,20 @@ MediaBinder^ createMediaBinderForTrack(const api::TrackInfo& info) {
 }
 
 void showTrackDisplayInfo(const api::TrackInfo& trackInfo, bool canGoNext, bool canGoBack, SystemMediaTransportControls^ smtc, Windows::Foundation::Collections::ValueSet^ customProperties) {
-	smtc->IsEnabled = true;
+	
 	smtc->IsPauseEnabled = true;
 	smtc->IsPlayEnabled = true;
 	smtc->IsNextEnabled = canGoNext;
 	smtc->IsPreviousEnabled = canGoBack;
 	auto coverUri = ref new Uri(api::EnsureCoverInCacheAsync(trackInfo.album.id, tools::strings::toWindowsString(trackInfo.album.cover), concurrency::cancellation_token::none()).get());
+
+	smtc->DisplayUpdater->ClearAll();
 	smtc->DisplayUpdater->Type = MediaPlaybackType::Music;
 	smtc->DisplayUpdater->MusicProperties->Artist = tools::strings::toWindowsString(trackInfo.artists[0].name);
 	smtc->DisplayUpdater->MusicProperties->AlbumTitle = tools::strings::toWindowsString(trackInfo.album.title);
 	smtc->DisplayUpdater->MusicProperties->Title = tools::strings::toWindowsString(trackInfo.title);
 	smtc->DisplayUpdater->Thumbnail = Windows::Storage::Streams::RandomAccessStreamReference::CreateFromUri(coverUri);
+	smtc->DisplayUpdater->AppMediaId = trackInfo.id.ToString();
 	smtc->DisplayUpdater->Update();
 
 	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
@@ -171,6 +174,8 @@ void showTrackDisplayInfo(const api::TrackInfo& trackInfo, bool canGoNext, bool 
 
 	settingsValues->Insert(L"CurrentPlaybackTrackIsImport", customProperties->Lookup(L"isImport"));
 	settingsValues->Insert(L"CurrentPlaybackTrackQuality", customProperties->Lookup(L"quality"));
+	settingsValues->Insert(L"CurrentPlaybackTrackCanGoBack", canGoBack);
+	settingsValues->Insert(L"CurrentPlaybackTrackCanGoNext", canGoNext);
 	auto ackSet = ref new Windows::Foundation::Collections::ValueSet();
 	ackSet->Insert(L"request", L"current_playback_item_changed");
 	ackSet->Insert(L"track_id", trackInfo.id);

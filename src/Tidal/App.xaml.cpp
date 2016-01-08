@@ -44,6 +44,10 @@ App::App()
 /// <param name="e">Details about the launch request and process.</param>
 void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs^ e)
 {
+	if (_smtcService) {
+		return;
+	}
+	_smtcService = std::make_unique<SmtcService>(Windows::UI::Core::CoreWindow::GetForCurrentThread()->Dispatcher);
 	Windows::Graphics::Display::DisplayInformation::AutoRotationPreferences = Windows::Graphics::Display::DisplayOrientations::Landscape
 		| Windows::Graphics::Display::DisplayOrientations::LandscapeFlipped
 		| Windows::Graphics::Display::DisplayOrientations::Portrait
@@ -121,9 +125,9 @@ void App::OnSuspending(Object^ sender, SuspendingEventArgs^ e)
 	(void)sender;	// Unused parameter
 	(void)e;	// Unused parameter
 	auto deferral = e->SuspendingOperation->GetDeferral();
+	_smtcService.reset();
 	getAudioService().onSuspending();
 	getAppSuspendingMediator().raise(true).then([deferral]() {deferral->Complete(); });
-
 }
 
 /// <summary>
@@ -139,6 +143,7 @@ void App::OnNavigationFailed(Platform::Object ^sender, Windows::UI::Xaml::Naviga
 void Tidal::App::OnResuming(Platform::Object ^sender, Platform::Object ^args)
 {
 
+	_smtcService = std::make_unique<SmtcService>(Windows::UI::Core::CoreWindow::GetForCurrentThread()->Dispatcher);
 	getFavoriteService().refreshAsync().then([](concurrency::task<void>t) {
 		try {
 			t.get();
