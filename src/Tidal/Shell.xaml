@@ -75,8 +75,11 @@
             </Button>
             <Border Background="#FF171717" x:Name="titleBar" RelativePanel.AlignRightWithPanel="True" 
                     RelativePanel.RightOf="backButton">
+                <StackPanel Orientation="Horizontal">
                 <FontIcon FontFamily="ms-appx:///Assets/TIDAL-Logo-Icons.ttf#tidal_logo" Glyph="b"
                       HorizontalAlignment="Left" FontSize="136"/>
+                    <TextBlock Text="unofficial" VerticalAlignment="Center" FontStyle="Italic" FontFamily="Consolas"/>
+                </StackPanel>
             </Border>
            
         </RelativePanel>
