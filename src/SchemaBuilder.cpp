@@ -346,8 +346,8 @@ std::string LocalDB::SchemaDefinition::generateEntitiesClasses(const SchemaDefin
 	result << "#include <vector>" << std::endl;
 	result << "#include <cstdint>" << std::endl;
 	result << "#include <sqlite3.h>" << std::endl;
-	result << "#include <DBQuery.h>" << std::endl;
-	result << "#include <Sqlite3Extensions.h>" << std::endl;
+	result << "#include <LocalDB/DBQuery.h>" << std::endl;
+	result << "#include <LocalDB/Sqlite3Extensions.h>" << std::endl;
 	for (auto& ns : nameSpace) {
 		result << "namespace " << ns << "{" << std::endl;
 	}
@@ -399,6 +399,31 @@ std::string LocalDB::SchemaDefinition::generateEntitiesClasses(const SchemaDefin
 		result << "}" << std::endl;
 		result << "public:" << std::endl;
 		result << table.name << "InsertDbQuery(const LocalDB::DBContext& ctx, const " << table.name << "& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity){}" << std::endl;
+		result << "};" << std::endl;
+
+
+		// insert or replace command
+		result << "class " << table.name << "InsertOrReplaceDbQuery : public LocalDB::NoResultDBQuery{" << std::endl;
+		result << "private:" << std::endl;
+		result << table.name << " _entity;" << std::endl;
+		result << "protected:" << std::endl;
+		result << "virtual std::string identifier() override { return \"gen-" << table.name << "-insertorreplace\";}" << std::endl;
+		result << "virtual std::string sql(int ) override {" << std::endl;
+
+		result << "return \"insert or replace into " << table.name << "(";
+		stringJoin(result, table.columns.begin(), table.columns.end(), ", ", [](auto& stream, const auto& col) {stream << col.name; });
+		result << ") values (";
+		stringJoin(result, table.columns.begin(), table.columns.end(), ", ", [](auto& stream, const auto& col) {stream << "@" << col.name; });
+		result << ")\";" << std::endl;
+		result << "}" << std::endl;
+
+		result << "virtual  void bindParameters(int, sqlite3* , sqlite3_stmt* statement) override {" << std::endl;
+		stringJoin(result, table.columns.begin(), table.columns.end(), "", [](auto& stream, const auto& col) {
+			stream << sqliteToBindFunction(col.type) << "(statement, sqlite3_bind_parameter_index(statement, \"@" << col.name << "\"), _entity." << col.name << ");" << std::endl;
+		});
+		result << "}" << std::endl;
+		result << "public:" << std::endl;
+		result << table.name << "InsertOrReplaceDbQuery(const LocalDB::DBContext& ctx, const " << table.name << "& entity) : LocalDB::NoResultDBQuery(ctx), _entity(entity){}" << std::endl;
 		result << "};" << std::endl;
 
 		// update query
