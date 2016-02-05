@@ -223,8 +223,7 @@
             </Style>
         </ResourceDictionary>
     </Page.Resources>
-    <Grid x:Name="rootGrid"  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-          local:BindableSizeHelper.Enabled="True">
+    <local:LoadingView x:Name="loadingView">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="AdaptativeStates">
                 <VisualState x:Name="Narrow"/>
@@ -252,6 +251,9 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+        <Grid x:Name="rootGrid"  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+          local:BindableSizeHelper.Enabled="True">
+       
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -523,4 +525,5 @@
             </PivotItem>
         </Pivot>
     </Grid>
+    </local:LoadingView>
 </Page>

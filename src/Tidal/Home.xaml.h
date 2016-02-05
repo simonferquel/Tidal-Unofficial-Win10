@@ -24,9 +24,16 @@ namespace Tidal
 	[Windows::Foundation::Metadata::WebHostHidden]
 	public ref class Home sealed
 	{
+	private:
+		concurrency::cancellation_token_source _cts;
 	public:
 		Home();
+	protected:
 
+		virtual void OnNavigatedFrom(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override {
+			_cts.cancel();
+			_cts = concurrency::cancellation_token_source();
+		}
 	private:
 		void OnPromotionClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
 		void OnVideoClicked(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);

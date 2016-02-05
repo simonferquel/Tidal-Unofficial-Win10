@@ -15,6 +15,14 @@ namespace Tidal
 	[Windows::Foundation::Metadata::WebHostHidden]
 	public ref class Rising sealed
 	{
+	private:
+		concurrency::cancellation_token_source _cts;
+
+	protected:
+		virtual void OnNavigatedFrom(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override {
+			_cts.cancel();
+			_cts = concurrency::cancellation_token_source();
+		}
 	public:
 		Rising();
 	private:

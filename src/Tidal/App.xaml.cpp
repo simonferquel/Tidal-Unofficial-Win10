@@ -61,7 +61,7 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 	}
 #endif
 
-	getFavoriteService().refreshAsync().then([](concurrency::task<void>t) {
+	getFavoriteService().refreshAsync(concurrency::cancellation_token::none()).then([](concurrency::task<void>t) {
 		try {
 			t.get();
 		}
@@ -144,7 +144,7 @@ void Tidal::App::OnResuming(Platform::Object ^sender, Platform::Object ^args)
 {
 
 	_smtcService = std::make_unique<SmtcService>(Windows::UI::Core::CoreWindow::GetForCurrentThread()->Dispatcher);
-	getFavoriteService().refreshAsync().then([](concurrency::task<void>t) {
+	getFavoriteService().refreshAsync(concurrency::cancellation_token::none()).then([](concurrency::task<void>t) {
 		try {
 			t.get();
 		}

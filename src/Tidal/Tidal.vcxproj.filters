@@ -65,6 +65,7 @@
     <ClCompile Include="MiniPlayerView.xaml.cpp" />
     <ClCompile Include="PlayerSeekBar.xaml.cpp" />
     <ClCompile Include="SmtcService.cpp" />
+    <ClCompile Include="LoadingView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -126,6 +127,7 @@
     <ClInclude Include="MiniPlayerView.xaml.h" />
     <ClInclude Include="PlayerSeekBar.xaml.h" />
     <ClInclude Include="SmtcService.h" />
+    <ClInclude Include="LoadingView.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\tidal-logo-large.png">
@@ -216,6 +218,7 @@
     <Page Include="MiniPlayerView.xaml" />
     <Page Include="PlayerSeekBar.xaml" />
     <Page Include="CurrentPlaylistPage.xaml" />
+    <Page Include="Themes\Generic.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\WiMP-Icons.ttf" />

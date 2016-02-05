@@ -60,36 +60,38 @@ concurrency::task<void> Tidal::Home::LoadTracksAsync()
 	try {
 		auto tracks = await getNewsTrackItemsAsync(concurrency::cancellation_token::none());
 		tracksLV->ItemsSource = tracks;
+
+		auto videoSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
+		auto albumSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
+		auto playlistSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
+		auto trackSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
+
+		auto allLists = await getSublistsAsync(concurrency::cancellation_token::none());
+		for (auto&& info : *allLists) {
+			auto item = ref new SublistItemVM(info);
+			if (info.hasAlbums) {
+				albumSublists->Append(item);
+			}
+			if (info.hasPlaylists) {
+				playlistSublists->Append(item);
+			}
+			if (info.hasTracks) {
+				trackSublists->Append(item);
+			}
+			if (info.hasVideos) {
+				videoSublists->Append(item);
+			}
+		}
+		videosFilter->SublistSource = videoSublists;
+		albumsFilter->SublistSource = albumSublists;
+		playlistsFilter->SublistSource = playlistSublists;
+		tracksFilter->SublistSource = trackSublists;
 	}
 	catch (...) {
 		// connectivity issue
 	}
 
-	auto videoSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
-	auto albumSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
-	auto playlistSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
-	auto trackSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
-
-	auto allLists = await getSublistsAsync(concurrency::cancellation_token::none());
-	for (auto&& info : *allLists) {
-		auto item = ref new SublistItemVM(info);
-		if (info.hasAlbums) {
-			albumSublists->Append(item);
-		}
-		if (info.hasPlaylists) {
-			playlistSublists->Append(item);
-		}
-		if (info.hasTracks) {
-			trackSublists->Append(item);
-		}
-		if (info.hasVideos) {
-			videoSublists->Append(item);
-		}
-	}
-	videosFilter->SublistSource = videoSublists;
-	albumsFilter->SublistSource = albumSublists;
-	playlistsFilter->SublistSource = playlistSublists;
-	tracksFilter->SublistSource = trackSublists;
+	
 }
 
 

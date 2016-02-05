@@ -64,6 +64,7 @@ concurrency::task<void> DownloadService::StartDownloadAlbumAsync(std::int64_t id
 			job.server_size = 0;
 			job.server_timestamp = 0;
 			job.title = ti.title;
+			job.obuscated = 1;
 
 			auto existing = LocalDB::executeSynchronously<localdata::GetExistingTrackImportJobQuery>(localCtx, db, ti.id);
 			if (existing->size() == 0) {
@@ -129,6 +130,7 @@ concurrency::task<void> DownloadService::StartDownloadPlaylistAsync(const std::w
 			job.server_size = 0;
 			job.server_timestamp = 0;
 			job.title = ti.title;
+			job.obuscated = 1;
 
 			auto existing = LocalDB::executeSynchronously<localdata::GetExistingTrackImportJobQuery>(localCtx, db, ti.id);
 			if (existing->size() == 0) {

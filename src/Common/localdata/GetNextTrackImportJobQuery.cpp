@@ -115,6 +115,7 @@ concurrency::task<void> localdata::transformTrackImportJobToImportedTrackAsync(L
 		trk.quality = job.quality;
 		trk.title = job.title;
 		trk.size = job.server_size;
+		trk.obuscated = job.obuscated;
 		
 		auto existing = LocalDB::executeSynchronouslyWithCancel<localdata::GetImportedTrackInfoQuery>(ctx, db, cancelToken, id);
 		if (existing->size() == 0) {

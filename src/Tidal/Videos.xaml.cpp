@@ -31,17 +31,22 @@ Videos::Videos()
 
 concurrency::task<void> Tidal::Videos::LoadAsync()
 {
-	auto videoSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
+	try {
+		auto videoSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
 
-	auto allLists = await getSublistsAsync(concurrency::cancellation_token::none());
-	for (auto&& info : *allLists) {
-		if (info.hasVideos) {
-			auto item = ref new SublistItemVM(info);
+		auto allLists = await getSublistsAsync(concurrency::cancellation_token::none());
+		for (auto&& info : *allLists) {
+			if (info.hasVideos) {
+				auto item = ref new SublistItemVM(info);
 
-			videoSublists->Append(item);
+				videoSublists->Append(item);
+			}
 		}
+		videosFilter->SublistSource = videoSublists;
 	}
-	videosFilter->SublistSource = videoSublists;
+	catch (...) {
+
+	}
 }
 
 void Tidal::Videos::OnPageLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)

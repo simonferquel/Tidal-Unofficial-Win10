@@ -24,10 +24,11 @@ private:
 		_myPlaylists = ref new Platform::Collections::Vector<Tidal::PlaylistResumeItemVM^>();
 		_tracks = ref new Platform::Collections::Vector<Tidal::TrackItemVM^>();
 	}
+	concurrency::task<void> doRefreshAsync(concurrency::cancellation_token cancelToken);
 public:
 	friend FavoritesService& getFavoriteService();
 
-	concurrency::task<void> refreshAsync();
+	concurrency::task<void> refreshAsync(concurrency::cancellation_token cancelToken);
 	Platform::Collections::Vector<Tidal::AlbumResumeItemVM^>^ Albums()const { return _albums; }
 	Platform::Collections::Vector<Tidal::ArtistItemVM^>^ Artists()const { return _artists; }
 	Platform::Collections::Vector<Tidal::PlaylistResumeItemVM^>^ Playlists()const { return _playlists; }

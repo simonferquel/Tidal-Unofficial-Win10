@@ -17,6 +17,7 @@
 #include "AlbumPage.xaml.h"
 #include "FavoritesService.h"
 #include "VideoItemVM.h"
+#include <tools/AsyncHelpers.h>
 using namespace Tidal;
 
 using namespace Platform;
@@ -100,87 +101,112 @@ void parseBio(TextBlock^ txtBlock, std::wstring bioText) {
 
 concurrency::task<void> Tidal::ArtistPage::LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ args)
 {
-	auto id = dynamic_cast<IBox<std::int64_t>^>(args->Parameter)->Value;
-	_artistId = id;
-	if (getFavoriteService().isArtistFavorite(id)) {
-		addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-	}
-	else {
-		removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-	}
-	auto info = await artists::getArtistInfoAsync(id, concurrency::cancellation_token::none());
-	videosGV->ItemsSource = getArtistVideosDataSource(id);
-	similarArtistsGV->ItemsSource = getSimilarArtistsDataSource(id);
-	auto popularTracksTask = artists::getArtistPopularTracksAsync(id, 10, concurrency::cancellation_token::none());
-	auto albumsTask = artists::getArtistAlbumsAsync(id, concurrency::cancellation_token::none());
-	auto singlesTask = artists::getArtistAlbumsAsync(id, concurrency::cancellation_token::none(), L"EPSANDSINGLES");
-	auto compilationsTask = artists::getArtistAlbumsAsync(id, concurrency::cancellation_token::none(), L"COMPILATIONS");
-	auto bioTask = artists::getArtistBioAsync(id, concurrency::cancellation_token::none());
-	if (info->picture.size() > 0) {
-		loadImageAsync(api::resolveImageUri(info->picture, 1024, 256));
-	}
-	pageHeader->Text = tools::strings::toWindowsString(info->name);
-	headerArtistName->Text = tools::strings::toWindowsString(info->name);
-	headerImageRound->ImageSource = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(ref new Uri(api::resolveImageUri(info->picture, 160, 160)));
-	auto tracks = await popularTracksTask;
-	auto trackSource = ref new Platform::Collections::Vector<TrackItemVM^>();
-	for (auto&& t : tracks->items) {
-		trackSource->Append(ref new TrackItemVM(t));
-	}
-	popularTracksLV->ItemsSource = trackSource;
-	auto albumGroups = ref new Platform::Collections::Vector<GroupedAlbums^>();
-	{
-		auto albums = ref new GroupedAlbums();
-		albums->Title = L"ALBUMS";
-		albums->Albums = ref new Platform::Collections::Vector<AlbumResumeItemVM^>();
-		auto albumsSource = await albumsTask;
-		for (auto&& a : albumsSource->items) {
-			albums->Albums->Append(ref new AlbumResumeItemVM(a));
-		}
-		albumGroups->Append(albums);
-	}
-
-	{
-		auto albums = ref new GroupedAlbums();
-		albums->Title = L"SINGLES";
-		albums->Albums = ref new Platform::Collections::Vector<AlbumResumeItemVM^>();
-		auto albumsSource = await singlesTask;
-		for (auto&& a : albumsSource->items) {
-			albums->Albums->Append(ref new AlbumResumeItemVM(a));
-		}
-		albumGroups->Append(albums);
-	}
-	{
-		auto albums = ref new GroupedAlbums();
-		albums->Title = L"COMPILATIONS";
-		albums->Albums = ref new Platform::Collections::Vector<AlbumResumeItemVM^>();
-		auto albumsSource = await compilationsTask;
-		for (auto&& a : albumsSource->items) {
-			albums->Albums->Append(ref new AlbumResumeItemVM(a));
-		}
-		albumGroups->Append(albums);
-	}
-
-	auto viewSource = ref new CollectionViewSource();
-	viewSource->Source = albumGroups;
-	viewSource->IsSourceGrouped = true;
-	viewSource->ItemsPath = ref new PropertyPath( L"Albums");
-	discoGridView->ItemsSource = viewSource->View;
+	auto cancelToken = _cts.get_token();
 	try {
-		auto bio = await bioTask;
-		parseBio(bioTxt, bio->text);
-		bioSource->Text = L"Source: " + tools::strings::toWindowsString(bio->source);
-	}
-	catch (api::statuscode_exception& ex) {
-		if (ex.getStatusCode() == Windows::Web::Http::HttpStatusCode::NotFound) {
-			unsigned int index;
-			if (pivot->Items->IndexOf(bioPivotItem, &index)) {
-				pivot->Items->RemoveAt(index);
-			}
+		loadingView->LoadingState = Tidal::LoadingState::Loading;
+		auto id = dynamic_cast<IBox<std::int64_t>^>(args->Parameter)->Value;
+		_artistId = id;
+		if (getFavoriteService().isArtistFavorite(id)) {
+			addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 		}
 		else {
-			throw;
+			removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 		}
+		auto info = await artists::getArtistInfoAsync(id, cancelToken);
+		videosGV->ItemsSource = getArtistVideosDataSource(id);
+		similarArtistsGV->ItemsSource = getSimilarArtistsDataSource(id);
+		auto popularTracksTask = tools::async::swallowCancellationException( artists::getArtistPopularTracksAsync(id, 10, cancelToken));
+		auto albumsTask = tools::async::swallowCancellationException(artists::getArtistAlbumsAsync(id, cancelToken));
+		auto singlesTask = tools::async::swallowCancellationException(artists::getArtistAlbumsAsync(id, cancelToken, L"EPSANDSINGLES"));
+		auto compilationsTask = tools::async::swallowCancellationException(artists::getArtistAlbumsAsync(id, cancelToken, L"COMPILATIONS"));
+		auto bioTask = tools::async::swallowCancellationException(artists::getArtistBioAsync(id, cancelToken));
+		if (info->picture.size() > 0) {
+			loadImageAsync(api::resolveImageUri(info->picture, 1024, 256));
+		}
+		pageHeader->Text = tools::strings::toWindowsString(info->name);
+		headerArtistName->Text = tools::strings::toWindowsString(info->name);
+		headerImageRound->ImageSource = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(ref new Uri(api::resolveImageUri(info->picture, 160, 160)));
+		auto tracks = await popularTracksTask;
+		if (tracks.cancelled) {
+			concurrency::cancel_current_task();
+		}
+		auto trackSource = ref new Platform::Collections::Vector<TrackItemVM^>();
+		for (auto&& t : tracks.result->items) {
+			trackSource->Append(ref new TrackItemVM(t));
+		}
+		popularTracksLV->ItemsSource = trackSource;
+		auto albumGroups = ref new Platform::Collections::Vector<GroupedAlbums^>();
+		{
+			auto albums = ref new GroupedAlbums();
+			albums->Title = L"ALBUMS";
+			albums->Albums = ref new Platform::Collections::Vector<AlbumResumeItemVM^>();
+			auto albumsSource = await albumsTask;
+			if (albumsSource.cancelled) {
+				concurrency::cancel_current_task();
+			}
+			for (auto&& a : albumsSource.result->items) {
+				albums->Albums->Append(ref new AlbumResumeItemVM(a));
+			}
+			albumGroups->Append(albums);
+		}
+
+		{
+			auto albums = ref new GroupedAlbums();
+			albums->Title = L"SINGLES";
+			albums->Albums = ref new Platform::Collections::Vector<AlbumResumeItemVM^>();
+			auto albumsSource = await singlesTask;
+			if (albumsSource.cancelled) {
+				concurrency::cancel_current_task();
+			}
+			for (auto&& a : albumsSource.result->items) {
+				albums->Albums->Append(ref new AlbumResumeItemVM(a));
+			}
+			albumGroups->Append(albums);
+		}
+		{
+			auto albums = ref new GroupedAlbums();
+			albums->Title = L"COMPILATIONS";
+			albums->Albums = ref new Platform::Collections::Vector<AlbumResumeItemVM^>();
+			auto albumsSource = await compilationsTask;
+			if (albumsSource.cancelled) {
+				concurrency::cancel_current_task();
+			}
+			for (auto&& a : albumsSource.result->items) {
+				albums->Albums->Append(ref new AlbumResumeItemVM(a));
+			}
+			albumGroups->Append(albums);
+		}
+
+		auto viewSource = ref new CollectionViewSource();
+		viewSource->Source = albumGroups;
+		viewSource->IsSourceGrouped = true;
+		viewSource->ItemsPath = ref new PropertyPath(L"Albums");
+		discoGridView->ItemsSource = viewSource->View;
+		try {
+			auto bio = await bioTask;
+			if (bio.cancelled) {
+				concurrency::cancel_current_task();
+			}
+			parseBio(bioTxt, bio.result->text);
+			bioSource->Text = L"Source: " + tools::strings::toWindowsString(bio.result->source);
+		}
+		catch (api::statuscode_exception& ex) {
+			if (ex.getStatusCode() == Windows::Web::Http::HttpStatusCode::NotFound) {
+				unsigned int index;
+				if (pivot->Items->IndexOf(bioPivotItem, &index)) {
+					pivot->Items->RemoveAt(index);
+				}
+			}
+			else {
+				throw;
+			}
+		}
+
+		loadingView->LoadingState = Tidal::LoadingState::Loaded;
+	}
+	catch (...) {
+
+		loadingView->LoadingState = Tidal::LoadingState::Error;
 	}
 }
 

@@ -16,6 +16,7 @@
 #include "MenuFlyouts.h"
 #include <Api/CoverCache.h>
 #include "FavoritesService.h"
+#include "LoadingView.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -47,10 +48,10 @@ Tidal::AlbumPage::~AlbumPage()
 
 
 
-concurrency::task<void> Tidal::AlbumPage::loadImageAsync(Platform::String^ url)
+concurrency::task<void> Tidal::AlbumPage::loadImageAsync(Platform::String^ url,concurrency::cancellation_token cancelToken)
 {
 	win2DCtl->CustomDevice = Microsoft::Graphics::Canvas::CanvasDevice::GetSharedDevice();
-	auto bmp = await Microsoft::Graphics::Canvas::CanvasBitmap::LoadAsync(Microsoft::Graphics::Canvas::CanvasDevice::GetSharedDevice(), ref new Uri(url));
+	auto bmp = await concurrency::create_task( Microsoft::Graphics::Canvas::CanvasBitmap::LoadAsync(Microsoft::Graphics::Canvas::CanvasDevice::GetSharedDevice(), ref new Uri(url)), cancelToken);
 
 	_albumBmp = bmp;
 	await Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {
@@ -122,44 +123,52 @@ void Tidal::AlbumPage::ReevaluateTracksPlayingStates()
 
 concurrency::task<void> Tidal::AlbumPage::LoadAsync(std::int64_t id)
 {
-	if (getFavoriteService().isAlbumFavorite(id)) {
-		addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-		removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Visible;
+	auto cancelToken = _cts.get_token();
+	try {
+		loadingView->LoadingState = Tidal::LoadingState::Loading;
+		if (getFavoriteService().isAlbumFavorite(id)) {
+			addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+			removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Visible;
+		}
+		else {
+			addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Visible;
+			removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+
+		}
+		auto albumInfo = await albums::getAlbumResumeAsync(id, cancelToken);
+		_artistId = albumInfo->artist.id;
+		pageHeader->Text = tools::strings::toWindowsString(albumInfo->title);
+		auto headImageUrl = await api::GetCoverUriAndFallbackToWebAsync(id, tools::strings::toWindowsString(albumInfo->cover), 320, 320, cancelToken);
+
+		headerCover->Source = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(ref new Uri(headImageUrl));
+
+		headerTitle->Text = pageHeader->Text;
+		headerArtist->Text = tools::strings::toWindowsString(albumInfo->artist.name);
+
+		std::wstring txtTracksAndDuration;
+		txtTracksAndDuration.append(std::to_wstring(albumInfo->numberOfTracks));
+		txtTracksAndDuration.append(L" tracks (");
+		txtTracksAndDuration.append(tools::time::toStringMMSS(albumInfo->duration));
+		txtTracksAndDuration.append(L")");
+		headerTracksAndDuration->Text = tools::strings::toWindowsString(txtTracksAndDuration);
+		albumsGV->ItemsSource = getArtistAlbumsDataSource(albumInfo->artist.id);
+		auto tracks = await albums::getAlbumTracksAsync(id, albumInfo->numberOfTracks, cancelToken);
+		auto tracksDataSource = ref new Platform::Collections::Vector<Tidal::TrackItemVM^>();
+		for (auto&& t : tracks->items) {
+			tracksDataSource->Append(ref new Tidal::TrackItemVM(t, true));
+		}
+		tracksLV->ItemsSource = tracksDataSource;
+		_tracks = tracksDataSource;
+		ReevaluateTracksPlayingStates();
+		if (albumInfo->cover.size() > 0) {
+			auto bgImageUrl = await api::GetCoverUriAndFallbackToWebAsync(id, tools::strings::toWindowsString(albumInfo->cover), 1080, 1080, cancelToken);
+
+			await loadImageAsync(bgImageUrl, cancelToken);
+		}
+		loadingView->LoadingState = Tidal::LoadingState::Loaded;
 	}
-	else {
-		addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Visible;
-		removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-
-	}
-	auto albumInfo = await albums::getAlbumResumeAsync(id, concurrency::cancellation_token::none());
-	_artistId = albumInfo->artist.id;
-	pageHeader->Text = tools::strings::toWindowsString(albumInfo->title);
-	auto headImageUrl = await api::GetCoverUriAndFallbackToWebAsync(id, tools::strings::toWindowsString(albumInfo->cover), 320, 320, concurrency::cancellation_token::none());
-
-	headerCover->Source = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(ref new Uri(headImageUrl));
-
-	headerTitle->Text = pageHeader->Text;
-	headerArtist->Text = tools::strings::toWindowsString(albumInfo->artist.name);
-
-	std::wstring txtTracksAndDuration;
-	txtTracksAndDuration.append(std::to_wstring(albumInfo->numberOfTracks));
-	txtTracksAndDuration.append(L" tracks (");
-	txtTracksAndDuration.append(tools::time::toStringMMSS(albumInfo->duration));
-	txtTracksAndDuration.append(L")");
-	headerTracksAndDuration->Text = tools::strings::toWindowsString(txtTracksAndDuration);
-	albumsGV->ItemsSource = getArtistAlbumsDataSource(albumInfo->artist.id);
-	auto tracks = await albums::getAlbumTracksAsync(id, albumInfo->numberOfTracks, concurrency::cancellation_token::none());
-	auto tracksDataSource = ref new Platform::Collections::Vector<Tidal::TrackItemVM^>();
-	for (auto&& t : tracks->items) {
-		tracksDataSource->Append(ref new Tidal::TrackItemVM(t, true));
-	}
-	tracksLV->ItemsSource = tracksDataSource;
-	_tracks = tracksDataSource;
-	ReevaluateTracksPlayingStates();
-	if (albumInfo->cover.size() > 0) {
-		auto bgImageUrl = await api::GetCoverUriAndFallbackToWebAsync(id, tools::strings::toWindowsString(albumInfo->cover), 1080, 1080, concurrency::cancellation_token::none());
-
-		await loadImageAsync(bgImageUrl);
+	catch (...) {
+		loadingView->LoadingState = Tidal::LoadingState::Error;
 	}
 }
 

@@ -14,6 +14,7 @@
 #include <tools/TimeUtils.h>
 #include <Api/ApiErrors.h>
 #include "WebStream.h"
+#include <ObfuscateStream.h>
 using namespace Windows::Foundation;
 using namespace Windows::Storage::Streams;
 
@@ -197,7 +198,7 @@ public:
 	unsigned long long size() { return _track.server_size; }
 
 	HttpCacheStateMachine(std::int64_t trackId, SoundQuality soundQuality, IRandomAccessStream^ fileStream, const localdata::cached_track& track, concurrency::cancellation_token cancelToken) :
-		_track(track), _trackId(trackId), _soundQuality(soundQuality), _fileStream(fileStream)
+		_track(track), _trackId(trackId), _soundQuality(soundQuality), _fileStream(track.obuscated ==0 ? fileStream: ref new ObfuscateStream(fileStream, trackId))
 	{
 		if (cancelToken.is_cancelable()) {
 			_cts = concurrency::cancellation_token_source::create_linked_source(cancelToken);
@@ -362,7 +363,10 @@ public:
 concurrency::task<cached_stream_info> getCompleteStreamAsync(localdata::cached_track track, concurrency::cancellation_token cancelToken) {
 	auto folder = await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFolderAsync(L"track_cache", Windows::Storage::CreationCollisionOption::OpenIfExists));
 	auto file = await concurrency::create_task(folder->GetFileAsync(track.id.ToString()));
-	auto stream = await concurrency::create_task(file->OpenReadAsync());
+	IRandomAccessStream^ stream = await concurrency::create_task(file->OpenReadAsync());
+	if (track.obuscated == 1) {
+		stream = ref new ObfuscateStream(stream, track.id);
+	}
 
 	track.last_playpack_time = std::chrono::system_clock::now().time_since_epoch().count();
 	await cache::updateCachedTrackInfoAsync(localdata::getDb(), track, cancelToken);
@@ -406,7 +410,10 @@ concurrency::task<cached_stream_info> resolveCachedStreamAsync(std::int64_t id, 
 		await LocalDB::executeAsyncWithCancel<localdata::imported_trackUpdateDbQuery>(localdata::getDb(), cancelToken, state);
 		auto uri = ref new Windows::Foundation::Uri(L"ms-appdata:///local/imports/" + id.ToString());
 		auto streamRef = RandomAccessStreamReference::CreateFromUri(uri);
-		auto stream = await concurrency::create_task(streamRef->OpenReadAsync(), cancelToken);
+		IRandomAccessStream^ stream = await concurrency::create_task(streamRef->OpenReadAsync(), cancelToken);
+		if (state.obuscated == 1) {
+			stream = ref new ObfuscateStream(stream, state.id);
+		}
 		cached_stream_info result;
 		result.stream = stream;
 		result.contentType = importState->at(0).quality >= static_cast<int32>(SoundQuality::Lossless) ?

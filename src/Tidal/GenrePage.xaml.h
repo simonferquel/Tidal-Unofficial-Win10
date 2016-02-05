@@ -18,9 +18,14 @@ namespace Tidal
 	{
 	private:
 		concurrency::task<void> LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e);
+		concurrency::cancellation_token_source _cts;
 	protected:
 
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
+		virtual void OnNavigatedFrom(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override {
+			_cts.cancel();
+			_cts = concurrency::cancellation_token_source();
+		}
 	public:
 		GenrePage();
 	private:

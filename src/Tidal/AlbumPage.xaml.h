@@ -24,12 +24,17 @@ namespace Tidal
 		tools::ScopedEventRegistrations _eventRegistrations;
 		std::int64_t _artistId;
 		std::int64_t _albumId;
+		concurrency::cancellation_token_source _cts;
 	public:
 		AlbumPage();
 		virtual ~AlbumPage();
 	protected:
 
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
+		virtual void OnNavigatedFrom(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override {
+			_cts.cancel();
+			_cts = concurrency::cancellation_token_source();
+		}
 	private:
 		void AttachToPlayerEvents();
 		void DettachFromPlayerEvents();
@@ -37,7 +42,7 @@ namespace Tidal
 		concurrency::task<void> LoadAsync(std::int64_t id);
 		Platform::Collections::Vector<TrackItemVM^>^ _tracks = nullptr;
 		Microsoft::Graphics::Canvas::CanvasBitmap^ _albumBmp;
-		concurrency::task<void> loadImageAsync(Platform::String^ url);
+		concurrency::task<void> loadImageAsync(Platform::String^ url, concurrency::cancellation_token cancelToken);
 
 		void OnWin2DDrawing(Microsoft::Graphics::Canvas::UI::Xaml::ICanvasAnimatedControl^ sender, Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedDrawEventArgs^ args);
 		void OnWin2DCtlLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

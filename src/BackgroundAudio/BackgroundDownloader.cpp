@@ -11,6 +11,7 @@
 #include <Api/ApiErrors.h>
 #include <localdata/GetTrackImportQueueQuery.h>
 #include "WebStream.h"
+#include <ObfuscateStream.h>
 
 concurrency::task<void> handleJobAsync(localdata::track_import_job job, concurrency::cancellation_token cancelToken) {
 	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
@@ -53,14 +54,16 @@ concurrency::task<void> handleJobAsync(localdata::track_import_job job, concurre
 			}
 			auto folder = await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFolderAsync(L"imports", Windows::Storage::CreationCollisionOption::OpenIfExists));
 			auto file = await concurrency::create_task(folder->CreateFileAsync(job.id.ToString(), Windows::Storage::CreationCollisionOption::OpenIfExists));
-			auto fileStream = await concurrency::create_task(file->OpenAsync(Windows::Storage::FileAccessMode::ReadWrite));
+			Windows::Storage::Streams::IRandomAccessStream^ fileStream = await concurrency::create_task(file->OpenAsync(Windows::Storage::FileAccessMode::ReadWrite));
 			if (fileStream->Position != job.local_size) {
 				fileStream->Seek(job.local_size);
 			}
 			if (webStream->Position != job.local_size) {
 				webStream->Seek(job.local_size);
 			}
-
+			if (job.obuscated) {
+				fileStream = ref new ObfuscateStream(fileStream, job.id);
+			}
 			auto buffer = ref new Windows::Storage::Streams::Buffer(128 * 1024);
 			while (job.local_size < job.server_size) {
 				buffer->Length = 0;

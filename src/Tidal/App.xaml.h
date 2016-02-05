@@ -8,6 +8,7 @@
 #include "App.g.h"
 #include "SmtcService.h"
 #include <memory>
+#include "LoadingView.h"
 
 namespace Tidal
 {

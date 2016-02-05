@@ -21,11 +21,16 @@ namespace Tidal
 	private:
 		std::int64_t _artistId;
 		Microsoft::Graphics::Canvas::CanvasBitmap^ _albumBmp;
+		concurrency::cancellation_token_source _cts;
 	public:
 		ArtistPage();
 	protected:
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override {
 			LoadAsync(e);
+		}
+		virtual void OnNavigatedFrom(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override {
+			_cts.cancel();
+			_cts = concurrency::cancellation_token_source();
 		}
 	private:
 

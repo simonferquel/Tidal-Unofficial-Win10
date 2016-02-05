@@ -24,11 +24,17 @@ namespace Tidal
 		tools::ScopedEventRegistrations _eventRegistrations;
 		Platform::Collections::Vector<TrackItemVM^>^ _tracks;
 		std::wstring _playlistId;
+		concurrency::cancellation_token_source _cts;
 	public:
 		PlaylistPage();
 	protected:
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override {
 			LoadAsync(e);
+		}
+
+		virtual void OnNavigatedFrom(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override {
+			_cts.cancel();
+			_cts = concurrency::cancellation_token_source();
 		}
 	private:
 		void AttachToPlayerEvents();

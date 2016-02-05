@@ -64,5 +64,48 @@ namespace tools {
 			auto linkedCts = concurrency::cancellation_token_source::create_linked_source(tokens, tokens + ARRAYSIZE(tokens));
 			return linkedCts.get_token();
 		}
+
+		
+
+		template<typename T>
+		struct cancellable_result {
+			T result;
+			bool cancelled;
+		};
+
+		template <>
+		struct cancellable_result<void> {
+			bool cancelled;
+		};
+
+		template<typename T>
+		concurrency::task<cancellable_result<T>> swallowCancellationException(concurrency::task<T> t) {
+			return t.then([](const concurrency::task<T>& t) {
+				cancellable_result<T> result;
+				try {
+					result.result = t.get();
+					result.cancelled = false;
+				}
+				catch (concurrency::task_canceled&) {
+					result.cancelled = true;
+				}
+				return result;
+			});
+		}
+
+		template<>
+		inline concurrency::task<cancellable_result<void>> swallowCancellationException<void>(concurrency::task<void> t) {
+			return t.then([](const concurrency::task<void>& t) {
+				cancellable_result<void> result;
+				try {
+					t.get();
+					result.cancelled = false;
+				}
+				catch (concurrency::task_canceled&) {
+					result.cancelled = true;
+				}
+				return result;
+			});
+		}
 	}
 }

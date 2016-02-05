@@ -59,6 +59,7 @@
     <ClCompile Include="localdata\GetTrackImportQueueQuery.cpp" />
     <ClCompile Include="localdata\StorageStatistics.cpp" />
     <ClCompile Include="Api\FavoriteQueries.cpp" />
+    <ClCompile Include="ObfuscateStream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -125,5 +126,6 @@
     <ClInclude Include="localdata\GetTrackImportQueueQuery.h" />
     <ClInclude Include="localdata\StorageStatistics.h" />
     <ClInclude Include="Api\FavoriteQueries.h" />
+    <ClInclude Include="ObfuscateStream.h" />
   </ItemGroup>
 </Project>

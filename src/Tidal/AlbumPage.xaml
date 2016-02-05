@@ -10,6 +10,7 @@
     mc:Ignorable="d">
     <Page.Resources>
         <ResourceDictionary>
+            
             <DataTemplate x:Key="TrackItemTemplateExtraLarge"
                       x:DataType="local:TrackItemVM">
                 <Border Height="49" BorderThickness="1,0,0,1">
@@ -197,8 +198,7 @@
         </Style>
         </ResourceDictionary>
     </Page.Resources>
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    <local:LoadingView x:Name="loadingView">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="AdaptativeStates">
                 <VisualState x:Name="Narrow"/>
@@ -226,174 +226,178 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <win2D:CanvasAnimatedControl x:Name="win2DCtl" Loaded="OnWin2DCtlLoaded"  Margin="0,48,0,0"  Grid.Row="1" Draw="OnWin2DDrawing" />
-        <Image Margin="0,48,0,0"  />
-        <Border BorderThickness="1,1,0,1" BorderBrush="Black" Background="#FF171717" Height="48">
-            <TextBlock x:Name="pageHeader" Style="{StaticResource PageTitleStyle}" FontSize="16"></TextBlock>
-        </Border>
-        <Pivot Grid.Row="1">
-            <PivotItem Header="Tracks" Padding="0" Margin="0">
-                <ListView x:Name="tracksLV" ItemContainerStyle="{StaticResource TrackListViewItemStyle}" ItemTemplate="{StaticResource TrackItemTemplateNarrow}">
-                    <ListView.Header>
-                        <StackPanel Background="Black">
-                            <RelativePanel>
-                                <Image 
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <win2D:CanvasAnimatedControl x:Name="win2DCtl" Loaded="OnWin2DCtlLoaded"  Margin="0,48,0,0"  Grid.Row="1" Draw="OnWin2DDrawing" />
+            <Image Margin="0,48,0,0"  />
+            <Border BorderThickness="1,1,0,1" BorderBrush="Black" Background="#FF171717" Height="48">
+                <TextBlock x:Name="pageHeader" Style="{StaticResource PageTitleStyle}" FontSize="16"></TextBlock>
+            </Border>
+            <Pivot Grid.Row="1">
+                <PivotItem Header="Tracks" Padding="0" Margin="0">
+                    <ListView x:Name="tracksLV" ItemContainerStyle="{StaticResource TrackListViewItemStyle}" ItemTemplate="{StaticResource TrackItemTemplateNarrow}">
+                        <ListView.Header>
+                            <StackPanel Background="Black">
+                                <RelativePanel>
+                                    <Image 
                                    Width="96"
                                    Height="96"
                                    Margin="12,0"
                                    x:Name="headerCover"/>
-                                <AppBarButton Width="48" Height="48" x:Name="headerPlay"  RelativePanel.RightOf="headerCover" 
+                                    <AppBarButton Width="48" Height="48" x:Name="headerPlay"  RelativePanel.RightOf="headerCover" 
                                               Click="OnPlayAlbumClick">
-                                    <SymbolIcon  Symbol="Play"/>
-                                </AppBarButton>
-                                <TextBlock RelativePanel.AlignTopWith="headerPlay"
+                                        <SymbolIcon  Symbol="Play"/>
+                                    </AppBarButton>
+                                    <TextBlock RelativePanel.AlignTopWith="headerPlay"
                                        RelativePanel.RightOf="headerPlay"  x:Name="headerTitle" Margin="0,0,12,0" TextTrimming="CharacterEllipsis" FontStyle="Italic"></TextBlock>
-                                <TextBlock RelativePanel.Below="headerTitle"
+                                    <TextBlock RelativePanel.Below="headerTitle"
                                        RelativePanel.AlignLeftWith="headerTitle" FontSize="12"  >
                                     <Hyperlink  Foreground="#FF999999" Click="OnGoToArtist">
                                         <Run x:Name="headerArtist" />
                                     </Hyperlink>
-                                </TextBlock>
-                                <TextBlock RelativePanel.Below="headerPlay"
+                                    </TextBlock>
+                                    <TextBlock RelativePanel.Below="headerPlay"
                                        RelativePanel.AlignLeftWith="headerPlay" FontSize="12" x:Name="headerTracksAndDuration"></TextBlock>
-                                <Grid x:Name="headerFavoriteBtn" 
+                                    <Grid x:Name="headerFavoriteBtn" 
                                         RelativePanel.Below="headerTracksAndDuration"
                                         RelativePanel.AlignLeftWith="headerPlay" >
-                                    <Button Background="Transparent" Margin="-4,4,0,0" Padding="0"
+                                        <Button Background="Transparent" Margin="-4,4,0,0" Padding="0"
                                             x:Name="addFavoriteButton"
                                             Click="OnAddFavoriteClick">
-                                        <StackPanel Orientation="Horizontal">
-                                            <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
-                                            <TextBlock VerticalAlignment="Center">Favorite</TextBlock>
-                                        </StackPanel>
-                                    </Button>
-                                    <Button Background="Transparent" Margin="-4,4,0,0" Padding="0" Foreground="{StaticResource TidalAccentBrush}"
+                                            <StackPanel Orientation="Horizontal">
+                                                <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
+                                                <TextBlock VerticalAlignment="Center">Favorite</TextBlock>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Background="Transparent" Margin="-4,4,0,0" Padding="0" Foreground="{StaticResource TidalAccentBrush}"
                                             Click="OnRemoveFavoriteClick"
                                             x:Name="removeFavoriteButton">
-                                        <StackPanel Orientation="Horizontal">
-                                            <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€" />
-                                            <TextBlock VerticalAlignment="Center">Favorite</TextBlock>
-                                        </StackPanel>
-                                    </Button>
-                                </Grid>
+                                            <StackPanel Orientation="Horizontal">
+                                                <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€" />
+                                                <TextBlock VerticalAlignment="Center">Favorite</TextBlock>
+                                            </StackPanel>
+                                        </Button>
+                                    </Grid>
 
-                                <Button x:Name="headerShareBtn"
+                                    <Button x:Name="headerShareBtn"
                                         Background="Transparent"
                                         RelativePanel.Below="headerTracksAndDuration"
                                         RelativePanel.RightOf="headerFavoriteBtn" Margin="4,4,0,0" Padding="0">
-                                    <StackPanel Orientation="Horizontal">
-                                        <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="R" />
-                                        <TextBlock VerticalAlignment="Center">Share</TextBlock>
-                                    </StackPanel>
-                                </Button>
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="R" />
+                                            <TextBlock VerticalAlignment="Center">Share</TextBlock>
+                                        </StackPanel>
+                                    </Button>
 
-                                <Button x:Name="headerMoreButton"
+                                    <Button x:Name="headerMoreButton"
                                         Background="Transparent"
                                         RelativePanel.Below="headerTracksAndDuration"
                                         RelativePanel.RightOf="headerShareBtn" Margin="4,4,0,0" Padding="0"
                                         Click="OnMenuClick">
-                                    <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="#" />
-                                </Button>
-                            </RelativePanel>
-                            <Border Background="#FF171717" BorderBrush="Black" BorderThickness="1,1,0,1" Margin="0,0,0,0">
-                                <Grid x:Name="tracksHeaderGrid" Margin="0,8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="12" />
-                                        <ColumnDefinition Width="48" />
-                                        <ColumnDefinition Width="2*" />
-                                        <ColumnDefinition Width="0" />
-                                        <ColumnDefinition Width="0" />
-                                        <ColumnDefinition Width="0" />
-                                        <ColumnDefinition Width="84" />
-                                    </Grid.ColumnDefinitions>
-                                    <FontIcon Grid.Column="1"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="G" FontSize="24" HorizontalAlignment="Right" />
-                                    <TextBlock Margin="8,0,0,0"  Grid.Column="2" VerticalAlignment="Center">TITLE</TextBlock>
-                                    <StackPanel Orientation="Horizontal" Margin="8,0,0,0"  
+                                        <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="#" />
+                                    </Button>
+                                </RelativePanel>
+                                <Border Background="#FF171717" BorderBrush="Black" BorderThickness="1,1,0,1" Margin="0,0,0,0">
+                                    <Grid x:Name="tracksHeaderGrid" Margin="0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="12" />
+                                            <ColumnDefinition Width="48" />
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="0" />
+                                            <ColumnDefinition Width="0" />
+                                            <ColumnDefinition Width="0" />
+                                            <ColumnDefinition Width="84" />
+                                        </Grid.ColumnDefinitions>
+                                        <FontIcon Grid.Column="1"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="G" FontSize="24" HorizontalAlignment="Right" />
+                                        <TextBlock Margin="8,0,0,0"  Grid.Column="2" VerticalAlignment="Center">TITLE</TextBlock>
+                                        <StackPanel Orientation="Horizontal" Margin="8,0,0,0"  
                                     Grid.Column="3">
 
-                                        <FontIcon Grid.Column="1"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="J" FontSize="24" />
-                                        <TextBlock VerticalAlignment="Center">ARTIST</TextBlock>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="8,0,0,0"  
+                                            <FontIcon Grid.Column="1"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="J" FontSize="24" />
+                                            <TextBlock VerticalAlignment="Center">ARTIST</TextBlock>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="8,0,0,0"  
                                     Grid.Column="4">
 
-                                        <FontIcon Grid.Column="1"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="A" FontSize="24" />
-                                        <TextBlock VerticalAlignment="Center">ALBUM</TextBlock>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"  Margin="0,0,8,0"  
+                                            <FontIcon Grid.Column="1"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="A" FontSize="24" />
+                                            <TextBlock VerticalAlignment="Center">ALBUM</TextBlock>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"  Margin="0,0,8,0"  
                                     Grid.Column="5">
 
-                                        <FontIcon Grid.Column="1"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="F" FontSize="24" />
+                                            <FontIcon Grid.Column="1"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="F" FontSize="24" />
 
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </StackPanel>
-                    </ListView.Header>
-                </ListView>
-            </PivotItem>
-            <PivotItem Header="Other albums" Padding="0" Margin="0">
-                <Grid x:Name="grid" local:BindableSizeHelper.Enabled="True">
-                    <Grid.Resources>
-                        <local:MetricsHelper x:Key="MetricsSmall" DesiredItemSize="96" ItemMargin="12" ViewportSize="{Binding (local:BindableSizeHelper.BindableWidth), Mode=OneWay,ElementName=grid}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </ListView.Header>
+                    </ListView>
+                </PivotItem>
+                <PivotItem Header="Other albums" Padding="0" Margin="0">
+                    <Grid x:Name="grid" local:BindableSizeHelper.Enabled="True">
+                        <Grid.Resources>
+                            <local:MetricsHelper x:Key="MetricsSmall" DesiredItemSize="96" ItemMargin="12" ViewportSize="{Binding (local:BindableSizeHelper.BindableWidth), Mode=OneWay,ElementName=grid}" />
 
-                        <Style TargetType="GridViewItem" x:Key="GridViewItemSmall">
-                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
-                            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-                            <Setter Property="TabNavigation" Value="Local"/>
-                            <Setter Property="IsHoldingEnabled" Value="True"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                            <Setter Property="Margin" Value="12"/>
-                            <Setter Property="MinWidth" Value="{ThemeResource GridViewItemMinWidth}"/>
-                            <Setter Property="MinHeight" Value="{ThemeResource GridViewItemMinHeight}"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="GridViewItem">
-                                        <ListViewItemPresenter CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" ContentMargin="{TemplateBinding Padding}" CheckMode="Overlay" ContentTransitions="{TemplateBinding ContentTransitions}" CheckBoxBrush="{ThemeResource SystemControlBackgroundChromeMediumBrush}" DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}" FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" PointerOverForeground="{ThemeResource SystemControlForegroundBaseHighBrush}" PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}" ReorderHintOffset="{ThemeResource GridViewItemReorderHintThemeOffset}" SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}" SelectionCheckMarkVisualEnabled="True" SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}" SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}" SelectedBackground="{ThemeResource SystemControlHighlightAccentBrush}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            <Style TargetType="GridViewItem" x:Key="GridViewItemSmall">
+                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+                                <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                                <Setter Property="TabNavigation" Value="Local"/>
+                                <Setter Property="IsHoldingEnabled" Value="True"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Margin" Value="12"/>
+                                <Setter Property="MinWidth" Value="{ThemeResource GridViewItemMinWidth}"/>
+                                <Setter Property="MinHeight" Value="{ThemeResource GridViewItemMinHeight}"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="GridViewItem">
+                                            <ListViewItemPresenter CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" ContentMargin="{TemplateBinding Padding}" CheckMode="Overlay" ContentTransitions="{TemplateBinding ContentTransitions}" CheckBoxBrush="{ThemeResource SystemControlBackgroundChromeMediumBrush}" DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}" FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" PointerOverForeground="{ThemeResource SystemControlForegroundBaseHighBrush}" PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}" ReorderHintOffset="{ThemeResource GridViewItemReorderHintThemeOffset}" SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}" SelectionCheckMarkVisualEnabled="True" SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}" SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}" SelectedBackground="{ThemeResource SystemControlHighlightAccentBrush}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                                />
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </Grid.Resources>
-                    <GridView x:Name="albumsGV"  SelectionMode="None" IsItemClickEnabled="True" Padding="0" ItemContainerStyle="{StaticResource GridViewItemSmall}"  ItemClick="OnAlbumClicked">
-                        <GridView.ItemTemplate>
-                            <DataTemplate x:DataType="local:AlbumResumeItemVM">
-                                <StackPanel  Width="{Binding ComputedItemSize, Source={StaticResource MetricsSmall}}">
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Grid.Resources>
+                        <GridView x:Name="albumsGV"  SelectionMode="None" IsItemClickEnabled="True" Padding="0" ItemContainerStyle="{StaticResource GridViewItemSmall}"  ItemClick="OnAlbumClicked">
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="local:AlbumResumeItemVM">
+                                    <StackPanel  Width="{Binding ComputedItemSize, Source={StaticResource MetricsSmall}}">
 
-                                    <Image Height="{Binding ComputedItemSize, Source={StaticResource MetricsSmall}}" >
-                                        <Image.Source>
-                                            <BitmapImage DecodePixelType="Logical" DecodePixelWidth="{Binding ComputedItemSize, Source={StaticResource MetricsSmall}}" 
+                                        <Image Height="{Binding ComputedItemSize, Source={StaticResource MetricsSmall}}" >
+                                            <Image.Source>
+                                                <BitmapImage DecodePixelType="Logical" DecodePixelWidth="{Binding ComputedItemSize, Source={StaticResource MetricsSmall}}" 
                                                          DecodePixelHeight="{Binding ComputedItemSize, Source={StaticResource MetricsSmall}}"
                                          UriSource="{x:Bind ImageUrl}" />
-                                        </Image.Source>
-                                    </Image>
-                                    <Grid >
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-                                        <TextBlock  TextTrimming="CharacterEllipsis" Margin="0,4,0,0" FontSize="13.333">
+                                            </Image.Source>
+                                        </Image>
+                                        <Grid >
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock  TextTrimming="CharacterEllipsis" Margin="0,4,0,0" FontSize="13.333">
                 				<Run Text="{x:Bind Title}"/>
-                                        </TextBlock>
-                                        <TextBlock Grid.Row="1"  TextTrimming="CharacterEllipsis" Margin="0,0,8,0" Foreground="#FF999999" FontSize="12">
+                                            </TextBlock>
+                                            <TextBlock Grid.Row="1"  TextTrimming="CharacterEllipsis" Margin="0,0,8,0" Foreground="#FF999999" FontSize="12">
                 				<Run Text="{x:Bind ArtistName}"/>
-                                        </TextBlock>
-                                    </Grid>
-                                </StackPanel>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                    </GridView>
+                                            </TextBlock>
+                                        </Grid>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
 
-                </Grid>
-            </PivotItem>
-        </Pivot>
-    </Grid>
+                    </Grid>
+                </PivotItem>
+            </Pivot>
+        </Grid>
+    </local:LoadingView>
 </Page>

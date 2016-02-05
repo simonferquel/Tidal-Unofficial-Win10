@@ -26,16 +26,19 @@ using namespace Windows::UI::Xaml::Navigation;
 
 concurrency::task<void> Tidal::VideoPlayer::launchVideo(Platform::String ^ id)
 {
-	auto& authSvc = getAuthenticationService();
-	if (!authSvc.authenticationState().isAuthenticated()) {
-		auto dlg = ref new Windows::UI::Popups::MessageDialog(L"You are not authorized to watch this video", L"Access denied");
-		dlg->ShowAsync();
+	try {
+		auto& authSvc = getAuthenticationService();
+		if (!authSvc.authenticationState().isAuthenticated()) {
+			auto dlg = ref new Windows::UI::Popups::MessageDialog(L"You are not authorized to watch this video", L"Access denied");
+			dlg->ShowAsync();
+		}
+		else {
+			api::GetVideoUrlQuery query(authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode(), id);
+			auto urlInfo = await query.executeAsync(concurrency::cancellation_token::none());
+			me->Source = ref new Uri(tools::strings::toWindowsString(urlInfo->url));
+		}
 	}
-	else {
-		api::GetVideoUrlQuery query(authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode(), id);
-		auto urlInfo = await query.executeAsync(concurrency::cancellation_token::none());
-		me->Source = ref new Uri(tools::strings::toWindowsString(urlInfo->url));
-	}
+	catch (...) {}
 }
 
 void Tidal::VideoPlayer::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ e)

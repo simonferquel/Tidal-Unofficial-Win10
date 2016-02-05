@@ -16,6 +16,14 @@ namespace Tidal
 	public ref class VideoPlayer sealed
 	{
 	private:
+		concurrency::cancellation_token_source _cts;
+
+	protected:
+		virtual void OnNavigatedFrom(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override {
+			_cts.cancel();
+			_cts = concurrency::cancellation_token_source();
+		}
+	private:
 		concurrency::task<void> launchVideo(Platform::String^ id);
 	protected:
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;

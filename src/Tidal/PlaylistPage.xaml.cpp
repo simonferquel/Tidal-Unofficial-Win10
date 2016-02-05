@@ -134,40 +134,43 @@ void Tidal::PlaylistPage::OnPauseFromTrack(Platform::Object^ sender, Windows::UI
 
 concurrency::task<void> Tidal::PlaylistPage::LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ args)
 {
-	auto idPlat = dynamic_cast<String^>(args->Parameter);
-	auto id = tools::strings::toStdString(idPlat);
-	if (getFavoriteService().isPlaylistFavorite(id)) {
-		addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-	}
-	else {
-		removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-	}
-	_playlistId = id;
-	auto playlistInfo = await  playlists::getPlaylistAsync(id, concurrency::cancellation_token::none());
-	pageHeader->Text = tools::strings::toWindowsString(playlistInfo->title);
-	headeTitle->Text = tools::strings::toWindowsString(playlistInfo->title);
-	headerArtist->Text = playlistInfo->creator.name.size() > 0 ? tools::strings::toWindowsString(playlistInfo->creator.name) : L"TIDAL";
-	headerDescription->Text = tools::strings::toWindowsString(playlistInfo->description);
-	auto coverId = tools::strings::toWindowsString(playlistInfo->image);
-	auto urlTask = api::GetPlaylistCoverUriAndFallbackToWebAsync(playlistInfo->uuid, coverId, 1080, 720, concurrency::cancellation_token::none());
-	await urlTask.then([this, playlistInfo, id](Platform::String^ url) {;
-	headerImage->Source = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(ref new Uri(url));
-	std::wstring tracksAndDurations = std::to_wstring(playlistInfo->numberOfTracks);
-	tracksAndDurations.append(L" tracks (");
-	tracksAndDurations.append(tools::time::toStringMMSS(playlistInfo->duration));
-	tracksAndDurations.append(L")");
-	headerTracksAndDuration->Text = tools::strings::toWindowsString(tracksAndDurations);
-	return playlists::getPlaylistTracksAsync(id, playlistInfo->numberOfTracks, concurrency::cancellation_token::none()).then([this, id, playlistInfo](const std::shared_ptr<api::PaginatedList<api::TrackInfo>> & tracks) {
-		auto tracksVM = ref new Platform::Collections::Vector<TrackItemVM^>();
-		for (auto&& t : tracks->items) {
-			tracksVM->Append(ref new TrackItemVM(t));
+	try {
+		auto idPlat = dynamic_cast<String^>(args->Parameter);
+		auto id = tools::strings::toStdString(idPlat);
+		if (getFavoriteService().isPlaylistFavorite(id)) {
+			addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 		}
-		_tracks = tracksVM;
-		ReevaluateTracksPlayingStates();
-		tracksLV->ItemsSource = _tracks;
-	}, concurrency::task_continuation_context::get_current_winrt_context());
-	
-	}, concurrency::task_continuation_context::get_current_winrt_context());
+		else {
+			removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+		}
+		_playlistId = id;
+		auto playlistInfo = await  playlists::getPlaylistAsync(id, concurrency::cancellation_token::none());
+		pageHeader->Text = tools::strings::toWindowsString(playlistInfo->title);
+		headeTitle->Text = tools::strings::toWindowsString(playlistInfo->title);
+		headerArtist->Text = playlistInfo->creator.name.size() > 0 ? tools::strings::toWindowsString(playlistInfo->creator.name) : L"TIDAL";
+		headerDescription->Text = tools::strings::toWindowsString(playlistInfo->description);
+		auto coverId = tools::strings::toWindowsString(playlistInfo->image);
+		auto urlTask = api::GetPlaylistCoverUriAndFallbackToWebAsync(playlistInfo->uuid, coverId, 1080, 720, concurrency::cancellation_token::none());
+		await urlTask.then([this, playlistInfo, id](Platform::String^ url) {;
+		headerImage->Source = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(ref new Uri(url));
+		std::wstring tracksAndDurations = std::to_wstring(playlistInfo->numberOfTracks);
+		tracksAndDurations.append(L" tracks (");
+		tracksAndDurations.append(tools::time::toStringMMSS(playlistInfo->duration));
+		tracksAndDurations.append(L")");
+		headerTracksAndDuration->Text = tools::strings::toWindowsString(tracksAndDurations);
+		return playlists::getPlaylistTracksAsync(id, playlistInfo->numberOfTracks, concurrency::cancellation_token::none()).then([this, id, playlistInfo](const std::shared_ptr<api::PaginatedList<api::TrackInfo>> & tracks) {
+			auto tracksVM = ref new Platform::Collections::Vector<TrackItemVM^>();
+			for (auto&& t : tracks->items) {
+				tracksVM->Append(ref new TrackItemVM(t));
+			}
+			_tracks = tracksVM;
+			ReevaluateTracksPlayingStates();
+			tracksLV->ItemsSource = _tracks;
+		}, concurrency::task_continuation_context::get_current_winrt_context());
+
+		}, concurrency::task_continuation_context::get_current_winrt_context());
+	}
+	catch (...) {}
 }
 
 

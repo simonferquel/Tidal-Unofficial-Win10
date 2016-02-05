@@ -18,6 +18,7 @@ concurrency::task<localdata::cached_track> cache::getOrCreateCachedTrackInfoAsyn
 			result.quality = 0;
 			result.server_size = 0;
 			result.server_timestamp = 0;
+			result.obuscated = 1;
 			LocalDB::executeSynchronouslyWithCancel<localdata::cached_trackInsertDbQuery>(localCtx, db, cancelToken, result);
 		}
 
