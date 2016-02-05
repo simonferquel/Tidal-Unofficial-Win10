@@ -1,0 +1,63 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal">
+
+    <Style TargetType="local:LoadingView" >
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:LoadingView">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="LoadingStates">
+                                <VisualState x:Name="Loading" />
+                                <VisualState x:Name="Loaded" >
+                                    <VisualState.Setters>
+                                        <Setter Target="progressRing.(ProgressRing.IsActive)" Value="False"/>
+                                        <Setter Target="loadingView.(UIElement.Opacity)" Value="0"/>
+                                        <Setter Target="contentView.(UIElement.Opacity)" Value="1"/>
+                                        <Setter Target="contentView.(UIElement.IsHitTestVisible)" Value="True"/>
+                                    </VisualState.Setters>
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <FadeInThemeAnimation Storyboard.TargetName="contentView" />
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Error" >
+                                    <VisualState.Setters>
+                                        <Setter Target="loadingView.(UIElement.Opacity)" Value="0"/>
+                                        <Setter Target="progressRing.(ProgressRing.IsActive)" Value="False"/>
+                                        <Setter Target="errorView.(UIElement.Opacity)" Value="1"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter x:Name="contentView" 
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch"
+                                           Content="{TemplateBinding Content}"
+                                          Opacity="0"
+                                          IsHitTestVisible="False">
+                        </ContentPresenter>
+                        <StackPanel x:Name="loadingView"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                          IsHitTestVisible="False">
+                            <ProgressRing x:Name="progressRing" HorizontalAlignment="Center" Width="96" Height="96" IsActive="True" />
+                            <TextBlock Margin="12" HorizontalAlignment="Center" Text="{TemplateBinding LoadingText}" />
+                        </StackPanel>
+                        <StackPanel x:Name="errorView"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                          Opacity="0"
+                                          IsHitTestVisible="False">
+                            <SymbolIcon   Symbol="DisconnectDrive" />
+                            <TextBlock Margin="12" HorizontalAlignment="Center" Text="{TemplateBinding ErrorText}" />
+                        </StackPanel>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
