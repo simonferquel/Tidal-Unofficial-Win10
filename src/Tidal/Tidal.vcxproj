@@ -109,11 +109,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <PackageCertificateKeyFile>Tidal_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>Tidal_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <PackageCertificateThumbprint>764406BCCD326B5E3511CF0D4B5B442184968CBA</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)BuildOutput\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
@@ -396,6 +397,7 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="packages.config" />
+    <None Include="Tidal_StoreKey.pfx" />
     <None Include="Tidal_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -587,6 +589,11 @@
   <ItemGroup>
     <Font Include="Assets\TIDAL-Logo-Icons.ttf" />
     <Font Include="Assets\WiMP-Icons.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Package.StoreAssociation.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

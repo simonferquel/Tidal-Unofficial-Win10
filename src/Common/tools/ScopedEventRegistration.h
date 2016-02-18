@@ -46,8 +46,10 @@ namespace tools {
 
 		virtual ~ScopedEventRegistration() {
 			if (!moved()) {
-
-				_callback(registrationToken());
+				try {
+					_callback(registrationToken());
+				}
+				catch (...) {}
 			}
 		}
 
