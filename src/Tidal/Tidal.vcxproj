@@ -198,6 +198,9 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AccountPage.xaml.h">
+      <DependentUpon>AccountPage.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="AlbumDataSources.h" />
     <ClInclude Include="AlbumResumeItemVM.h" />
     <ClInclude Include="AlbumPage.xaml.h">
@@ -210,6 +213,7 @@
       <DependentUpon>ArtistPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="AudioService.h" />
+    <ClInclude Include="AuthenticationVisualStateTrigger.h" />
     <ClInclude Include="CurrentPlaylistPage.xaml.h">
       <DependentUpon>CurrentPlaylistPage.xaml</DependentUpon>
     </ClInclude>
@@ -315,6 +319,9 @@
     <ApplicationDefinition Include="App.xaml">
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="AccountPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="AlbumPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -455,6 +462,9 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AccountPage.xaml.cpp">
+      <DependentUpon>AccountPage.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="AlbumDataSources.cpp" />
     <ClCompile Include="AlbumResumeItemVM.cpp" />
     <ClCompile Include="AlbumPage.xaml.cpp">
@@ -466,6 +476,7 @@
       <DependentUpon>ArtistPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="AudioService.cpp" />
+    <ClCompile Include="AuthenticationVisualStateTrigger.cpp" />
     <ClCompile Include="CurrentPlaylistPage.xaml.cpp">
       <DependentUpon>CurrentPlaylistPage.xaml</DependentUpon>
     </ClCompile>

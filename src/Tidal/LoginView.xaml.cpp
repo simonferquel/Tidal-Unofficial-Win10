@@ -11,6 +11,8 @@
 #include "FacebookLoginFlyout.xaml.h"
 #include <Api/ImageUriResolver.h>
 #include <tools/StringUtils.h>
+#include "Shell.xaml.h"
+#include "AccountPage.xaml.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -91,4 +93,15 @@ concurrency::task<void> Tidal::LoginView::loginAsync()
 void Tidal::LoginView::OnLoginClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	loginAsync();
+}
+
+
+void Tidal::LoginView::OnViewTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
+{
+	if (getAuthenticationService().authenticationState().isAuthenticated()) {
+		auto shell = dynamic_cast<Tidal::Shell^>(Window::Current->Content);
+		if (shell) {
+			shell->Frame->Navigate(AccountPage::typeid);
+		}
+	}
 }

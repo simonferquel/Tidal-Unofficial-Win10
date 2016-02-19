@@ -10,6 +10,7 @@
 #include "Mediators.h"
 #include <localdata/db.h>
 #include "FavoritesService.h"
+#include "AuthenticationVisualStateTrigger.h"
 using namespace Tidal;
 
 using namespace Platform;

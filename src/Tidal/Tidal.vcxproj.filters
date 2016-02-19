@@ -66,6 +66,7 @@
     <ClCompile Include="PlayerSeekBar.xaml.cpp" />
     <ClCompile Include="SmtcService.cpp" />
     <ClCompile Include="LoadingView.cpp" />
+    <ClCompile Include="AuthenticationVisualStateTrigger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -128,6 +129,7 @@
     <ClInclude Include="PlayerSeekBar.xaml.h" />
     <ClInclude Include="SmtcService.h" />
     <ClInclude Include="LoadingView.h" />
+    <ClInclude Include="AuthenticationVisualStateTrigger.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\tidal-logo-large.png">
@@ -221,6 +223,7 @@
     <Page Include="PlayerSeekBar.xaml" />
     <Page Include="CurrentPlaylistPage.xaml" />
     <Page Include="Themes\Generic.xaml" />
+    <Page Include="AccountPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\WiMP-Icons.ttf" />

@@ -29,7 +29,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         
-        <Grid x:Name="grid" Height="80">
+        <Grid x:Name="grid" Height="80" Tapped="OnViewTapped" Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />

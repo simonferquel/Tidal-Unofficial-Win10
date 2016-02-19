@@ -123,9 +123,10 @@ void Tidal::MiniPlayerView::OnCurrentTrackChanged()
 
 	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
 	if (!settingsValues->HasKey(L"CurrentPlaybackTrack")) {
+		Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 		return;
 	}
-
+	Visibility = Windows::UI::Xaml::Visibility::Visible;
 	auto jsonText = dynamic_cast<String^>( settingsValues->Lookup(L"CurrentPlaybackTrack"));
 
 	tools::strings::WindowsWIStream stream(jsonText);

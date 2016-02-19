@@ -77,6 +77,23 @@ concurrency::task<void> AuthenticationService::authenticateWithPasswordAsync(Pla
 	getAuthenticationStateMediator().raise(_authState);
 }
 
+void AuthenticationService::logout()
+{
+	_authState = AuthenticationState();
+
+	auto settingsValues = ApplicationData::Current->LocalSettings->Values;
+	if (settingsValues->HasKey(L"authenticationState")) {
+		settingsValues->Remove(L"authenticationState");
+	}
+	if (settingsValues->HasKey(L"SessionId")) {
+		settingsValues->Remove(L"SessionId");
+	}
+	if (settingsValues->HasKey(L"CountryCode")) {
+		settingsValues->Remove(L"CountryCode");
+	}
+	getAuthenticationStateMediator().raise(_authState);
+}
+
 AuthenticationService & getAuthenticationService()
 {
 	static AuthenticationService authSvc;

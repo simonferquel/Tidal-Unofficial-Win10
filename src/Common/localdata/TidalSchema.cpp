@@ -184,6 +184,6 @@ void localdata::TidalSchema::BuildSchema(SchemaBuilder & builder)
 			.addColumn("import_timestamp")
 		.endIndex();
 			
-			auto entities = LocalDB::SchemaDefinition::generateEntitiesClasses(builder.definition(), { "localdata" });
-			OutputDebugStringA(entities.c_str());
+			/*auto entities = LocalDB::SchemaDefinition::generateEntitiesClasses(builder.definition(), { "localdata" });
+			OutputDebugStringA(entities.c_str());*/
 }
