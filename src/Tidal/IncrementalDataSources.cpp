@@ -355,7 +355,9 @@ concurrency::task<Platform::Collections::Vector<Tidal::TrackItemVM^>^> getNewsTr
 		query.withCustomListGroup(list, group);
 		auto result = await query.executeAsync(cancelToken);
 		for (auto& article : result->items) {
-			retval->Append(ref new Tidal::TrackItemVM(article));
+			auto item = ref new Tidal::TrackItemVM(article);
+			retval->Append(item);
+			item->AttachTo(retval);
 		}
 		return retval;
 	}
@@ -364,7 +366,9 @@ concurrency::task<Platform::Collections::Vector<Tidal::TrackItemVM^>^> getNewsTr
 		query.withCustomListGroup(list, group);
 		auto result = await query.executeAsync(cancelToken);
 		for (auto& article : result->items) {
-			retval->Append(ref new Tidal::TrackItemVM(article));
+			auto item = ref new Tidal::TrackItemVM(article);
+			retval->Append(item);
+			item->AttachTo(retval);
 		}
 		return retval;
 	}

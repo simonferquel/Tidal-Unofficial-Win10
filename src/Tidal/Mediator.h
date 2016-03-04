@@ -63,6 +63,27 @@ public:
 		return std::make_unique< RegistrationHolder>(callbackPtr, shared_from_this());
 	}
 
+	template<typename TObj>
+	RegistrationToken registerSharedPtrCallback(const std::shared_ptr<TObj>& obj, void(__thiscall TObj::* func) (const ArgType&)) {
+		std::weak_ptr<TObj> weakObj(obj);
+		return registerCallback([weakObj, func](const ArgType& arg) {
+			auto obj = weakObj.lock();
+			if (obj) {
+				(obj.get()->*func)(arg);
+			}
+		});
+	}
+	template<typename TObj>
+	RegistrationToken registerSharedPtrCallback(const std::shared_ptr<TObj>& obj, void(__thiscall TObj::* func) (void)) {
+		std::weak_ptr<TObj> weakObj(obj);
+		return registerCallback([weakObj, func](const ArgType& arg) {
+			auto obj = weakObj.lock();
+			if (obj) {
+				(obj.get()->*func)();
+			}
+		});
+	}
+
 	template <typename TObj>
 	RegistrationToken registerCallback(TObj^ obj, void( __cdecl TObj::* func)(const ArgType&)) {
 		Platform::WeakReference weakObj(obj);
@@ -147,12 +168,40 @@ public:
 	}
 
 	template<typename TObj>
+	RegistrationToken registerSharedPtrCallback(const std::shared_ptr<TObj>& obj, concurrency::task<void>(__thiscall TObj::* func) (const ArgType&)) {
+		std::weak_ptr<TObj> weakObj(obj);
+		return registerCallback([weakObj, func](const ArgType& arg) {
+			auto obj = weakObj.lock();
+			if (obj) {
+				return (obj->*func)(arg);
+			}
+			else {
+				return concurrency::task_from_result();
+			}
+		});
+	}
+	template<typename TObj>
+	RegistrationToken registerSharedPtrCallback(const std::shared_ptr<TObj>& obj, concurrency::task<void>(__thiscall TObj::* func) (void)) {
+		std::weak_ptr<TObj> weakObj(obj);
+		return registerCallback([weakObj, func](const ArgType& arg) {
+			auto obj = weakObj.lock();
+			if (obj) {
+				return (obj.get()->*func)();
+			}
+			else {
+				return concurrency::task_from_result();
+			}
+		});
+	}
+
+
+	template<typename TObj>
 	RegistrationToken registerCallback(TObj^ obj, concurrency::task<void>(__cdecl TObj::* func)(const ArgType&)){
 		Platform::WeakReference weakObj(obj);
 		return registerCallback([weakObj, func](const ArgType& arg) {
 			auto obj = weakObj.Resolve<TObj>();
 			if (obj) {
-				return (obj->*func)(arg);
+				return (obj.get()->*func)(arg);
 			}
 			else {
 				return concurrency::task_from_result();

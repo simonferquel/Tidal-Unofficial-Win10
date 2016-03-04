@@ -8,8 +8,19 @@
 #include "ArtistPage.xaml.h"
 #include "AlbumPage.xaml.h"
 #include "FavoritesService.h"
-
+#include "PlayCommand.h"
+#include "AuthenticationService.h"
+#include "UnauthenticatedDialog.h"
 using namespace api;
+Windows::UI::Xaml::Input::ICommand^ Tidal::TrackItemVM::PlayCommand::get() {
+	auto lst = _trackListRef.Resolve<Windows::Foundation::Collections::IIterable<TrackItemVM^>>();
+	if (lst) {
+		return ref new Tidal::PlayCommand(this, lst);
+	}
+	else {
+		return ref new Tidal::PlayCommand(this);
+	}
+}
 void Tidal::TrackItemVM::GoToArtist()
 {
 	auto shell = dynamic_cast<Shell^>(Windows::UI::Xaml::Window::Current->Content);
@@ -26,6 +37,10 @@ void Tidal::TrackItemVM::GoToAlbum()
 }
 void Tidal::TrackItemVM::AddFavorite()
 {
+	if (!getAuthenticationService().authenticationState().isAuthenticated()) {
+		showUnauthenticatedDialog();
+		return;
+	}
 	getFavoriteService().addTrackAsync(Id).then([](concurrency::task<void> t) {
 		try {
 			t.get();
@@ -37,6 +52,10 @@ void Tidal::TrackItemVM::AddFavorite()
 }
 void Tidal::TrackItemVM::RemoveFavorite()
 {
+	if (!getAuthenticationService().authenticationState().isAuthenticated()) {
+		showUnauthenticatedDialog();
+		return;
+	}
 	getFavoriteService().removeTrackAsync(Id).then([](concurrency::task<void> t) {
 		try {
 			t.get();

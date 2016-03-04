@@ -4,7 +4,7 @@
 //
 
 #pragma once
-
+#include "PauseCommand.h"
 #include "App.g.h"
 #include "SmtcService.h"
 #include <memory>

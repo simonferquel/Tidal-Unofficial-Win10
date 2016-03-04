@@ -153,6 +153,7 @@ private:
 				catch (...)
 				{
 					_webStream = nullptr;
+					throw;
 				}
 				if (!resultBuffer) {
 					continue;
@@ -361,16 +362,30 @@ public:
 };
 
 concurrency::task<cached_stream_info> getCompleteStreamAsync(localdata::cached_track track, concurrency::cancellation_token cancelToken) {
+	if (cancelToken.is_canceled()) {
+		concurrency::cancel_current_task();
+	}
 	auto folder = await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFolderAsync(L"track_cache", Windows::Storage::CreationCollisionOption::OpenIfExists));
+	if (cancelToken.is_canceled()) {
+		concurrency::cancel_current_task();
+	}
 	auto file = await concurrency::create_task(folder->GetFileAsync(track.id.ToString()));
+	if (cancelToken.is_canceled()) {
+		concurrency::cancel_current_task();
+	}
 	IRandomAccessStream^ stream = await concurrency::create_task(file->OpenReadAsync());
+	if (cancelToken.is_canceled()) {
+		concurrency::cancel_current_task();
+	}
 	if (track.obuscated == 1) {
 		stream = ref new ObfuscateStream(stream, track.id);
 	}
 
 	track.last_playpack_time = std::chrono::system_clock::now().time_since_epoch().count();
 	await cache::updateCachedTrackInfoAsync(localdata::getDb(), track, cancelToken);
-
+	if (cancelToken.is_canceled()) {
+		concurrency::cancel_current_task();
+	}
 	cached_stream_info result;
 	result.stream = stream;
 	result.isImport = false;
@@ -380,17 +395,34 @@ concurrency::task<cached_stream_info> getCompleteStreamAsync(localdata::cached_t
 }
 
 concurrency::task<cached_stream_info> getPartialStreamAsync(localdata::cached_track track, SoundQuality quality, concurrency::cancellation_token cancelToken) {
+	if (cancelToken.is_canceled()) {
+		concurrency::cancel_current_task();
+	}
 	auto folder = await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFolderAsync(L"track_cache", Windows::Storage::CreationCollisionOption::OpenIfExists));
+	if (cancelToken.is_canceled()) {
+		concurrency::cancel_current_task();
+	}
 	auto file = await concurrency::create_task(folder->CreateFileAsync(track.id.ToString(), Windows::Storage::CreationCollisionOption::OpenIfExists));
+	if (cancelToken.is_canceled()) {
+		concurrency::cancel_current_task();
+	}
 	auto stream = await concurrency::create_task(file->OpenAsync(Windows::Storage::FileAccessMode::ReadWrite));
-
+	if (cancelToken.is_canceled()) {
+		concurrency::cancel_current_task();
+	}
 	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
 
 
 	track.last_playpack_time = std::chrono::system_clock::now().time_since_epoch().count();
 	await cache::updateCachedTrackInfoAsync(localdata::getDb(), track, cancelToken);
+	if (cancelToken.is_canceled()) {
+		concurrency::cancel_current_task();
+	}
 	auto sm = std::make_shared< HttpCacheStateMachine>(track.id, quality, stream, track, cancelToken);
 	await sm->initializeAsync(cancelToken);
+	if (cancelToken.is_canceled()) {
+		concurrency::cancel_current_task();
+	}
 	sm->Start();
 	cached_stream_info result;
 

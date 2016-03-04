@@ -18,6 +18,9 @@
 #include "FavoritesService.h"
 #include "VideoItemVM.h"
 #include <tools/AsyncHelpers.h>
+#include "PlayCommand.h"
+#include "AuthenticationService.h"
+#include "UnauthenticatedDialog.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -132,8 +135,13 @@ concurrency::task<void> Tidal::ArtistPage::LoadAsync(Windows::UI::Xaml::Navigati
 		}
 		auto trackSource = ref new Platform::Collections::Vector<TrackItemVM^>();
 		for (auto&& t : tracks.result->items) {
-			trackSource->Append(ref new TrackItemVM(t));
+			auto ti = ref new TrackItemVM(t);
+			trackSource->Append(ti);
+			ti->AttachTo(trackSource);
 		}
+		_popularTracks = trackSource;
+		_tracksPlaybackManager = std::make_shared<TracksPlaybackStateManager>();
+		_tracksPlaybackManager->initialize(trackSource, Dispatcher);
 		popularTracksLV->ItemsSource = trackSource;
 		auto albumGroups = ref new Platform::Collections::Vector<GroupedAlbums^>();
 		{
@@ -267,16 +275,6 @@ void Tidal::ArtistPage::OnDrawHeaderImage(Microsoft::Graphics::Canvas::UI::Xaml:
 }
 
 
-void Tidal::ArtistPage::OnPlayFromTrack(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-
-}
-
-
-void Tidal::ArtistPage::OnPauseFromTrack(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-
-}
 
 
 void Tidal::ArtistPage::OnAlbumClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e)
@@ -308,6 +306,10 @@ void Tidal::ArtistPage::OnSimilarArtistClicked(Platform::Object^ sender, Windows
 
 void Tidal::ArtistPage::OnAddFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+	if (!getAuthenticationService().authenticationState().isAuthenticated()) {
+		showUnauthenticatedDialog();
+		return;
+	}
 	getFavoriteService().addArtistAsync(_artistId).then([](concurrency::task<void> t) {
 		try {
 			t.get();
@@ -321,6 +323,10 @@ void Tidal::ArtistPage::OnAddFavoriteClick(Platform::Object^ sender, Windows::UI
 
 void Tidal::ArtistPage::OnRemoveFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+	if (!getAuthenticationService().authenticationState().isAuthenticated()) {
+		showUnauthenticatedDialog();
+		return;
+	}
 	getFavoriteService().removeArtistAsync(_artistId).then([](concurrency::task<void> t) {
 		try {
 			t.get();
@@ -329,4 +335,33 @@ void Tidal::ArtistPage::OnRemoveFavoriteClick(Platform::Object^ sender, Windows:
 	});
 	addFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Visible;
 	removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+concurrency::task<void> PlayRadio(std::int64_t artistId) {
+	auto tracks = await tools::async::swallowCancellationException(artists::getArtistRadioTracksAsync(artistId, 100, concurrency::cancellation_token::none()));
+	auto trackSource = ref new Platform::Collections::Vector<TrackItemVM^>();
+	if (tracks.cancelled) {
+		return;
+	}
+	for (auto&& t : tracks.result->items) {
+		auto ti = ref new TrackItemVM(t);
+		trackSource->Append(ti);
+		ti->AttachTo(trackSource);
+	}
+	if (trackSource->Size > 0) {
+		trackSource->GetAt(0)->PlayCommand->Execute(nullptr);
+	}
+}
+
+void Tidal::ArtistPage::OnPlayPopularTracks(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	if (_popularTracks && _popularTracks->Size > 0) {
+		_popularTracks->GetAt(0)->PlayCommand->Execute(nullptr);
+	}
+}
+
+
+void Tidal::ArtistPage::OnRadioClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	PlayRadio(this->_artistId);
 }

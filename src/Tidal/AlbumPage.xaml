@@ -24,11 +24,11 @@
                             <ColumnDefinition Width="72" />
                             <ColumnDefinition Width="120" />
                         </Grid.ColumnDefinitions>
-                        <AppBarButton Padding="0" Margin="0" Grid.Column="1" HorizontalContentAlignment="Center" Click="OnPlayFromTrack"
-                                  Visibility="{x:Bind PlayButtonVisibility, Mode=OneWay}">
+                        <AppBarButton Padding="0" Margin="0" Grid.Column="1" HorizontalContentAlignment="Center" 
+                                  Visibility="{x:Bind PlayButtonVisibility, Mode=OneWay}" Command="{x:Bind PlayCommand}" >
                             <SymbolIcon Symbol="Play" />
                         </AppBarButton>
-                        <AppBarButton Padding="0" Margin="0" Grid.Column="1" HorizontalContentAlignment="Center" Click="OnPauseFromTrack"
+                        <AppBarButton Padding="0" Margin="0" Grid.Column="1" HorizontalContentAlignment="Center" Command="{StaticResource pauseCommand}"
                                   Visibility="{x:Bind PauseButtonVisibility, Mode=OneWay}">
                             <SymbolIcon Symbol="Pause" />
                         </AppBarButton>
@@ -83,11 +83,11 @@
                             <RowDefinition />
                         </Grid.RowDefinitions>
 
-                        <AppBarButton Grid.RowSpan="2"  Padding="0" Margin="0" Grid.Column="1" HorizontalContentAlignment="Center" Click="OnPlayFromTrack"
+                        <AppBarButton Grid.RowSpan="2"  Padding="0" Margin="0" Grid.Column="1" HorizontalContentAlignment="Center"  Command="{x:Bind PlayCommand}"
                                   Visibility="{x:Bind PlayButtonVisibility, Mode=OneWay}">
                             <SymbolIcon Symbol="Play" />
                         </AppBarButton>
-                        <AppBarButton Grid.RowSpan="2" Padding="0" Margin="0" Grid.Column="1" HorizontalContentAlignment="Center" Click="OnPauseFromTrack"
+                        <AppBarButton Grid.RowSpan="2" Padding="0" Margin="0" Grid.Column="1" HorizontalContentAlignment="Center"  Command="{StaticResource pauseCommand}"
                                   Visibility="{x:Bind PauseButtonVisibility, Mode=OneWay}">
                             <SymbolIcon Symbol="Pause" />
                         </AppBarButton>
@@ -139,11 +139,11 @@
                             <RowDefinition />
                         </Grid.RowDefinitions>
 
-                        <AppBarButton Grid.RowSpan="2"  Padding="0" Margin="0" Grid.Column="1" HorizontalContentAlignment="Center" Click="OnPlayFromTrack"
+                        <AppBarButton Grid.RowSpan="2"  Padding="0" Margin="0" Grid.Column="1" HorizontalContentAlignment="Center"  Command="{x:Bind PlayCommand}"
                                   Visibility="{x:Bind PlayButtonVisibility, Mode=OneWay}">
                             <SymbolIcon Symbol="Play" />
                         </AppBarButton>
-                        <AppBarButton Grid.RowSpan="2" Padding="0" Margin="0" Grid.Column="1" HorizontalContentAlignment="Center" Click="OnPauseFromTrack"
+                        <AppBarButton Grid.RowSpan="2" Padding="0" Margin="0" Grid.Column="1" HorizontalContentAlignment="Center"  Command="{StaticResource pauseCommand}"
                                   Visibility="{x:Bind PauseButtonVisibility, Mode=OneWay}">
                             <SymbolIcon Symbol="Pause" />
                         </AppBarButton>

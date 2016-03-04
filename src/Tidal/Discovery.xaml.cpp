@@ -38,6 +38,8 @@ concurrency::task<void> Tidal::Discovery::loadAsync()
 	try {
 		auto tracks = await getNewsTrackItemsAsync(concurrency::cancellation_token::none(), L"discovery", L"new");
 		tracksLV->ItemsSource = tracks;
+		_playbackStateManager = std::make_shared<TracksPlaybackStateManager>();
+		_playbackStateManager->initialize(tracks, Dispatcher);
 	}
 	catch (...) {
 		// connectivity issue
@@ -68,11 +70,12 @@ void Tidal::Discovery::OnPageLoaded(Platform::Object^ sender, Windows::UI::Xaml:
 }
 
 
+
+
 void Tidal::Discovery::OnTrackClicked(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e)
 {
-
-	auto trackItem = dynamic_cast<TrackItemVM^>(e->ClickedItem);
-	std::vector<api::TrackInfo> tracks;
-	tracks.push_back(trackItem->trackInfo());
-	getAudioService().resetPlaylistAndPlay(tracks, 0, concurrency::cancellation_token::none());
+	auto item = dynamic_cast<TrackItemVM^>(e->ClickedItem);
+	if (item) {
+		item->PlayCommand->Execute(nullptr);
+	}
 }

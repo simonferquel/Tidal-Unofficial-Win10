@@ -7,8 +7,14 @@
 #include "Shell.xaml.h"
 #include "VideoPlayer.xaml.h"
 #include "ArtistPage.xaml.h"
+#include "AuthenticationService.h"
+#include "UnauthenticatedDialog.h"
 void Tidal::VideoItemVM::Go()
 {
+	if (!getAuthenticationService().authenticationState().isAuthenticated()) {
+		showUnauthenticatedDialog();
+		return;
+	}
 	auto shell = dynamic_cast<Shell^>(Windows::UI::Xaml::Window::Current->Content);
 	if (shell) {
 		shell->Frame->Navigate(VideoPlayer::typeid, Id.ToString());

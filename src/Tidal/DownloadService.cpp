@@ -10,6 +10,8 @@
 #include "Mediators.h"
 #include "PlaylistsDataSources.h"
 #include <map>
+#include "AuthenticationService.h"
+#include "UnauthenticatedDialog.h"
 DownloadService & getDownloadService()
 {
 	static DownloadService g_instance;
@@ -22,6 +24,10 @@ DownloadService::DownloadService()
 
 concurrency::task<void> DownloadService::StartDownloadAlbumAsync(std::int64_t id)
 {
+	if (!getAuthenticationService().authenticationState().isAuthenticated()) {
+		showUnauthenticatedDialog();
+		return;
+	}
 	auto albumInfo = await albums::getAlbumResumeAsync(id, concurrency::cancellation_token::none());
 	auto tracks = await albums::getAlbumTracksAsync(id, albumInfo->numberOfTracks, concurrency::cancellation_token::none());
 	std::vector<concurrency::task<Platform::String^>> coversTasks;
@@ -80,6 +86,10 @@ concurrency::task<void> DownloadService::StartDownloadAlbumAsync(std::int64_t id
 
 concurrency::task<void> DownloadService::StartDownloadPlaylistAsync(const std::wstring& idRef)
 {
+	if (!getAuthenticationService().authenticationState().isAuthenticated()) {
+		showUnauthenticatedDialog();
+		return;
+	}
 	std::wstring id = idRef;
 	auto playlist = await playlists::getPlaylistAsync(id, concurrency::cancellation_token::none(), true);
 	auto tracks = await playlists::getPlaylistTracksAsync(id, playlist->numberOfTracks, concurrency::cancellation_token::none(), true);

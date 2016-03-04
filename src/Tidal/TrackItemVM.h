@@ -9,6 +9,7 @@ namespace Tidal {
 		Windows::UI::Xaml::Visibility _playButtonVisibility;
 		Windows::UI::Xaml::Visibility _addFavoriteVisibility;
 		Windows::UI::Xaml::Visibility _removeFavoriteVisibility;
+		Platform::WeakReference _trackListRef;
 	public:
 		property std::int64_t Id;
 		property std::int64_t AlbumId;
@@ -51,6 +52,7 @@ namespace Tidal {
 				}
 			}
 		}
+		property Windows::UI::Xaml::Input::ICommand^ PlayCommand {Windows::UI::Xaml::Input::ICommand^ get();  }
 		virtual event Windows::UI::Xaml::Data::PropertyChangedEventHandler ^ PropertyChanged;
 
 		void GoToArtist();
@@ -61,6 +63,9 @@ namespace Tidal {
 	internal:
 		const api::TrackInfo& trackInfo() {
 			return _trackInfo;
+		}
+		void AttachTo(Windows::Foundation::Collections::IIterable<TrackItemVM^>^ trackList) {
+			_trackListRef = Platform::WeakReference(trackList);
 		}
 		TrackItemVM(const api::TrackInfo& info, bool includeTrackNumberInTitle = false);
 		void RefreshPlayingState(std::int64_t trackId, Windows::Media::Playback::MediaPlayerState state);

@@ -63,7 +63,10 @@ concurrency::task<void> Tidal::GenrePage::LoadAsync(Windows::UI::Xaml::Navigatio
 	}
 
 	if (decoder->GetFirstValueByName(L"hasTracks") == L"true") {
-		tracksLV->ItemsSource = await getNewsTrackItemsAsync(concurrency::cancellation_token::none(), L"genres", path);
+		auto tracks = await getNewsTrackItemsAsync(concurrency::cancellation_token::none(), L"genres", path);
+		tracksLV->ItemsSource = tracks;
+		_playbackStateManager = std::make_shared<TracksPlaybackStateManager>();
+		_playbackStateManager->initialize(tracks, Dispatcher);
 	}
 	else {
 		unsigned int index;
@@ -114,7 +117,7 @@ void Tidal::GenrePage::OnAlbumClicked(Platform::Object^ sender, Windows::UI::Xam
 void Tidal::GenrePage::OnTrackClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e)
 {
 	auto trackItem = dynamic_cast<TrackItemVM^>(e->ClickedItem);
-	std::vector<api::TrackInfo> tracks;
-	tracks.push_back(trackItem->trackInfo());
-	getAudioService().resetPlaylistAndPlay(tracks, 0, concurrency::cancellation_token::none());
+	if (trackItem) {
+		trackItem->PlayCommand->Execute(nullptr);
+	}
 }

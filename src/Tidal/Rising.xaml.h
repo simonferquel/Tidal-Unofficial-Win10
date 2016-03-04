@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Rising.g.h"
+#include "TracksPlaybackStateManager.h"
 
 namespace Tidal
 {
@@ -17,7 +18,7 @@ namespace Tidal
 	{
 	private:
 		concurrency::cancellation_token_source _cts;
-
+		std::shared_ptr<TracksPlaybackStateManager> _tracksPlaybackManager;
 	protected:
 		virtual void OnNavigatedFrom(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override {
 			_cts.cancel();

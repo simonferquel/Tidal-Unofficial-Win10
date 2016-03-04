@@ -99,7 +99,9 @@ concurrency::task<void> FavoritesService::doRefreshAsync(concurrency::cancellati
 				_tracks->Clear();
 				for (auto&& item : tracks->items) {
 					_trackIds.insert(item.item.id);
-					_tracks->Append(ref new Tidal::TrackItemVM(item.item));
+					auto ti = ref new Tidal::TrackItemVM(item.item);
+					_tracks->Append(ti);
+					ti->AttachTo(_tracks);
 				}
 			}
 

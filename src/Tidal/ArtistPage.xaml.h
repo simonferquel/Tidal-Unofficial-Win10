@@ -9,6 +9,7 @@
 #include "ArtistItemVM.h"
 #include "GroupedAlbums.h"
 #include "ArtistPage.g.h"
+#include "TracksPlaybackStateManager.h"
 
 namespace Tidal
 {
@@ -22,6 +23,8 @@ namespace Tidal
 		std::int64_t _artistId;
 		Microsoft::Graphics::Canvas::CanvasBitmap^ _albumBmp;
 		concurrency::cancellation_token_source _cts;
+		std::shared_ptr<TracksPlaybackStateManager> _tracksPlaybackManager;
+		Platform::Collections::Vector<TrackItemVM^>^ _popularTracks;
 	public:
 		ArtistPage();
 	protected:
@@ -37,12 +40,13 @@ namespace Tidal
 		concurrency::task<void> LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs^ args);
 		concurrency::task<void> loadImageAsync(Platform::String^ url);
 		void OnDrawHeaderImage(Microsoft::Graphics::Canvas::UI::Xaml::ICanvasAnimatedControl^ sender, Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedDrawEventArgs^ args);
-		void OnPlayFromTrack(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void OnPauseFromTrack(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		
 		void OnAlbumClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
 		void OnVideoClicked(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
 		void OnSimilarArtistClicked(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
 		void OnAddFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnRemoveFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void OnPlayPopularTracks(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void OnRadioClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

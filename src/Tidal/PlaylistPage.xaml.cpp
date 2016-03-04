@@ -14,6 +14,8 @@
 #include <Api/CoverCache.h>
 #include "AudioService.h"
 #include "FavoritesService.h"
+#include "AuthenticationService.h"
+#include "UnauthenticatedDialog.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -32,105 +34,9 @@ using namespace Windows::UI::Xaml::Navigation;
 PlaylistPage::PlaylistPage()
 {
 	InitializeComponent();
-	_mediatorRegistrations.push_back(getAppSuspendingMediator().registerCallbackNoArg<PlaylistPage>(this, &PlaylistPage::OnAppSuspended));
-	_mediatorRegistrations.push_back(getAppResumingMediator().registerCallbackNoArg<PlaylistPage>(this, &PlaylistPage::OnAppResuming));
-	_mediatorRegistrations.push_back(getCurrentPlaybackTrackIdMediator().registerCallbackNoArg<PlaylistPage>(this, &PlaylistPage::ReevaluateTracksPlayingStates));
-	AttachToPlayerEvents();
-}
-
-void Tidal::PlaylistPage::AttachToPlayerEvents()
-{
-	try {
-		auto player = Windows::Media::Playback::BackgroundMediaPlayer::Current;
-		auto token = player->CurrentStateChanged += ref new Windows::Foundation::TypedEventHandler<Windows::Media::Playback::MediaPlayer ^, Platform::Object ^>(this, &Tidal::PlaylistPage::OnPlayerStateChanged);
-		_eventRegistrations.push_back(tools::makeScopedEventRegistration(token, [player](const Windows::Foundation::EventRegistrationToken& token) {
-			try {
-				player->CurrentStateChanged -= token;
-			}
-			catch (...) {}
-		}));
-	}
-	catch (Platform::COMException^ comEx) {
-		if (comEx->HResult == 0x800706BA) {
-			getAudioService().onBackgroundAudioFailureDetected();
-			AttachToPlayerEvents();
-			return;
-		}
-		throw;
-	}
-}
-
-void Tidal::PlaylistPage::DettachFromPlayerEvents()
-{
-	_eventRegistrations.clear();
-}
-
-void Tidal::PlaylistPage::ReevaluateTracksPlayingStates()
-{
-	if (!Dispatcher->HasThreadAccess) {
-		Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {
-			this->ReevaluateTracksPlayingStates();
-		}));
-		return;
-	}
-	auto tracks = _tracks;
-	if (!tracks) {
-		return;
-	}
-	auto trackId = getAudioService().getCurrentPlaybackTrackId();
-	auto state = Windows::Media::Playback::BackgroundMediaPlayer::Current->CurrentState;
-	for (auto&& track : tracks) {
-		track->RefreshPlayingState(trackId, state);
-	}
-}
-
-concurrency::task<void> Tidal::PlaylistPage::OnAppSuspended()
-{
-	DettachFromPlayerEvents();
-	return concurrency::task_from_result();
-}
-
-void Tidal::PlaylistPage::OnAppResuming()
-{
-	AttachToPlayerEvents();
-
-	ReevaluateTracksPlayingStates();
-}
-
-void Tidal::PlaylistPage::OnPlayerStateChanged(Windows::Media::Playback::MediaPlayer ^ sender, Platform::Object ^ args)
-{
-	ReevaluateTracksPlayingStates();
 }
 
 
-void Tidal::PlaylistPage::OnPlayFromTrack(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-	auto trackItem = dynamic_cast<TrackItemVM^>(dynamic_cast<FrameworkElement^>(sender)->DataContext);
-	if (trackItem) {
-
-		auto trackId = getAudioService().getCurrentPlaybackTrackId();
-		auto state = Windows::Media::Playback::BackgroundMediaPlayer::Current->CurrentState;
-		if (state == Windows::Media::Playback::MediaPlayerState::Paused && trackId == trackItem->Id) {
-			Windows::Media::Playback::BackgroundMediaPlayer::Current->Play();
-			return;
-		}
-		if (_tracks) {
-			std::vector<api::TrackInfo> tracksInfo;
-			for (auto&& t : _tracks) {
-				tracksInfo.push_back(t->trackInfo());
-			}
-			unsigned int index = 0;
-			_tracks->IndexOf(trackItem, &index);
-			getAudioService().resetPlaylistAndPlay(tracksInfo, index, concurrency::cancellation_token::none());
-		}
-	}
-}
-
-
-void Tidal::PlaylistPage::OnPauseFromTrack(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-	Windows::Media::Playback::BackgroundMediaPlayer::Current->Pause();
-}
 
 concurrency::task<void> Tidal::PlaylistPage::LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ args)
 {
@@ -161,10 +67,13 @@ concurrency::task<void> Tidal::PlaylistPage::LoadAsync(Windows::UI::Xaml::Naviga
 		return playlists::getPlaylistTracksAsync(id, playlistInfo->numberOfTracks, concurrency::cancellation_token::none()).then([this, id, playlistInfo](const std::shared_ptr<api::PaginatedList<api::TrackInfo>> & tracks) {
 			auto tracksVM = ref new Platform::Collections::Vector<TrackItemVM^>();
 			for (auto&& t : tracks->items) {
-				tracksVM->Append(ref new TrackItemVM(t));
+				auto ti = ref new TrackItemVM(t);
+				tracksVM->Append(ti);
+				ti->AttachTo(tracksVM);
 			}
 			_tracks = tracksVM;
-			ReevaluateTracksPlayingStates();
+			_tracksPlaybackManager = std::make_shared<TracksPlaybackStateManager>();
+			_tracksPlaybackManager->initialize(_tracks, Dispatcher);
 			tracksLV->ItemsSource = _tracks;
 		}, concurrency::task_continuation_context::get_current_winrt_context());
 
@@ -176,12 +85,8 @@ concurrency::task<void> Tidal::PlaylistPage::LoadAsync(Windows::UI::Xaml::Naviga
 
 void Tidal::PlaylistPage::OnPlayAll(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	if (_tracks) {
-		std::vector<api::TrackInfo> tracksInfo;
-		for (auto&& t : _tracks) {
-			tracksInfo.push_back(t->trackInfo());
-		}
-		getAudioService().resetPlaylistAndPlay(tracksInfo, 0, concurrency::cancellation_token::none());
+	if (_tracks && _tracks->Size>0) {
+		_tracks->GetAt(0)->PlayCommand->Execute(nullptr);
 	}
 }
 
@@ -196,6 +101,10 @@ void Tidal::PlaylistPage::OnContextMenuClick(Platform::Object^ sender, Windows::
 
 void Tidal::PlaylistPage::AddFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+	if (!getAuthenticationService().authenticationState().isAuthenticated()) {
+		showUnauthenticatedDialog();
+		return;
+	}
 	getFavoriteService().addPlaylistAsync(_playlistId).then([](concurrency::task<void> t) {
 		try {
 			t.get();
@@ -209,6 +118,10 @@ void Tidal::PlaylistPage::AddFavoriteClick(Platform::Object^ sender, Windows::UI
 
 void Tidal::PlaylistPage::RemoveFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+	if (!getAuthenticationService().authenticationState().isAuthenticated()) {
+		showUnauthenticatedDialog();
+		return;
+	}
 	getFavoriteService().removePlaylistAsync(_playlistId).then([](concurrency::task<void> t) {
 		try {
 			t.get();

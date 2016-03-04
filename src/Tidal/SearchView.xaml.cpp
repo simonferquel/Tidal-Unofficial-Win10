@@ -86,9 +86,7 @@ void Tidal::SearchView::OnSearchResultClick(Platform::Object^ sender, Windows::U
 		auto track = dynamic_cast<TrackItemVM^>(e->ClickedItem);
 		if (track) {
 
-			std::vector<api::TrackInfo> tracks;
-			tracks.push_back(track->trackInfo());
-			getAudioService().resetPlaylistAndPlay(tracks, 0, concurrency::cancellation_token::none());
+			track->PlayCommand->Execute(nullptr);
 		}
 	}
 

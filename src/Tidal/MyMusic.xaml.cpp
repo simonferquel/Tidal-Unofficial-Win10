@@ -37,7 +37,10 @@ concurrency::task<void> Tidal::MyMusic::LoadAsync()
 	this->playlistsGV->ItemsSource = getFavoriteService().Playlists();
 	this->myPlaylistsGV->ItemsSource = getFavoriteService().MyPlaylists();
 	this->artistsGV->ItemsSource = getFavoriteService().Artists();
-	this->tracksLV->ItemsSource = getFavoriteService().Tracks();
+	auto tracks = getFavoriteService().Tracks();
+	this->tracksLV->ItemsSource = tracks;
+	_tracksPlaybackManager = std::make_shared<TracksPlaybackStateManager>();
+	_tracksPlaybackManager->initialize(tracks, Dispatcher);
 	
 }
 
@@ -71,9 +74,7 @@ void Tidal::MyMusic::OnAlbumClicked(Platform::Object^ sender, Windows::UI::Xaml:
 void Tidal::MyMusic::OnTrackClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e)
 {
 	auto trackItem = dynamic_cast<TrackItemVM^>(e->ClickedItem);
-	std::vector<api::TrackInfo> tracks;
-	tracks.push_back(trackItem->trackInfo());
-	getAudioService().resetPlaylistAndPlay(tracks, 0, concurrency::cancellation_token::none());
+	trackItem->PlayCommand->Execute(nullptr);
 }
 
 

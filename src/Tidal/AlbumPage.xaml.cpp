@@ -17,6 +17,9 @@
 #include <Api/CoverCache.h>
 #include "FavoritesService.h"
 #include "LoadingView.h"
+#include "PlayCommand.h"
+#include "AuthenticationService.h"
+#include "UnauthenticatedDialog.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -35,10 +38,7 @@ using namespace Windows::UI::Xaml::Navigation;
 AlbumPage::AlbumPage()
 {
 	InitializeComponent();
-	_mediatorRegistrations.push_back(getAppSuspendingMediator().registerCallbackNoArg<AlbumPage>(this, &AlbumPage::OnAppSuspended));
-	_mediatorRegistrations.push_back(getAppResumingMediator().registerCallbackNoArg<AlbumPage>(this, &AlbumPage::OnAppResuming));
-	_mediatorRegistrations.push_back(getCurrentPlaybackTrackIdMediator().registerCallbackNoArg<AlbumPage>(this, &AlbumPage::ReevaluateTracksPlayingStates));
-	AttachToPlayerEvents();
+	
 }
 
 Tidal::AlbumPage::~AlbumPage()
@@ -75,51 +75,6 @@ void Tidal::AlbumPage::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEv
 
 }
 
-void Tidal::AlbumPage::AttachToPlayerEvents()
-{
-	try {
-		auto player = Windows::Media::Playback::BackgroundMediaPlayer::Current;
-		auto token = player->CurrentStateChanged += ref new Windows::Foundation::TypedEventHandler<Windows::Media::Playback::MediaPlayer ^, Platform::Object ^>(this, &Tidal::AlbumPage::OnPlayerStateChanged);
-		_eventRegistrations.push_back(tools::makeScopedEventRegistration(token, [player](const Windows::Foundation::EventRegistrationToken& token) {
-			try {
-				player->CurrentStateChanged -= token;
-			}
-			catch (...) {}
-		}));
-	}
-	catch (Platform::COMException^ comEx) {
-		if (comEx->HResult == 0x800706BA) {
-			getAudioService().onBackgroundAudioFailureDetected();
-			AttachToPlayerEvents();
-			return;
-		}
-		throw;
-	}
-}
-
-void Tidal::AlbumPage::DettachFromPlayerEvents()
-{
-	_eventRegistrations.clear();
-}
-
-void Tidal::AlbumPage::ReevaluateTracksPlayingStates()
-{
-	if (!Dispatcher->HasThreadAccess) {
-		Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {
-			this->ReevaluateTracksPlayingStates();
-		}));
-		return;
-	}
-	auto tracks = _tracks;
-	if (!tracks) {
-		return;
-	}
-	auto trackId = getAudioService().getCurrentPlaybackTrackId();
-	auto state = Windows::Media::Playback::BackgroundMediaPlayer::Current->CurrentState;
-	for (auto&& track : tracks) {
-		track->RefreshPlayingState(trackId, state);
-	}
-}
 
 concurrency::task<void> Tidal::AlbumPage::LoadAsync(std::int64_t id)
 {
@@ -155,11 +110,14 @@ concurrency::task<void> Tidal::AlbumPage::LoadAsync(std::int64_t id)
 		auto tracks = await albums::getAlbumTracksAsync(id, albumInfo->numberOfTracks, cancelToken);
 		auto tracksDataSource = ref new Platform::Collections::Vector<Tidal::TrackItemVM^>();
 		for (auto&& t : tracks->items) {
-			tracksDataSource->Append(ref new Tidal::TrackItemVM(t, true));
+			auto ti = ref new Tidal::TrackItemVM(t, true);
+			tracksDataSource->Append(ti);
+			ti->AttachTo(tracksDataSource);
 		}
 		tracksLV->ItemsSource = tracksDataSource;
 		_tracks = tracksDataSource;
-		ReevaluateTracksPlayingStates();
+		_tracksPlaybackManager = std::make_shared<TracksPlaybackStateManager>();
+		_tracksPlaybackManager->initialize(_tracks, Dispatcher);
 		if (albumInfo->cover.size() > 0) {
 			auto bgImageUrl = await api::GetCoverUriAndFallbackToWebAsync(id, tools::strings::toWindowsString(albumInfo->cover), 1080, 1080, cancelToken);
 
@@ -207,64 +165,10 @@ void Tidal::AlbumPage::OnWin2DCtlLoaded(Platform::Object^ sender, Windows::UI::X
 
 void Tidal::AlbumPage::OnPlayAlbumClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	if (_tracks) {
-		std::vector<api::TrackInfo> tracksInfo;
-		for (auto&& t : _tracks) {
-			tracksInfo.push_back(t->trackInfo());
-		}
-		getAudioService().resetPlaylistAndPlay(tracksInfo, 0, concurrency::cancellation_token::none());
+	if (_tracks && _tracks->Size >0) {
+		auto cmd = ref new PlayCommand(_tracks->GetAt(0), _tracks);
+		cmd->Execute(nullptr);
 	}
-}
-
-
-void Tidal::AlbumPage::OnPlayFromTrack(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-	auto trackItem = dynamic_cast<TrackItemVM^>(dynamic_cast<FrameworkElement^>(sender)->DataContext);
-	if (trackItem) {
-
-		auto trackId = getAudioService().getCurrentPlaybackTrackId();
-		auto state = Windows::Media::Playback::BackgroundMediaPlayer::Current->CurrentState;
-		if (state == Windows::Media::Playback::MediaPlayerState::Paused && trackId == trackItem->Id) {
-			Windows::Media::Playback::BackgroundMediaPlayer::Current->Play();
-			return;
-		}
-		if (_tracks) {
-			std::vector<api::TrackInfo> tracksInfo;
-			for (auto&& t : _tracks) {
-				tracksInfo.push_back(t->trackInfo());
-			}
-			unsigned int index = 0;
-			_tracks->IndexOf(trackItem, &index);
-			getAudioService().resetPlaylistAndPlay(tracksInfo, index, concurrency::cancellation_token::none());
-		}
-	}
-}
-
-concurrency::task<void> Tidal::AlbumPage::OnAppSuspended()
-{
-	DettachFromPlayerEvents();
-	return concurrency::task_from_result();
-}
-
-void Tidal::AlbumPage::OnAppResuming()
-{
-	AttachToPlayerEvents();
-
-	ReevaluateTracksPlayingStates();
-}
-
-
-
-void Tidal::AlbumPage::OnPlayerStateChanged(Windows::Media::Playback::MediaPlayer ^sender, Platform::Object ^args)
-{
-
-	ReevaluateTracksPlayingStates();
-}
-
-
-void Tidal::AlbumPage::OnPauseFromTrack(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-	Windows::Media::Playback::BackgroundMediaPlayer::Current->Pause();
 }
 
 
@@ -293,6 +197,10 @@ void Tidal::AlbumPage::OnMenuClick(Platform::Object^ sender, Windows::UI::Xaml::
 
 void Tidal::AlbumPage::OnAddFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+	if (!getAuthenticationService().authenticationState().isAuthenticated()) {
+		showUnauthenticatedDialog();
+		return;
+	}
 	getFavoriteService().addAlbumAsync(_albumId).then([](concurrency::task<void> t) {
 		try {
 			t.get();
@@ -306,6 +214,10 @@ void Tidal::AlbumPage::OnAddFavoriteClick(Platform::Object^ sender, Windows::UI:
 
 void Tidal::AlbumPage::OnRemoveFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+	if (!getAuthenticationService().authenticationState().isAuthenticated()) {
+		showUnauthenticatedDialog();
+		return;
+	}
 	getFavoriteService().removeAlbumAsync(_albumId).then([](concurrency::task<void> t) {
 		try {
 			t.get();

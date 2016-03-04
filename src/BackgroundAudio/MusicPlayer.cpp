@@ -135,6 +135,9 @@ MediaBinder^ createMediaBinderForTrack(const api::TrackInfo& info) {
 				catch (track_unavailable_for_streaming&) {
 					deferral->Complete();
 				}
+				catch (...) {
+					deferral->Complete();
+				}
 			});
 
 		}, tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(500)), cancelToken)

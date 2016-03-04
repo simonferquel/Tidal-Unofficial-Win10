@@ -7,7 +7,7 @@
 
 #include "GenrePage.g.h"
 #include "IGo.h"
-
+#include "TracksPlaybackStateManager.h"
 namespace Tidal
 {
 	/// <summary>
@@ -19,6 +19,7 @@ namespace Tidal
 	private:
 		concurrency::task<void> LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e);
 		concurrency::cancellation_token_source _cts;
+		std::shared_ptr<TracksPlaybackStateManager> _playbackStateManager;
 	protected:
 
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;

@@ -60,7 +60,8 @@ concurrency::task<void> Tidal::Home::LoadTracksAsync()
 	try {
 		auto tracks = await getNewsTrackItemsAsync(concurrency::cancellation_token::none());
 		tracksLV->ItemsSource = tracks;
-
+		_tracksPlaybackManager = std::make_shared<TracksPlaybackStateManager>();
+		_tracksPlaybackManager->initialize(tracks, Dispatcher);
 		auto videoSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
 		auto albumSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
 		auto playlistSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
@@ -126,9 +127,7 @@ void Tidal::Home::OnTrackClick(Platform::Object^ sender, Windows::UI::Xaml::Cont
 {
 
 	auto trackItem = dynamic_cast<TrackItemVM^>(e->ClickedItem);
-	std::vector<api::TrackInfo> tracks;
-	tracks.push_back(trackItem->trackInfo());
-	getAudioService().resetPlaylistAndPlay(tracks, 0, concurrency::cancellation_token::none());
+	trackItem->PlayCommand->Execute(nullptr);
 }
 
 
@@ -157,8 +156,11 @@ void Tidal::Home::OnTrackFilterChanged(Platform::Object^ sender, Tidal::SublistI
 	getNewsTrackItemsAsync(concurrency::cancellation_token::none(), L"featured", e->Path)
 		.then([this](concurrency::task<Platform::Collections::Vector<Tidal::TrackItemVM^>^> t) {
 		try {
-			
-			tracksLV->ItemsSource = t.get();
+			auto tracks = t.get();
+			tracksLV->ItemsSource = tracks;
+
+			_tracksPlaybackManager = std::make_shared<TracksPlaybackStateManager>();
+			_tracksPlaybackManager->initialize(tracks, Dispatcher);
 		}
 		catch (...) {
 			// connectivity issue

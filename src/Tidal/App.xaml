@@ -5,6 +5,7 @@
     xmlns:local="using:Tidal"
     RequestedTheme="Dark">
     <Application.Resources>
+        <local:PauseCommand x:Key="pauseCommand" />
         <Color x:Key="TidalAccentColor">#00FFFF</Color>
         <SolidColorBrush x:Key="TidalAccentBrush" Color="{StaticResource TidalAccentColor}" />
         <Style x:Key="PageTitleStyle" TargetType="TextBlock">

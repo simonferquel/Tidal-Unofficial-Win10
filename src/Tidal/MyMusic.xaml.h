@@ -6,6 +6,7 @@
 #pragma once
 
 #include "MyMusic.g.h"
+#include "TracksPlaybackStateManager.h"
 
 namespace Tidal
 {
@@ -17,6 +18,7 @@ namespace Tidal
 	{
 	private:
 		concurrency::cancellation_token_source _cts;
+		std::shared_ptr<TracksPlaybackStateManager> _tracksPlaybackManager;
 	public:
 		MyMusic();
 	protected:

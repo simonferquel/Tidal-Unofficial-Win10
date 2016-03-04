@@ -233,6 +233,8 @@
     <ClInclude Include="MiniPlayerView.xaml.h">
       <DependentUpon>MiniPlayerView.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="PauseCommand.h" />
+    <ClInclude Include="PlayCommand.h" />
     <ClInclude Include="PlayerSeekBar.xaml.h">
       <DependentUpon>PlayerSeekBar.xaml</DependentUpon>
     </ClInclude>
@@ -252,9 +254,11 @@
     </ClInclude>
     <ClInclude Include="SublistItemVM.h" />
     <ClInclude Include="TrackItemVM.h" />
+    <ClInclude Include="TracksPlaybackStateManager.h" />
     <ClInclude Include="TrackTemplatesWithCover.xaml.h">
       <DependentUpon>TrackTemplatesWithCover.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="UnauthenticatedDialog.h" />
     <ClInclude Include="VideoItemVM.h" />
     <ClInclude Include="VideoPlayer.xaml.h">
       <DependentUpon>VideoPlayer.xaml</DependentUpon>
@@ -494,6 +498,8 @@
     <ClCompile Include="MiniPlayerView.xaml.cpp">
       <DependentUpon>MiniPlayerView.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="PauseCommand.cpp" />
+    <ClCompile Include="PlayCommand.cpp" />
     <ClCompile Include="PlayerSeekBar.xaml.cpp">
       <DependentUpon>PlayerSeekBar.xaml</DependentUpon>
     </ClCompile>
@@ -512,9 +518,11 @@
     </ClCompile>
     <ClCompile Include="SublistItemVM.cpp" />
     <ClCompile Include="TrackItemVM.cpp" />
+    <ClCompile Include="TracksPlaybackStateManager.cpp" />
     <ClCompile Include="TrackTemplatesWithCover.xaml.cpp">
       <DependentUpon>TrackTemplatesWithCover.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="UnauthenticatedDialog.cpp" />
     <ClCompile Include="VideoItemVM.cpp" />
     <ClCompile Include="VideoPlayer.xaml.cpp">
       <DependentUpon>VideoPlayer.xaml</DependentUpon>

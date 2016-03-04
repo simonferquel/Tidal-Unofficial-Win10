@@ -67,6 +67,11 @@
     <ClCompile Include="SmtcService.cpp" />
     <ClCompile Include="LoadingView.cpp" />
     <ClCompile Include="AuthenticationVisualStateTrigger.cpp" />
+    <ClCompile Include="AccountPage.xaml.cpp" />
+    <ClCompile Include="PlayCommand.cpp" />
+    <ClCompile Include="UnauthenticatedDialog.cpp" />
+    <ClCompile Include="PauseCommand.cpp" />
+    <ClCompile Include="TracksPlaybackStateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -130,6 +135,11 @@
     <ClInclude Include="SmtcService.h" />
     <ClInclude Include="LoadingView.h" />
     <ClInclude Include="AuthenticationVisualStateTrigger.h" />
+    <ClInclude Include="AccountPage.xaml.h" />
+    <ClInclude Include="UnauthenticatedDialog.h" />
+    <ClInclude Include="PlayCommand.h" />
+    <ClInclude Include="PauseCommand.h" />
+    <ClInclude Include="TracksPlaybackStateManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\tidal-logo-large.png">
