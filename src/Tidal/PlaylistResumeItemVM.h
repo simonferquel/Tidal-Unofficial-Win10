@@ -13,6 +13,7 @@ namespace Tidal {
 		property Platform::String^ SearchImageUrl;
 		property Platform::String^ Title;
 		property Platform::String^ ArtistName;
+		property std::int32_t NumberOfTracks;
 		virtual void Go();
 		void GoToArtist();
 	internal:

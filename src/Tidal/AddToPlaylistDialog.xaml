@@ -1,0 +1,40 @@
+﻿<ContentDialog
+    x:Class="Tidal.AddToPlaylistDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Choose a playlist"
+    SecondaryButtonText="Cancel"
+    SecondaryButtonClick="OnCancel"
+    PrimaryButtonText="New playlist"
+    PrimaryButtonClick="OnPrimaryButtonClick"
+    >
+   
+    <local:LoadingView x:Name="loadingView" MinHeight="220">
+        
+        <Grid>
+            <ListView x:Name="playlistsLV" SelectionMode="None"
+                  IsItemClickEnabled="True" ItemClick="OnExistingPlaylistClick">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:PlaylistResumeItemVM">
+
+                        <TextBlock Text="{x:Bind Title}"  />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Grid x:Name="newPlaylistForm" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBox x:Name="txtTitle" PlaceholderText="title" Margin="0,4" />
+                <TextBox Grid.Row="1"
+                    x:Name="txtDesctiption" 
+                         PlaceholderText="Description" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,4"  />
+            </Grid>
+        </Grid>
+    </local:LoadingView>
+</ContentDialog>

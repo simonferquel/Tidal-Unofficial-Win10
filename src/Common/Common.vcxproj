@@ -215,6 +215,7 @@
     <ClInclude Include="Api\ArtistInfo.h" />
     <ClInclude Include="Api\Config.h" />
     <ClInclude Include="Api\CoverCache.h" />
+    <ClInclude Include="Api\PlaylistsQueries.h" />
     <ClInclude Include="Api\GetAlbumResumeQuery.h" />
     <ClInclude Include="Api\GetAlbumTracksQuery.h" />
     <ClInclude Include="Api\GetArtistAlbumsQuery.h" />
@@ -305,6 +306,7 @@
     <ClCompile Include="Api\LoginWithFacebookQuery.cpp" />
     <ClCompile Include="Api\LoginWithPasswordQuery.cpp" />
     <ClCompile Include="Api\PlaylistResume.cpp" />
+    <ClCompile Include="Api\PlaylistsQueries.cpp" />
     <ClCompile Include="Api\PromotionArticle.cpp" />
     <ClCompile Include="Api\QueryBase.cpp" />
     <ClCompile Include="Api\SearchQuery.cpp" />

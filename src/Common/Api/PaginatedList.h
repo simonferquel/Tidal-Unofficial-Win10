@@ -10,6 +10,7 @@ namespace api {
 		std::int32_t limit;
 		std::int64_t offset;
 		std::int64_t totalNumberOfItems;
+		std::wstring etag;
 		std::vector<T> items;
 
 		PaginatedList() = default;

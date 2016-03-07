@@ -49,7 +49,7 @@
                     <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind RemoveFavoriteVisibility, Mode=OneWay}" Click="{x:Bind RemoveFavorite}" >
                         <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€"  Foreground="{StaticResource TidalAccentBrush}" />
                     </AppBarButton>
-                    <AppBarButton Padding="0" Margin="0"  Width="36"  >
+                    <AppBarButton Padding="0" Margin="0"  Width="36" Click="{x:Bind AddToPlaylist}" >
                         <FontIcon  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="U" />
                     </AppBarButton>
                     <AppBarButton Padding="0" Margin="0"  Width="36"  >
@@ -98,7 +98,7 @@
                     <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind RemoveFavoriteVisibility, Mode=OneWay}" Click="{x:Bind RemoveFavorite}" >
                         <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€"  Foreground="{StaticResource TidalAccentBrush}" />
                     </AppBarButton>
-                    <AppBarButton Padding="0" Margin="0"  Width="36"  >
+                    <AppBarButton Padding="0" Margin="0"  Width="36" Click="{x:Bind AddToPlaylist}" >
                         <FontIcon  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="U" />
                     </AppBarButton>
                     <AppBarButton Padding="0" Margin="0"  Width="36"  >
@@ -142,7 +142,7 @@
                     <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind RemoveFavoriteVisibility, Mode=OneWay}" Click="{x:Bind RemoveFavorite}" >
                         <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€"  Foreground="{StaticResource TidalAccentBrush}" />
                     </AppBarButton>
-                    <AppBarButton Padding="0" Margin="0"  Width="36"  >
+                    <AppBarButton Padding="0" Margin="0"  Width="36" Click="{x:Bind AddToPlaylist}" >
                         <FontIcon  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="U" />
                     </AppBarButton>
                     <AppBarButton Padding="0" Margin="0"  Width="36"  >

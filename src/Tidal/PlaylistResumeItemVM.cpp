@@ -27,6 +27,7 @@ void Tidal::PlaylistResumeItemVM::GoToArtist()
 Tidal::PlaylistResumeItemVM::PlaylistResumeItemVM(const api::PlaylistResume & info, bool offline)
 {
 	ArtistId = info.creator.id;
+	NumberOfTracks = info.numberOfTracks;
 	Uuid = tools::strings::toWindowsString(info.uuid);
 	if (offline) {
 		ImageUrl = api::getPlaylistOfflineCoverUrl(info.uuid, 320, 214);

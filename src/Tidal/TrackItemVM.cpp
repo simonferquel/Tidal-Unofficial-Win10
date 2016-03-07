@@ -11,6 +11,7 @@
 #include "PlayCommand.h"
 #include "AuthenticationService.h"
 #include "UnauthenticatedDialog.h"
+#include "AddToPlaylistDialog.xaml.h"
 using namespace api;
 Windows::UI::Xaml::Input::ICommand^ Tidal::TrackItemVM::PlayCommand::get() {
 	auto lst = _trackListRef.Resolve<Windows::Foundation::Collections::IIterable<TrackItemVM^>>();
@@ -64,6 +65,10 @@ void Tidal::TrackItemVM::RemoveFavorite()
 	});
 	AddFavoriteVisibility = Windows::UI::Xaml::Visibility::Visible;
 	RemoveFavoriteVisibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+void Tidal::TrackItemVM::AddToPlaylist()
+{
+	ShowAddToPlaylistDialog(Id);
 }
 Tidal::TrackItemVM::TrackItemVM(const TrackInfo & info, bool includeTrackNumberInTitle) : _trackInfo(info)
 {

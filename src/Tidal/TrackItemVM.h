@@ -60,6 +60,7 @@ namespace Tidal {
 		void GoToAlbum();
 		void AddFavorite();
 		void RemoveFavorite();
+		void AddToPlaylist();
 	internal:
 		const api::TrackInfo& trackInfo() {
 			return _trackInfo;

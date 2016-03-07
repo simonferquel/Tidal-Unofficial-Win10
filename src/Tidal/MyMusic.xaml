@@ -216,10 +216,9 @@
                 				<Run Text="{x:Bind Title}"/>
                                     </TextBlock>
                                     <TextBlock Grid.Row="1"  TextTrimming="CharacterEllipsis" Margin="0,0,8,0" Foreground="#FF999999" FontSize="12">
-                				<Hyperlink  Foreground="#FF999999"  Click="{x:Bind GoToArtist}">
-                                    <Run>Created by </Run>
-                                        <Run Text="{x:Bind ArtistName}" />
-                                </Hyperlink>
+                				
+                                    <Run Foreground="#FF999999">Created by me</Run>
+
                                     </TextBlock>
                                 </Grid>
                             </StackPanel>

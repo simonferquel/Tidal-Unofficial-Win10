@@ -201,6 +201,9 @@
     <ClInclude Include="AccountPage.xaml.h">
       <DependentUpon>AccountPage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="AddToPlaylistDialog.xaml.h">
+      <DependentUpon>AddToPlaylistDialog.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="AlbumDataSources.h" />
     <ClInclude Include="AlbumResumeItemVM.h" />
     <ClInclude Include="AlbumPage.xaml.h">
@@ -324,6 +327,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="AccountPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="AddToPlaylistDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="AlbumPage.xaml">
@@ -468,6 +474,9 @@
   <ItemGroup>
     <ClCompile Include="AccountPage.xaml.cpp">
       <DependentUpon>AccountPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="AddToPlaylistDialog.xaml.cpp">
+      <DependentUpon>AddToPlaylistDialog.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="AlbumDataSources.cpp" />
     <ClCompile Include="AlbumResumeItemVM.cpp" />

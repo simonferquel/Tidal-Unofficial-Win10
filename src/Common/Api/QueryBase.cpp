@@ -34,6 +34,14 @@ void api::QueryBase::addQueryStringParameter(Platform::String ^ key, Platform::S
 	_queryString->Insert(key, value);
 }
 
+void api::QueryBase::addHeader(Platform::String ^ key, Platform::String ^ value)
+{
+	if (!_customHeaders) {
+		_customHeaders = ref new Map<String^, String^>();
+	}
+	_customHeaders->Insert(key, value);
+}
+
 api::QueryBase::QueryBase()
 {
 	addQueryStringParameter(L"token", config::apiToken());
@@ -41,11 +49,11 @@ api::QueryBase::QueryBase()
 
 api::QueryBase::QueryBase(Platform::String ^ sessionId, Platform::String^ countryCode)
 {
-	addQueryStringParameter(L"sessionId", sessionId);
+	addHeader(L"X-Tidal-SessionId", sessionId);
 	addQueryStringParameter(L"countryCode", countryCode);
 }
 
-concurrency::task<Platform::String^> api::QueryBase::getAsync(concurrency::cancellation_token cancelToken)
+concurrency::task<Platform::String^> api::QueryBase::getAsync(concurrency::cancellation_token cancelToken, std::shared_ptr<ResponseHolder> responseHolder )
 {
 	auto filter = ref new Windows::Web::Http::Filters::HttpBaseProtocolFilter();
 	filter->AllowUI = false;
@@ -71,7 +79,16 @@ concurrency::task<Platform::String^> api::QueryBase::getAsync(concurrency::cance
 	auto timeoutProvider = std::make_shared<tools::async::TimeoutCancelTokenProvider>(timeout());
 	auto combinedTokens = tools::async::combineCancelTokens(cancelToken, timeoutProvider->get_token());
 	try {
-		auto response = await create_task(client->SendRequestAsync(ref new HttpRequestMessage(HttpMethod::Get, ref new Uri(tools::strings::toWindowsString(urlBuilder)))), combinedTokens);
+		auto request = ref new HttpRequestMessage(HttpMethod::Get, ref new Uri(tools::strings::toWindowsString(urlBuilder)));
+		if (_customHeaders) {
+			for (auto&& pair : _customHeaders) {
+				request->Headers->Append(pair->Key, pair->Value);
+			}
+		}
+		auto response = await create_task(client->SendRequestAsync(request), combinedTokens);
+		if (responseHolder) {
+			responseHolder->response = response;
+		}
 		auto contentString = await create_task(response->Content->ReadAsStringAsync(), combinedTokens);
 		if (!response->IsSuccessStatusCode) {
 			throw statuscode_exception(urlBuilder, response->StatusCode, contentString);
@@ -86,7 +103,7 @@ concurrency::task<Platform::String^> api::QueryBase::getAsync(concurrency::cance
 	}
 }
 
-concurrency::task<Platform::String^> api::QueryBase::deleteAsync(concurrency::cancellation_token cancelToken)
+concurrency::task<Platform::String^> api::QueryBase::deleteAsync(concurrency::cancellation_token cancelToken, std::shared_ptr<ResponseHolder> responseHolder )
 {
 	auto filter = ref new Windows::Web::Http::Filters::HttpBaseProtocolFilter();
 	filter->AllowUI = false;
@@ -112,7 +129,16 @@ concurrency::task<Platform::String^> api::QueryBase::deleteAsync(concurrency::ca
 	auto timeoutProvider = std::make_shared<tools::async::TimeoutCancelTokenProvider>(timeout());
 	auto combinedTokens = tools::async::combineCancelTokens(cancelToken, timeoutProvider->get_token());
 	try {
-		auto response = await create_task(client->SendRequestAsync(ref new HttpRequestMessage(HttpMethod::Delete, ref new Uri(tools::strings::toWindowsString(urlBuilder)))), combinedTokens);
+		auto request = ref new HttpRequestMessage(HttpMethod::Delete, ref new Uri(tools::strings::toWindowsString(urlBuilder)));
+		if (_customHeaders) {
+			for (auto&& pair : _customHeaders) {
+				request->Headers->Append(pair->Key, pair->Value);
+			}
+		}
+		auto response = await create_task(client->SendRequestAsync(request), combinedTokens);
+		if (responseHolder) {
+			responseHolder->response = response;
+		}
 		auto contentString = await create_task(response->Content->ReadAsStringAsync(), combinedTokens);
 		if (!response->IsSuccessStatusCode) {
 			throw statuscode_exception(urlBuilder, response->StatusCode, contentString);
@@ -127,7 +153,7 @@ concurrency::task<Platform::String^> api::QueryBase::deleteAsync(concurrency::ca
 	}
 }
 
-concurrency::task<Platform::String^> api::QueryBase::postAsync(concurrency::cancellation_token cancelToken)
+concurrency::task<Platform::String^> api::QueryBase::postAsync(concurrency::cancellation_token cancelToken, std::shared_ptr<ResponseHolder> responseHolder )
 {
 	auto client = ref new HttpClient();
 	std::wstring urlBuilder(config::apiLocationPrefix()->Data());
@@ -150,7 +176,22 @@ concurrency::task<Platform::String^> api::QueryBase::postAsync(concurrency::canc
 	auto timeoutProvider = std::make_shared<tools::async::TimeoutCancelTokenProvider>(timeout());
 	auto combinedTokens = tools::async::combineCancelTokens(cancelToken, timeoutProvider->get_token());
 	try {
-		auto response = await create_task(client->PostAsync(ref new Uri(tools::strings::toWindowsString(urlBuilder)), _requestContent ? static_cast<IHttpContent^>(ref new HttpFormUrlEncodedContent(_requestContent)) : static_cast<IHttpContent^>(ref new HttpStringContent(L""))), combinedTokens);
+		auto request = ref new HttpRequestMessage(HttpMethod::Post, ref new Uri(tools::strings::toWindowsString(urlBuilder)));
+		if (_requestContent) {
+			request->Content = ref new HttpFormUrlEncodedContent(_requestContent);
+		}
+		else {
+			request->Content = ref new HttpStringContent(L"");
+		}
+		if (_customHeaders) {
+			for (auto&& pair : _customHeaders) {
+				request->Headers->Append(pair->Key, pair->Value);
+			}
+		}
+		auto response = await create_task(client->SendRequestAsync(request), combinedTokens);
+		if (responseHolder) {
+			responseHolder->response = response;
+		}
 		auto contentString = await create_task(response->Content->ReadAsStringAsync(), combinedTokens);
 		if (!response->IsSuccessStatusCode) {
 			throw statuscode_exception(urlBuilder, response->StatusCode, contentString);

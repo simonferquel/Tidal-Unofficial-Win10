@@ -234,6 +234,7 @@
     <Page Include="CurrentPlaylistPage.xaml" />
     <Page Include="Themes\Generic.xaml" />
     <Page Include="AccountPage.xaml" />
+    <Page Include="AddToPlaylistDialog.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\WiMP-Icons.ttf" />
