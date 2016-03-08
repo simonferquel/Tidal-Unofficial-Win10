@@ -72,6 +72,7 @@
     <ClCompile Include="UnauthenticatedDialog.cpp" />
     <ClCompile Include="PauseCommand.cpp" />
     <ClCompile Include="TracksPlaybackStateManager.cpp" />
+    <ClCompile Include="AddToPlaylistDialog.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -140,6 +141,7 @@
     <ClInclude Include="PlayCommand.h" />
     <ClInclude Include="PauseCommand.h" />
     <ClInclude Include="TracksPlaybackStateManager.h" />
+    <ClInclude Include="AddToPlaylistDialog.xaml.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\tidal-logo-large.png">

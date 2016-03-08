@@ -365,6 +365,7 @@
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
     <MainPackageIdentityName>11423SimonFerquel.fingatest</MainPackageIdentityName>
+    <MainPackageIdentityName>11423SimonFerquel.PushTestSimon</MainPackageIdentityName>
   </AccountPackageIdentityNames>
   <PackageInfoList LandingUrl="https://dev.windows.com/dashboard/Application?appId=9NBLGGH5QLCL" />
 </StoreAssociation>
