@@ -10,6 +10,7 @@ namespace Tidal {
 		Windows::UI::Xaml::Visibility _addFavoriteVisibility;
 		Windows::UI::Xaml::Visibility _removeFavoriteVisibility;
 		Platform::WeakReference _trackListRef;
+		std::wstring _owningPlaylistId;
 	public:
 		property std::int64_t Id;
 		property std::int64_t AlbumId;
@@ -61,6 +62,7 @@ namespace Tidal {
 		void AddFavorite();
 		void RemoveFavorite();
 		void AddToPlaylist();
+		void ShowMenu(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	internal:
 		const api::TrackInfo& trackInfo() {
 			return _trackInfo;
@@ -70,6 +72,9 @@ namespace Tidal {
 		}
 		TrackItemVM(const api::TrackInfo& info, bool includeTrackNumberInTitle = false);
 		void RefreshPlayingState(std::int64_t trackId, Windows::Media::Playback::MediaPlayerState state);
+		void attachToOwiningPlaylistId(const std::wstring& id) {
+			_owningPlaylistId = id;
+		}
 
 	};
 }

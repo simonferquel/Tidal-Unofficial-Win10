@@ -12,6 +12,7 @@
 #include "AuthenticationService.h"
 #include "UnauthenticatedDialog.h"
 #include "AddToPlaylistDialog.xaml.h"
+#include "MenuFlyouts.h"
 using namespace api;
 Windows::UI::Xaml::Input::ICommand^ Tidal::TrackItemVM::PlayCommand::get() {
 	auto lst = _trackListRef.Resolve<Windows::Foundation::Collections::IIterable<TrackItemVM^>>();
@@ -69,6 +70,12 @@ void Tidal::TrackItemVM::RemoveFavorite()
 void Tidal::TrackItemVM::AddToPlaylist()
 {
 	ShowAddToPlaylistDialog(Id);
+}
+void Tidal::TrackItemVM::ShowMenu(Platform::Object ^ sender, Windows::UI::Xaml::RoutedEventArgs ^ e)
+{
+	auto menu = getTrackMenuFlyout(_trackInfo, _owningPlaylistId);
+	auto fe = dynamic_cast<Windows::UI::Xaml::FrameworkElement^>(sender);
+	menu->ShowAt(fe, Windows::Foundation::Point(0, fe->ActualHeight));
 }
 Tidal::TrackItemVM::TrackItemVM(const TrackInfo & info, bool includeTrackNumberInTitle) : _trackInfo(info)
 {

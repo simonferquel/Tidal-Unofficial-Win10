@@ -42,3 +42,9 @@ Mediator<bool>& getTrackImportLaunchedMediator()
 	static std::shared_ptr<Mediator<bool>> m = std::make_shared<Mediator<bool>>();
 	return *m;
 }
+
+Mediator<ItemRemovedFromPlaylist>& getItemRemovedFromPlaylistMediator()
+{
+	static std::shared_ptr<Mediator<ItemRemovedFromPlaylist>> m = std::make_shared<Mediator<ItemRemovedFromPlaylist>>();
+	return *m;
+}

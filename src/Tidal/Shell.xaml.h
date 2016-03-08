@@ -32,12 +32,12 @@ namespace Tidal
 		void OnBackRequested(Platform::Object^ sender, Windows::UI::Core::BackRequestedEventArgs^ e);
 		void OnPhoneBackRequested(Platform::Object^sender, Windows::Phone::UI::Input::BackPressedEventArgs^ e);
 
-		void OnSizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e);
 		void OnWindowActivated(Platform::Object ^sender, Windows::UI::Core::WindowActivatedEventArgs ^e);
 
 		void OnBackClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnSearchButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 
 		void OnTrackImportComplete();
+		void OnVisibleBoundsChanged(Windows::UI::ViewManagement::ApplicationView ^sender, Platform::Object ^args);
 	};
 }

@@ -25,4 +25,15 @@ namespace api {
 		virtual std::wstring url() const override;
 		concurrency::task<void> executeAsync(concurrency::cancellation_token cancelToken);
 	};
+
+	class RemoveItemFromPlaylistQuery : public QueryBase {
+	private:
+		std::wstring _uuid;
+		int _index;
+	public:
+		RemoveItemFromPlaylistQuery(const std::wstring& playlistUuid, Platform::String^ etag, Platform::String^ sessionId, Platform::String^ countryCode, int index);
+
+		virtual std::wstring url() const override;
+		concurrency::task<void> executeAsync(concurrency::cancellation_token cancelToken);
+	};
 }

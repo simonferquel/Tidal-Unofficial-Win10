@@ -55,3 +55,25 @@ concurrency::task<void> api::AddTracksToPlaylistQuery::executeAsync(concurrency:
 {
 	await postAsync(cancelToken);
 }
+
+api::RemoveItemFromPlaylistQuery::RemoveItemFromPlaylistQuery(const std::wstring & playlistUuid, Platform::String ^ etag, Platform::String ^ sessionId, Platform::String ^ countryCode, int index)
+	: QueryBase(sessionId, countryCode),
+	_uuid(playlistUuid), _index(index)
+{
+	addHeader(L"If-None-Match", etag);
+	
+}
+
+std::wstring api::RemoveItemFromPlaylistQuery::url() const
+{
+	std::wstring result = L"playlists/";
+	result.append(_uuid);
+	result.append(L"/tracks/");
+	result.append(std::to_wstring(_index));
+	return result;
+}
+
+concurrency::task<void> api::RemoveItemFromPlaylistQuery::executeAsync(concurrency::cancellation_token cancelToken)
+{
+	await deleteAsync(cancelToken);
+}

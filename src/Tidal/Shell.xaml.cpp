@@ -36,6 +36,10 @@ Shell::Shell()
 	OnTrackImportComplete();
 	auto coreAppView = CoreApplication::GetCurrentView();
 	Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->SetPreferredMinSize(Size(360, 100));
+	auto appView = Windows::UI::ViewManagement::ApplicationView::GetForCurrentView();
+	appView->VisibleBoundsChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::ViewManagement::ApplicationView ^, Platform::Object ^>(this, &Tidal::Shell::OnVisibleBoundsChanged);
+	appView->SetDesiredBoundsMode(Windows::UI::ViewManagement::ApplicationViewBoundsMode::UseVisible);
+	OnVisibleBoundsChanged(appView, nullptr);
 	coreAppView->TitleBar->ExtendViewIntoTitleBar = true;
 	Window::Current->SetTitleBar(titleBar);
 	_systemNavManager = Windows::UI::Core::SystemNavigationManager::GetForCurrentView();
@@ -118,22 +122,6 @@ void Tidal::Shell::OnPhoneBackRequested(Platform::Object ^ sender, Windows::Phon
 
 
 
-void Tidal::Shell::OnSizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e)
-{
-	if (Windows::Foundation::Metadata::ApiInformation::IsApiContractPresent(L"Windows.Phone.PhoneContract", 1)) {
-		auto occludedRect = Windows::UI::ViewManagement::StatusBar::GetForCurrentView()->OccludedRect;
-		auto newSize = e->NewSize;
-		if (occludedRect.Width == newSize.Width) {
-			Margin = Thickness(0, occludedRect.Height, 0, 0);
-		}
-		else if (occludedRect.Height == newSize.Height) {
-			Margin = Thickness(occludedRect.Width, 0, 0, 0);
-		}
-		else {
-			Margin = Thickness(0);
-		}
-	}
-}
 
 
 void Tidal::Shell::OnWindowActivated(Platform::Object ^sender, Windows::UI::Core::WindowActivatedEventArgs ^e)
@@ -171,4 +159,14 @@ void Tidal::Shell::OnTrackImportComplete()
 			localMusicMenuItem->BadgeVisibility = count == 0 ? Windows::UI::Xaml::Visibility::Collapsed : Windows::UI::Xaml::Visibility::Visible;
 		}));
 	});
+}
+
+
+void Tidal::Shell::OnVisibleBoundsChanged(Windows::UI::ViewManagement::ApplicationView ^sender, Platform::Object ^args)
+{
+	auto coreWindow = Windows::UI::Core::CoreWindow::GetForCurrentThread();
+	auto margin = ThicknessHelper::FromLengths(sender->VisibleBounds.Left - coreWindow->Bounds.Left, sender->VisibleBounds.Top- coreWindow->Bounds.Top, 0, 0);
+	rootGrid->Margin = margin;
+	rootGrid->Width = sender->VisibleBounds.Width;
+	rootGrid->Height = sender->VisibleBounds.Height;
 }

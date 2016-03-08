@@ -10,7 +10,7 @@
 #include "Mediator.h"
 #include <tools/ScopedEventRegistration.h>
 #include "TracksPlaybackStateManager.h"
-
+#include "Mediators.h"
 namespace Tidal
 {
 	/// <summary>
@@ -25,6 +25,7 @@ namespace Tidal
 		std::wstring _playlistId;
 		concurrency::cancellation_token_source _cts;
 		std::shared_ptr<TracksPlaybackStateManager> _tracksPlaybackManager;
+		std::vector<RegistrationToken> _mediatorTokens;
 	public:
 		PlaylistPage();
 	protected:
@@ -37,7 +38,7 @@ namespace Tidal
 			_cts = concurrency::cancellation_token_source();
 		}
 	private:
-
+		void OnTrackRemovedFromPlaylist(const ItemRemovedFromPlaylist& ev);
 		concurrency::task<void> LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs^ args);
 		void OnPlayAll(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnContextMenuClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

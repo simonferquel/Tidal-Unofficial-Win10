@@ -12,6 +12,7 @@
 #include <map>
 #include "AuthenticationService.h"
 #include "UnauthenticatedDialog.h"
+#include <Api/GetTrackInfoQuery.h>
 DownloadService & getDownloadService()
 {
 	static DownloadService g_instance;
@@ -56,7 +57,7 @@ concurrency::task<void> DownloadService::StartDownloadAlbumAsync(std::int64_t id
 			jarr[jarr.size()] = ti.toJson();
 		}
 		importedAlbum.tracks_json = jarr.serialize();
-		
+
 		LocalDB::executeSynchronously<localdata::imported_albumInsertOrReplaceDbQuery>(localCtx, db, importedAlbum);
 		for (auto&& ti : tracks->items) {
 			localdata::track_import_job job;
@@ -152,4 +153,56 @@ concurrency::task<void> DownloadService::StartDownloadPlaylistAsync(const std::w
 	});
 	await getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
 	getTrackImportLaunchedMediator().raise(true);
+}
+
+concurrency::task<void> DownloadService::StartDownloadTracksAsync(const std::vector<std::int64_t>& idsRef)
+{
+	auto& authState = getAuthenticationService().authenticationState();
+	if (!authState.isAuthenticated()) {
+		showUnauthenticatedDialog();
+		return;
+	}
+	std::vector<std::int64_t> ids = idsRef;
+	for (auto id : ids) {
+		auto track = await api::GetTrackInfoQuery(id, authState.sessionId(), authState.countryCode()).executeAsync(concurrency::cancellation_token::none());
+		std::vector<concurrency::task<Platform::String^>> coversTasks;
+		coversTasks.push_back(api::EnsureCoverInCacheAsync(track->album.id, tools::strings::toWindowsString(track->album.cover), concurrency::cancellation_token::none()));
+		coversTasks.push_back(api::EnsureCoverInCacheAsync(track->album.id, tools::strings::toWindowsString(track->album.cover), 80, 80, concurrency::cancellation_token::none()));
+		coversTasks.push_back(api::EnsureCoverInCacheAsync(track->album.id, tools::strings::toWindowsString(track->album.cover), 160, 160, concurrency::cancellation_token::none()));
+		coversTasks.push_back(api::EnsureCoverInCacheAsync(track->album.id, tools::strings::toWindowsString(track->album.cover), 320, 320, concurrency::cancellation_token::none()));
+		coversTasks.push_back(api::EnsureCoverInCacheAsync(track->album.id, tools::strings::toWindowsString(track->album.cover), 1080, 1080, concurrency::cancellation_token::none()));
+		for (auto& t : coversTasks) {
+			await t;
+		}
+		auto ctx = localdata::getDb();
+		await ctx.executeAsync([ctx, track](sqlite3* db) {
+			auto localCtx = ctx;
+			LocalDB::SynchronousTransactionScope trans(localCtx, db);
+			localdata::track_import_job job;
+			job.artist = track->artists[0].name;
+			job.cover = track->album.cover;
+			job.id = track->id;
+			job.import_timestamp = std::chrono::system_clock::now().time_since_epoch().count();
+			job.local_size = 0;
+			job.owning_albumid = track->album.id;
+			job.owning_playlistid = L"";
+			job.server_size = 0;
+			job.server_timestamp = 0;
+			job.title = track->title;
+			job.obuscated = 1;
+
+			auto existing = LocalDB::executeSynchronously<localdata::GetExistingTrackImportJobQuery>(localCtx, db, track->id);
+			if (existing->size() == 0) {
+				LocalDB::executeSynchronously<localdata::track_import_jobInsertDbQuery>(localCtx, db, job);
+			}
+
+
+			trans.commit();
+		});
+		await getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
+		getTrackImportLaunchedMediator().raise(true);
+	}
+
+
+
 }

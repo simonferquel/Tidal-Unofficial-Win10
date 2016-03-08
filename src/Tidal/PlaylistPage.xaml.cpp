@@ -34,9 +34,22 @@ using namespace Windows::UI::Xaml::Navigation;
 PlaylistPage::PlaylistPage()
 {
 	InitializeComponent();
+	_mediatorTokens.push_back(getItemRemovedFromPlaylistMediator().registerCallback<PlaylistPage>(this, &PlaylistPage::OnTrackRemovedFromPlaylist));
 }
 
 
+
+void Tidal::PlaylistPage::OnTrackRemovedFromPlaylist(const ItemRemovedFromPlaylist & ev)
+{
+	if (_playlistId == ev.playlistId&& _tracks != nullptr) {
+		for (auto ix = 0; ix < _tracks->Size; ++ix) {
+			if (_tracks->GetAt(ix)->Id == ev.trackId) {
+				_tracks->RemoveAt(ix);
+				return;
+			}
+		}
+	}
+}
 
 concurrency::task<void> Tidal::PlaylistPage::LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ args)
 {
@@ -70,6 +83,9 @@ concurrency::task<void> Tidal::PlaylistPage::LoadAsync(Windows::UI::Xaml::Naviga
 				auto ti = ref new TrackItemVM(t);
 				tracksVM->Append(ti);
 				ti->AttachTo(tracksVM);
+				if (playlistInfo->type == L"USER" && playlistInfo->creator.id == getAuthenticationService().authenticationState().userId()) {
+					ti->attachToOwiningPlaylistId(playlistInfo->uuid);
+				}
 			}
 			_tracks = tracksVM;
 			_tracksPlaybackManager = std::make_shared<TracksPlaybackStateManager>();

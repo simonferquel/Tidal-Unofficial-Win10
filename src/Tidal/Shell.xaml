@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     RequestedTheme="Dark"
-    SizeChanged="OnSizeChanged"
     mc:Ignorable="d">
     <UserControl.Resources>
         <Style x:Key="ListViewItemStyle1" TargetType="ListViewItem">
@@ -29,7 +28,7 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="rootGrid">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="rootGrid" HorizontalAlignment="Left" VerticalAlignment="Top">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="AdaptativeStates">
                 <VisualState x:Name="Narrow"/>

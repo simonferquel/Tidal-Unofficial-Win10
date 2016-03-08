@@ -57,7 +57,7 @@
                             <AppBarButton Padding="0" Margin="0"  Width="36" Click="{x:Bind AddToPlaylist}" >
                                 <FontIcon  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="U" />
                             </AppBarButton>
-                            <AppBarButton Padding="0" Margin="0"  Width="36"  >
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Click="{x:Bind ShowMenu}" >
                                 <FontIcon   VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="#" />
                             </AppBarButton>
                         </StackPanel>
@@ -114,7 +114,7 @@
                             <AppBarButton Padding="0" Margin="0"  Width="36" Click="{x:Bind AddToPlaylist}" >
                                 <FontIcon  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="U" />
                             </AppBarButton>
-                            <AppBarButton Padding="0" Margin="0"  Width="36"  >
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Click="{x:Bind ShowMenu}" >
                                 <FontIcon   VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="#" />
                             </AppBarButton>
                         </StackPanel>
@@ -166,7 +166,7 @@
                             <AppBarButton Padding="0" Margin="0"  Width="36" Click="{x:Bind AddToPlaylist}" >
                                 <FontIcon  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="U" />
                             </AppBarButton>
-                            <AppBarButton Padding="0" Margin="0"  Width="36"  >
+                            <AppBarButton Padding="0" Margin="0"  Width="36" Click="{x:Bind ShowMenu}" >
                                 <FontIcon   VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="#" />
                             </AppBarButton>
                         </StackPanel>
