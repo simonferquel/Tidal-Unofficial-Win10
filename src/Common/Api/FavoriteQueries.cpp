@@ -17,10 +17,10 @@ std::wstring api::GetFavoriteAlbumsQuery::url() const
 
 concurrency::task<std::shared_ptr<PaginatedList<TimestampedEntity<AlbumResume>>>> api::GetFavoriteAlbumsQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto json = await getAsync(cancelToken);
+	auto json = co_await getAsync(cancelToken);
 	tools::strings::WindowsWIStream stream(json);
 	auto jsonVal = web::json::value::parse(stream);
-	return std::make_shared<api::PaginatedList<TimestampedEntity<AlbumResume>>>(jsonVal);
+	co_return std::make_shared<api::PaginatedList<TimestampedEntity<AlbumResume>>>(jsonVal);
 }
 
 api::GetFavoriteArtistsQuery::GetFavoriteArtistsQuery(std::int64_t userId, Platform::String ^ sessionId, Platform::String ^ countryCode) : QueryBase(sessionId, countryCode), _userId(userId)
@@ -38,10 +38,10 @@ std::wstring api::GetFavoriteArtistsQuery::url() const
 
 concurrency::task<std::shared_ptr<PaginatedList<TimestampedEntity<ArtistInfo>>>> api::GetFavoriteArtistsQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto json = await getAsync(cancelToken);
+	auto json = co_await getAsync(cancelToken);
 	tools::strings::WindowsWIStream stream(json);
 	auto jsonVal = web::json::value::parse(stream);
-	return std::make_shared<api::PaginatedList<TimestampedEntity<ArtistInfo>>>(jsonVal);
+	co_return std::make_shared<api::PaginatedList<TimestampedEntity<ArtistInfo>>>(jsonVal);
 }
 
 api::GetFavoriteTracksQuery::GetFavoriteTracksQuery(std::int64_t userId, Platform::String ^ sessionId, Platform::String ^ countryCode) : QueryBase(sessionId, countryCode), _userId(userId)
@@ -59,10 +59,10 @@ std::wstring api::GetFavoriteTracksQuery::url() const
 
 concurrency::task<std::shared_ptr<PaginatedList<TimestampedEntity<TrackInfo>>>> api::GetFavoriteTracksQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto json = await getAsync(cancelToken);
+	auto json = co_await getAsync(cancelToken);
 	tools::strings::WindowsWIStream stream(json);
 	auto jsonVal = web::json::value::parse(stream);
-	return std::make_shared<api::PaginatedList<TimestampedEntity<TrackInfo>>>(jsonVal);
+	co_return std::make_shared<api::PaginatedList<TimestampedEntity<TrackInfo>>>(jsonVal);
 }
 
 api::GetFavoritePlaylistsQuery::GetFavoritePlaylistsQuery(std::int64_t userId, Platform::String ^ sessionId, Platform::String ^ countryCode) : QueryBase(sessionId, countryCode), _userId(userId)
@@ -80,10 +80,10 @@ std::wstring api::GetFavoritePlaylistsQuery::url() const
 
 concurrency::task<std::shared_ptr<PaginatedList<TimestampedEntity<PlaylistResume>>>> api::GetFavoritePlaylistsQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto json = await getAsync(cancelToken);
+	auto json = co_await getAsync(cancelToken);
 	tools::strings::WindowsWIStream stream(json);
 	auto jsonVal = web::json::value::parse(stream);
-	return std::make_shared<api::PaginatedList<TimestampedEntity<PlaylistResume>>>(jsonVal);
+	co_return std::make_shared<api::PaginatedList<TimestampedEntity<PlaylistResume>>>(jsonVal);
 }
 
 api::GetMyPlaylistsQuery::GetMyPlaylistsQuery(std::int64_t userId, Platform::String ^ sessionId, Platform::String ^ countryCode) : QueryBase(sessionId, countryCode), _userId(userId)
@@ -101,10 +101,10 @@ std::wstring api::GetMyPlaylistsQuery::url() const
 
 concurrency::task<std::shared_ptr<PaginatedList<PlaylistResume>>> api::GetMyPlaylistsQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto json = await getAsync(cancelToken);
+	auto json = co_await getAsync(cancelToken);
 	tools::strings::WindowsWIStream stream(json);
 	auto jsonVal = web::json::value::parse(stream);
-	return std::make_shared<api::PaginatedList<PlaylistResume>>(jsonVal);
+	co_return std::make_shared<api::PaginatedList<PlaylistResume>>(jsonVal);
 }
 
 api::AddFavoritePlaylistQuery::AddFavoritePlaylistQuery(std::int64_t userId, Platform::String ^ sessionId, Platform::String ^ countryCode, Platform::String ^ playlistId) : QueryBase(sessionId, countryCode), _userId(userId)
@@ -122,7 +122,7 @@ std::wstring api::AddFavoritePlaylistQuery::url() const
 
 concurrency::task<void> api::AddFavoritePlaylistQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto result = await postAsync(cancelToken);
+	auto result = co_await postAsync(cancelToken);
 }
 
 api::RemoveFavoritePlaylistQuery::RemoveFavoritePlaylistQuery(std::int64_t userId, Platform::String ^ sessionId, Platform::String ^ countryCode, Platform::String ^ playlistId) : QueryBase(sessionId, countryCode), _userId(userId), _playlistId(playlistId)
@@ -140,7 +140,7 @@ std::wstring api::RemoveFavoritePlaylistQuery::url() const
 
 concurrency::task<void> api::RemoveFavoritePlaylistQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto result = await deleteAsync(cancelToken);
+	auto result = co_await deleteAsync(cancelToken);
 
 }
 
@@ -159,7 +159,7 @@ std::wstring api::AddFavoriteArtistQuery::url() const
 
 concurrency::task<void> api::AddFavoriteArtistQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto result = await postAsync(cancelToken);
+	auto result = co_await postAsync(cancelToken);
 }
 
 api::RemoveFavoriteArtisttQuery::RemoveFavoriteArtisttQuery(std::int64_t userId, Platform::String ^ sessionId, Platform::String ^ countryCode, std::int64_t id) : QueryBase(sessionId, countryCode), _userId(userId), _id(id)
@@ -177,7 +177,7 @@ std::wstring api::RemoveFavoriteArtisttQuery::url() const
 
 concurrency::task<void> api::RemoveFavoriteArtisttQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto result = await deleteAsync(cancelToken);
+	auto result = co_await deleteAsync(cancelToken);
 }
 
 
@@ -199,7 +199,7 @@ std::wstring api::AddFavoriteAlbumQuery::url() const
 
 concurrency::task<void> api::AddFavoriteAlbumQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto result = await postAsync(cancelToken);
+	auto result = co_await postAsync(cancelToken);
 }
 
 api::RemoveFavoriteAlbumQuery::RemoveFavoriteAlbumQuery(std::int64_t userId, Platform::String ^ sessionId, Platform::String ^ countryCode, std::int64_t id) : QueryBase(sessionId, countryCode), _userId(userId), _id(id)
@@ -217,7 +217,7 @@ std::wstring api::RemoveFavoriteAlbumQuery::url() const
 
 concurrency::task<void> api::RemoveFavoriteAlbumQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto result = await deleteAsync(cancelToken);
+	auto result = co_await deleteAsync(cancelToken);
 }
 
 
@@ -239,7 +239,7 @@ std::wstring api::AddFavoriteTrackQuery::url() const
 
 concurrency::task<void> api::AddFavoriteTrackQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto result = await postAsync(cancelToken);
+	auto result = co_await postAsync(cancelToken);
 }
 
 api::RemoveFavoriteTrackQuery::RemoveFavoriteTrackQuery(std::int64_t userId, Platform::String ^ sessionId, Platform::String ^ countryCode, std::int64_t id) : QueryBase(sessionId, countryCode), _userId(userId), _id(id)
@@ -257,5 +257,5 @@ std::wstring api::RemoveFavoriteTrackQuery::url() const
 
 concurrency::task<void> api::RemoveFavoriteTrackQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto result = await deleteAsync(cancelToken);
+	auto result = co_await deleteAsync(cancelToken);
 }

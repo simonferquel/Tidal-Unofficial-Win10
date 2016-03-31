@@ -30,7 +30,7 @@ AuthenticationService::AuthenticationService()
 concurrency::task<void> AuthenticationService::authenticateWithFacebookAsync(Platform::String^ accessToken, concurrency::cancellation_token cancelToken)
 {
 	api::LoginWithFacebookQuery q(accessToken);
-	auto result = await q.executeAsync(cancelToken);
+	auto result = co_await q.executeAsync(cancelToken);
 	api::GetUserInfoQuery userInfoQuery(result->userId, 
 		tools::strings::toWindowsString(result->sessionId),
 		tools::strings::toWindowsString(result->countryCode));
@@ -38,8 +38,8 @@ concurrency::task<void> AuthenticationService::authenticateWithFacebookAsync(Pla
 	api::GetSubscribtionQuery subscribtionQuery(result->userId,
 		tools::strings::toWindowsString(result->sessionId),
 		tools::strings::toWindowsString(result->countryCode));
-	auto subscribtion = await subscribtionQuery.executeAsync(cancelToken);
-	auto userInfo = await userInfoTask;
+	auto subscribtion = co_await subscribtionQuery.executeAsync(cancelToken);
+	auto userInfo = co_await userInfoTask;
 	_authState = AuthenticationState(*result, *subscribtion, *userInfo);
 	
 	auto settingsValues = ApplicationData::Current->LocalSettings->Values;
@@ -55,7 +55,7 @@ concurrency::task<void> AuthenticationService::authenticateWithFacebookAsync(Pla
 concurrency::task<void> AuthenticationService::authenticateWithPasswordAsync(Platform::String ^ userName, Platform::String ^ password, concurrency::cancellation_token cancelToken)
 {
 	api::LoginWithPasswordQuery q(userName, password);
-	auto result = await q.executeAsync(cancelToken);
+	auto result = co_await q.executeAsync(cancelToken);
 	api::GetUserInfoQuery userInfoQuery(result->userId,
 		tools::strings::toWindowsString(result->sessionId),
 		tools::strings::toWindowsString(result->countryCode));
@@ -63,8 +63,8 @@ concurrency::task<void> AuthenticationService::authenticateWithPasswordAsync(Pla
 	api::GetSubscribtionQuery subscribtionQuery(result->userId,
 		tools::strings::toWindowsString(result->sessionId),
 		tools::strings::toWindowsString(result->countryCode));
-	auto subscribtion = await subscribtionQuery.executeAsync(cancelToken);
-	auto userInfo = await userInfoTask;
+	auto subscribtion = co_await subscribtionQuery.executeAsync(cancelToken);
+	auto userInfo = co_await userInfoTask;
 	_authState = AuthenticationState(*result, *subscribtion, *userInfo);
 
 	auto settingsValues = ApplicationData::Current->LocalSettings->Values;

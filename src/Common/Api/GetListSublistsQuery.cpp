@@ -11,7 +11,7 @@ std::wstring api::GetListSublistsQuery::url() const
 
 concurrency::task<std::shared_ptr<std::vector<api::SublistInfo>>> api::GetListSublistsQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto json = await getAsync(cancelToken);
+	auto json = co_await getAsync(cancelToken);
 	tools::strings::WindowsWIStream stream(json);
 	auto jsonVal = web::json::value::parse(stream);
 	auto result = std::make_shared<std::vector<api::SublistInfo>>();

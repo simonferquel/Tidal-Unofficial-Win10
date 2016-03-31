@@ -73,12 +73,12 @@ namespace api {
 		using namespace std;
 		using namespace std::chrono;
 		using namespace date;
-		auto dayPoint = floor<days>(tp);
+		auto dayPoint = date::floor<days>(tp);
 		auto ymd = year_month_day{ dayPoint };
-		auto h = floor<hours>(tp - dayPoint);
-		auto m = floor<minutes>(tp - dayPoint - h);
-		auto s = floor<seconds>(tp - dayPoint - h - m);
-		auto ms = floor<milliseconds>(tp - dayPoint - h - m - s);
+		auto h = date::floor<hours>(tp - dayPoint);
+		auto m = date::floor<minutes>(tp - dayPoint - h);
+		auto s = date::floor<seconds>(tp - dayPoint - h - m);
+		auto ms = date::floor<milliseconds>(tp - dayPoint - h - m - s);
 		wstringstream stream;
 		stream << setfill(L'0') << setw(4) << (int)ymd.year();
 		stream << L'-';

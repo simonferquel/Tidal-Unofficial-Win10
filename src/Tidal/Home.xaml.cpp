@@ -58,7 +58,7 @@ concurrency::task<void> Tidal::Home::LoadTracksAsync()
 	selectionGV->ItemsSource = getNewsPromotionsDataSource();
 	
 	try {
-		auto tracks = await getNewsTrackItemsAsync(concurrency::cancellation_token::none());
+		auto tracks = co_await getNewsTrackItemsAsync(concurrency::cancellation_token::none());
 		tracksLV->ItemsSource = tracks;
 		_tracksPlaybackManager = std::make_shared<TracksPlaybackStateManager>();
 		_tracksPlaybackManager->initialize(tracks, Dispatcher);
@@ -67,7 +67,7 @@ concurrency::task<void> Tidal::Home::LoadTracksAsync()
 		auto playlistSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
 		auto trackSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
 
-		auto allLists = await getSublistsAsync(concurrency::cancellation_token::none());
+		auto allLists = co_await getSublistsAsync(concurrency::cancellation_token::none());
 		for (auto&& info : *allLists) {
 			auto item = ref new SublistItemVM(info);
 			if (info.hasAlbums) {

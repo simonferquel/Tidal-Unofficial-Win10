@@ -20,7 +20,7 @@ std::wstring api::CreatePlaylistQuery::url() const
 
 concurrency::task<std::shared_ptr<api::PlaylistResume>> api::CreatePlaylistQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto jsonString = await postAsync(cancelToken);
+	auto jsonString = co_await postAsync(cancelToken);
 	tools::strings::WindowsWIStream stream(jsonString);
 	auto jsonVal = web::json::value::parse(stream);
 	return std::make_shared<api::PlaylistResume>(jsonVal);
@@ -53,7 +53,7 @@ std::wstring api::AddTracksToPlaylistQuery::url() const
 
 concurrency::task<void> api::AddTracksToPlaylistQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	await postAsync(cancelToken);
+	co_await postAsync(cancelToken);
 }
 
 api::RemoveItemFromPlaylistQuery::RemoveItemFromPlaylistQuery(const std::wstring & playlistUuid, Platform::String ^ etag, Platform::String ^ sessionId, Platform::String ^ countryCode, int index)
@@ -75,5 +75,5 @@ std::wstring api::RemoveItemFromPlaylistQuery::url() const
 
 concurrency::task<void> api::RemoveItemFromPlaylistQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	await deleteAsync(cancelToken);
+	co_await deleteAsync(cancelToken);
 }

@@ -9,7 +9,7 @@ concurrency::task<void> localdata::initializeDbAsync()
 {
 	g_db = std::make_unique<LocalDB::DBContext>(L"localdata.db");
 	auto schema = std::make_shared<TidalSchema>(*g_db);
-	await schema->initializeAsync(concurrency::cancellation_token::none());
+	co_await schema->initializeAsync(concurrency::cancellation_token::none());
 }
 
 LocalDB::DBContext localdata::getDb()

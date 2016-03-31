@@ -39,7 +39,7 @@ concurrency::task<void> Tidal::LoginDialog::loginAsync()
 	validationMessage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 
 	try {
-		await getAuthenticationService().authenticateWithPasswordAsync(loginTxtBox->Text, passwordBox->Password, concurrency::cancellation_token::none());
+		co_await getAuthenticationService().authenticateWithPasswordAsync(loginTxtBox->Text, passwordBox->Password, concurrency::cancellation_token::none());
 		_loginResult = LoginDialogResult::LoggedInWithPassword;
 		Hide();
 		return;

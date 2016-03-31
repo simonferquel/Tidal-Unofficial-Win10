@@ -5,7 +5,7 @@
 concurrency::task<Windows::UI::Xaml::Data::LoadMoreItemsResult> Tidal::IncrementalLoadingCollection::LoadMoreItemsAsync(unsigned int count, concurrency::cancellation_token cancelToken)
 {
 	auto sizeBefore = _innerVector->Size;
-	HasMoreItems = await _loadMoreItemsCallback(_innerVector, count, cancelToken);
+	HasMoreItems = co_await _loadMoreItemsCallback(_innerVector, count, cancelToken);
 	
 	auto sizeAfter = _innerVector->Size;
 	Windows::UI::Xaml::Data::LoadMoreItemsResult result;

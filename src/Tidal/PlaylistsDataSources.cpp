@@ -8,7 +8,7 @@ concurrency::task<std::shared_ptr<api::PlaylistResume>> playlists::getPlaylistAs
 {
 	std::wstring id = idRef;
 	if (!forceRefresh) {
-		auto imported = await localdata::getImportedPlaylistIfExistsAsync(id, cancelToken);
+		auto imported = co_await localdata::getImportedPlaylistIfExistsAsync(id, cancelToken);
 		if (imported) {
 			return std::make_shared<api::PlaylistResume>(web::json::value::parse(imported->json));
 		}
@@ -17,11 +17,11 @@ concurrency::task<std::shared_ptr<api::PlaylistResume>> playlists::getPlaylistAs
 	auto& authSvc = getAuthenticationService();
 	if (!authSvc.authenticationState().isAuthenticated()) {
 		api::GetPlaylistQuery q(id, L"US");
-		return await q.executeAsync(cancelToken);
+		return co_await q.executeAsync(cancelToken);
 	}
 	else {
 		api::GetPlaylistQuery q(id, authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode());
-		return await q.executeAsync(cancelToken);
+		return co_await q.executeAsync(cancelToken);
 	}
 }
 
@@ -30,7 +30,7 @@ concurrency::task<std::shared_ptr<api::PaginatedList<api::TrackInfo>>> playlists
 	std::wstring id = idRef;
 
 	if (!forceRefresh) {
-		auto imported = await localdata::getImportedPlaylistIfExistsAsync(id, cancelToken);
+		auto imported = co_await localdata::getImportedPlaylistIfExistsAsync(id, cancelToken);
 		if (imported) {
 			auto jarr = web::json::value::parse(imported->tracks_json);
 			auto result = std::make_shared<api::PaginatedList<api::TrackInfo>>();
@@ -44,10 +44,10 @@ concurrency::task<std::shared_ptr<api::PaginatedList<api::TrackInfo>>> playlists
 	auto& authSvc = getAuthenticationService();
 	if (!authSvc.authenticationState().isAuthenticated()) {
 		api::GetPlaylistTracksQuery q(id, trackCount, 0, L"US");
-		return await q.executeAsync(cancelToken);
+		return co_await q.executeAsync(cancelToken);
 	}
 	else {
 		api::GetPlaylistTracksQuery q(id, trackCount, 0, authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode());
-		return await q.executeAsync(cancelToken);
+		return co_await q.executeAsync(cancelToken);
 	}
 }

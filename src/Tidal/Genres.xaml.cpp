@@ -29,7 +29,7 @@ using namespace Windows::UI::Xaml::Navigation;
 concurrency::task<void> Tidal::Genres::LoadAsync()
 {
 	try {
-		auto genres = await getSublistsAsync(concurrency::cancellation_token::none(), L"genres");
+		auto genres = co_await getSublistsAsync(concurrency::cancellation_token::none(), L"genres");
 		auto genresSources = ref new Platform::Collections::Vector<SublistItemVM^>();
 		for (auto&& info : *genres) {
 			genresSources->Append(ref new SublistItemVM(info));

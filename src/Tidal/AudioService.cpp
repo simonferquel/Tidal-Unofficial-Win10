@@ -106,7 +106,7 @@ public:
 				auto pingValueSet = ref new Windows::Foundation::Collections::ValueSet();
 				pingValueSet->Insert(L"request", L"ping");
 				Windows::Media::Playback::BackgroundMediaPlayer::SendMessageToBackground(pingValueSet);
-				await (resultTask || tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(100)), cancelToken));
+				co_await (resultTask || tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(100)), cancelToken));
 				if (resultTask.is_done()) {
 					return;
 				}
@@ -159,14 +159,14 @@ concurrency::task<void> AudioService::resetPlaylistAndPlay(const std::vector<api
 		json[json.size()] = track.toJson();
 	}
 	auto jsonText = tools::strings::toWindowsString( json.serialize());
-	auto file = await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFileAsync(L"current_playlist.json", Windows::Storage::CreationCollisionOption::OpenIfExists), cancelToken);
-	await concurrency::create_task(Windows::Storage::FileIO::WriteTextAsync(file, jsonText), cancelToken);
-	await _connection->ensureConnectionActiveAsync(cancelToken);
+	auto file = co_await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFileAsync(L"current_playlist.json", Windows::Storage::CreationCollisionOption::OpenIfExists), cancelToken);
+	co_await concurrency::create_task(Windows::Storage::FileIO::WriteTextAsync(file, jsonText), cancelToken);
+	co_await _connection->ensureConnectionActiveAsync(cancelToken);
 	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
 	resetPlayListValues->Insert(L"request", L"reset_playlist");
 	resetPlayListValues->Insert(L"index", startIndex);
 	resetPlayListValues->Insert(L"play", true);
-	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+	co_await _connection->sendAndWaitResponseAsync(resetPlayListValues);
 	
 }
 
@@ -175,13 +175,13 @@ concurrency::task<void> AudioService::moveToIndex(int startIndex, concurrency::c
 	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
 	resetPlayListValues->Insert(L"request", L"move_to_index");
 	resetPlayListValues->Insert(L"index", startIndex);
-	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+	co_await _connection->sendAndWaitResponseAsync(resetPlayListValues);
 }
 
 concurrency::task<std::shared_ptr<std::vector<api::TrackInfo>>> AudioService::getCurrentPlaylistAsync()
 {
-	auto file = await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFileAsync(L"current_playlist.json", Windows::Storage::CreationCollisionOption::OpenIfExists));
-	auto text = await concurrency::create_task(Windows::Storage::FileIO::ReadTextAsync(file));
+	auto file = co_await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFileAsync(L"current_playlist.json", Windows::Storage::CreationCollisionOption::OpenIfExists));
+	auto text = co_await concurrency::create_task(Windows::Storage::FileIO::ReadTextAsync(file));
 	auto result = std::make_shared<std::vector<api::TrackInfo>>();
 	if (text->Length() > 0) {	
 		tools::strings::WindowsWIStream stream(text);
@@ -239,10 +239,10 @@ concurrency::task<void> AudioService::wakeupDownloaderAsync(concurrency::cancell
 		_connection->Initialize();
 	}
 	
-	await _connection->ensureConnectionActiveAsync(cancelToken);
+	co_await _connection->ensureConnectionActiveAsync(cancelToken);
 	auto values = ref new Windows::Foundation::Collections::ValueSet();
 	values->Insert(L"request", L"wakeup_downloader");
-	await _connection->sendAndWaitResponseAsync(values);
+	co_await _connection->sendAndWaitResponseAsync(values);
 }
 
 concurrency::task<void> AudioService::playAllLocalMusicAsync()
@@ -254,10 +254,10 @@ concurrency::task<void> AudioService::playAllLocalMusicAsync()
 		_connection->Initialize();
 	}
 	
-	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	co_await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
 	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
 	resetPlayListValues->Insert(L"request", L"play_all_local");
-	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+	co_await _connection->sendAndWaitResponseAsync(resetPlayListValues);
 }
 
 concurrency::task<void> AudioService::resumeAsync()
@@ -267,10 +267,10 @@ concurrency::task<void> AudioService::resumeAsync()
 		_connection->Initialize();
 	}
 
-	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	co_await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
 	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
 	resetPlayListValues->Insert(L"request", L"resume");
-	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+	co_await _connection->sendAndWaitResponseAsync(resetPlayListValues);
 }
 
 concurrency::task<void> AudioService::pauseAsync()
@@ -280,10 +280,10 @@ concurrency::task<void> AudioService::pauseAsync()
 		_connection->Initialize();
 	}
 
-	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	co_await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
 	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
 	resetPlayListValues->Insert(L"request", L"pause");
-	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+	co_await _connection->sendAndWaitResponseAsync(resetPlayListValues);
 }
 
 concurrency::task<void> AudioService::nextAsync()
@@ -293,10 +293,10 @@ concurrency::task<void> AudioService::nextAsync()
 		_connection->Initialize();
 	}
 
-	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	co_await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
 	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
 	resetPlayListValues->Insert(L"request", L"next");
-	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+	co_await _connection->sendAndWaitResponseAsync(resetPlayListValues);
 }
 
 concurrency::task<void> AudioService::previousAsync()
@@ -306,10 +306,10 @@ concurrency::task<void> AudioService::previousAsync()
 		_connection->Initialize();
 	}
 
-	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	co_await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
 	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
 	resetPlayListValues->Insert(L"request", L"previous");
-	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+	co_await _connection->sendAndWaitResponseAsync(resetPlayListValues);
 }
 
 concurrency::task<void> AudioService::shuffleChangeAsync()
@@ -319,10 +319,10 @@ concurrency::task<void> AudioService::shuffleChangeAsync()
 		_connection->Initialize();
 	}
 
-	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	co_await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
 	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
 	resetPlayListValues->Insert(L"request", L"shuffle_change");
-	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+	co_await _connection->sendAndWaitResponseAsync(resetPlayListValues);
 }
 
 concurrency::task<void> AudioService::repeatChangeAsync()
@@ -332,10 +332,10 @@ concurrency::task<void> AudioService::repeatChangeAsync()
 		_connection->Initialize();
 	}
 
-	await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
+	co_await _connection->ensureConnectionActiveAsync(Concurrency::cancellation_token::none());
 	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
 	resetPlayListValues->Insert(L"request", L"repeat_change");
-	await _connection->sendAndWaitResponseAsync(resetPlayListValues);
+	co_await _connection->sendAndWaitResponseAsync(resetPlayListValues);
 }
 
 AudioService & getAudioService()

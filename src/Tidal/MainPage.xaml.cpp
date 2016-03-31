@@ -34,7 +34,7 @@ MainPage::MainPage()
 concurrency::task<void> Tidal::MainPage::loginWithFacebookAsync(Platform::String^ accessToken, concurrency::cancellation_token cancelToken)
 {
 	auto& svc = getAuthenticationService();
-	await svc.authenticateWithFacebookAsync(accessToken, cancelToken);
+	co_await svc.authenticateWithFacebookAsync(accessToken, cancelToken);
 	
 }
 

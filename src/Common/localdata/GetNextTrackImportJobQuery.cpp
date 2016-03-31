@@ -84,7 +84,7 @@ concurrency::task<void> localdata::deleteImportedTrackAsync(LocalDB::DBContext &
 
 concurrency::task<std::shared_ptr<imported_track>> localdata::getExistingImportedTrackIfExistsAsync(LocalDB::DBContext & context, std::int64_t id, concurrency::cancellation_token cancelToken)
 {
-	auto result = await LocalDB::executeAsyncWithCancel<GetImportedTrackInfoQuery>(context, cancelToken, id);
+	auto result = co_await LocalDB::executeAsyncWithCancel<GetImportedTrackInfoQuery>(context, cancelToken, id);
 	if (result->size() == 0) {
 		return std::shared_ptr<imported_track>();
 	}
@@ -97,8 +97,8 @@ concurrency::task<void> localdata::transformTrackImportJobToImportedTrackAsync(L
 {
 	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
 	api::GetTrackInfoQuery tiQuery(id, dynamic_cast<Platform::String^>(settingsValues->Lookup(L"SessionId")), dynamic_cast<Platform::String^>(settingsValues->Lookup(L"CountryCode")));
-	auto ti = await tiQuery.executeAsync(cancelToken);
-	await context.executeAsync([id, context, cancelToken, ti](sqlite3* db) {
+	auto ti = co_await tiQuery.executeAsync(cancelToken);
+	co_await context.executeAsync([id, context, cancelToken, ti](sqlite3* db) {
 		auto ctx = context;
 		LocalDB::SynchronousTransactionScope trans(ctx, db);
 		auto jobset = LocalDB::executeSynchronouslyWithCancel<localdata::GetExistingTrackImportJobQuery>(ctx, db, cancelToken, id);

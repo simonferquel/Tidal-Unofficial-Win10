@@ -154,7 +154,7 @@ void Tidal::MiniPlayerView::OnAppResuming()
 concurrency::task<void> Tidal::MiniPlayerView::HandleTrackInfoAsync(const api::TrackInfo & infoRef)
 {
 	auto info = infoRef;
-	auto url = await api::EnsureCoverInCacheAsync(infoRef.album.id, tools::strings::toWindowsString( infoRef.album.cover), concurrency::cancellation_token::none());
+	auto url = co_await api::EnsureCoverInCacheAsync(infoRef.album.id, tools::strings::toWindowsString( infoRef.album.cover), concurrency::cancellation_token::none());
 	currentItemImage->Source = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(ref new Uri(url));
 	trackName->Text = tools::strings::toWindowsString(info.title);
 	artistName->Text = tools::strings::toWindowsString(info.artists[0].name);

@@ -113,7 +113,7 @@ void Tidal::CurrentPlaylistPage::OnPlayerStateChanged(Windows::Media::Playback::
 
 concurrency::task<void> Tidal::CurrentPlaylistPage::LoadAsync()
 {
-	auto items = await getAudioService().getCurrentPlaylistAsync();
+	auto items = co_await getAudioService().getCurrentPlaylistAsync();
 	_tracks = ref new Platform::Collections::Vector<Tidal::TrackItemVM^>();
 	for (auto&& item : *items) {
 		_tracks->Append(ref new TrackItemVM(item));
@@ -126,9 +126,9 @@ concurrency::task<void> Tidal::CurrentPlaylistPage::TransitionBackground(std::in
 {
 	_currentAlbumId = albumId;
 	try {
-		auto url = await api::GetCoverUriAndFallbackToWebAsync(albumId, tools::strings::toWindowsString(cover), 1080, 1080, cancelToken);
+		auto url = co_await api::GetCoverUriAndFallbackToWebAsync(albumId, tools::strings::toWindowsString(cover), 1080, 1080, cancelToken);
 		auto device = Microsoft::Graphics::Canvas::CanvasDevice::GetSharedDevice();
-		auto bmp = await concurrency::create_task(Microsoft::Graphics::Canvas::CanvasBitmap::LoadAsync(device, ref new Uri(url), 96), cancelToken);
+		auto bmp = co_await concurrency::create_task(Microsoft::Graphics::Canvas::CanvasBitmap::LoadAsync(device, ref new Uri(url), 96), cancelToken);
 		auto canvas = ref new Microsoft::Graphics::Canvas::CanvasRenderTarget(device, 1080, 1080, 96);
 		{
 			auto session = canvas->CreateDrawingSession();

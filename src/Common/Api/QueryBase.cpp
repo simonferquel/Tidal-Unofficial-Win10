@@ -85,11 +85,11 @@ concurrency::task<Platform::String^> api::QueryBase::getAsync(concurrency::cance
 				request->Headers->Append(pair->Key, pair->Value);
 			}
 		}
-		auto response = await create_task(client->SendRequestAsync(request), combinedTokens);
+		auto response = co_await create_task(client->SendRequestAsync(request), combinedTokens);
 		if (responseHolder) {
 			responseHolder->response = response;
 		}
-		auto contentString = await create_task(response->Content->ReadAsStringAsync(), combinedTokens);
+		auto contentString = co_await create_task(response->Content->ReadAsStringAsync(), combinedTokens);
 		if (!response->IsSuccessStatusCode) {
 			throw statuscode_exception(urlBuilder, response->StatusCode, contentString);
 		}
@@ -135,11 +135,11 @@ concurrency::task<Platform::String^> api::QueryBase::deleteAsync(concurrency::ca
 				request->Headers->Append(pair->Key, pair->Value);
 			}
 		}
-		auto response = await create_task(client->SendRequestAsync(request), combinedTokens);
+		auto response = co_await create_task(client->SendRequestAsync(request), combinedTokens);
 		if (responseHolder) {
 			responseHolder->response = response;
 		}
-		auto contentString = await create_task(response->Content->ReadAsStringAsync(), combinedTokens);
+		auto contentString = co_await create_task(response->Content->ReadAsStringAsync(), combinedTokens);
 		if (!response->IsSuccessStatusCode) {
 			throw statuscode_exception(urlBuilder, response->StatusCode, contentString);
 		}
@@ -188,11 +188,11 @@ concurrency::task<Platform::String^> api::QueryBase::postAsync(concurrency::canc
 				request->Headers->Append(pair->Key, pair->Value);
 			}
 		}
-		auto response = await create_task(client->SendRequestAsync(request), combinedTokens);
+		auto response = co_await create_task(client->SendRequestAsync(request), combinedTokens);
 		if (responseHolder) {
 			responseHolder->response = response;
 		}
-		auto contentString = await create_task(response->Content->ReadAsStringAsync(), combinedTokens);
+		auto contentString = co_await create_task(response->Content->ReadAsStringAsync(), combinedTokens);
 		if (!response->IsSuccessStatusCode) {
 			throw statuscode_exception(urlBuilder, response->StatusCode, contentString);
 		}

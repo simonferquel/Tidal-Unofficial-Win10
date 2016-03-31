@@ -36,7 +36,7 @@ concurrency::task<void> Tidal::Discovery::loadAsync()
 	selectionGV->ItemsSource = getNewsPromotionsDataSource(L"DISCOVERY");
 	albumsGV->ItemsSource = getNewsAlbumsDataSource(L"discovery", L"new");
 	try {
-		auto tracks = await getNewsTrackItemsAsync(concurrency::cancellation_token::none(), L"discovery", L"new");
+		auto tracks = co_await getNewsTrackItemsAsync(concurrency::cancellation_token::none(), L"discovery", L"new");
 		tracksLV->ItemsSource = tracks;
 		_playbackStateManager = std::make_shared<TracksPlaybackStateManager>();
 		_playbackStateManager->initialize(tracks, Dispatcher);

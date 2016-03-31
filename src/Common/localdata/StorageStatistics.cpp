@@ -85,7 +85,7 @@ protected:
 concurrency::task<std::shared_ptr<storage_statistics>> localdata::getStorageStatisticsAsync(concurrency::cancellation_token cancelToken)
 {
 	auto result = std::make_shared<storage_statistics>();
-	await getDb().executeAsync([result, cancelToken](sqlite3* db) {
+	co_await getDb().executeAsync([result, cancelToken](sqlite3* db) {
 		auto now = std::chrono::system_clock::now();
 		auto since = now - date::days(8);
 		result->totalCacheSize = LocalDB::executeSynchronouslyWithCancel<GetTotalCacheSizeQuery>(getDb(), db, cancelToken);

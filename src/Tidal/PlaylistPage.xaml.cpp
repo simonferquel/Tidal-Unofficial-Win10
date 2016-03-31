@@ -63,14 +63,14 @@ concurrency::task<void> Tidal::PlaylistPage::LoadAsync(Windows::UI::Xaml::Naviga
 			removeFavoriteButton->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 		}
 		_playlistId = id;
-		auto playlistInfo = await  playlists::getPlaylistAsync(id, concurrency::cancellation_token::none());
+		auto playlistInfo = co_await  playlists::getPlaylistAsync(id, concurrency::cancellation_token::none());
 		pageHeader->Text = tools::strings::toWindowsString(playlistInfo->title);
 		headeTitle->Text = tools::strings::toWindowsString(playlistInfo->title);
 		headerArtist->Text = playlistInfo->creator.name.size() > 0 ? tools::strings::toWindowsString(playlistInfo->creator.name) : L"TIDAL";
 		headerDescription->Text = tools::strings::toWindowsString(playlistInfo->description);
 		auto coverId = tools::strings::toWindowsString(playlistInfo->image);
 		auto urlTask = api::GetPlaylistCoverUriAndFallbackToWebAsync(playlistInfo->uuid, coverId, 1080, 720, concurrency::cancellation_token::none());
-		await urlTask.then([this, playlistInfo, id](Platform::String^ url) {;
+		co_await urlTask.then([this, playlistInfo, id](Platform::String^ url) {;
 		headerImage->Source = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(ref new Uri(url));
 		std::wstring tracksAndDurations = std::to_wstring(playlistInfo->numberOfTracks);
 		tracksAndDurations.append(L" tracks (");

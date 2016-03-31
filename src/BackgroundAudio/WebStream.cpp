@@ -101,7 +101,7 @@ concurrency::task<WebStream^> WebStream::CreateWebStreamAsync(Platform::String ^
 	auto uri = ref new Uri(url);
 	auto request = ref new HttpRequestMessage(HttpMethod::Head, uri);
 	auto client = ref new HttpClient();
-	auto response = await create_task(client->SendRequestAsync(request, HttpCompletionOption::ResponseHeadersRead), cancelToken);
+	auto response = co_await create_task(client->SendRequestAsync(request, HttpCompletionOption::ResponseHeadersRead), cancelToken);
 	auto modified = response->Content->Headers->LastModified->Value;
 	auto size = response->Content->Headers->ContentLength->Value;
 	return ref new WebStream(uri, size, modified);

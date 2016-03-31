@@ -18,6 +18,7 @@
 using namespace Windows::Foundation;
 using namespace Windows::Storage::Streams;
 
+
 class HttpCacheStateMachine : public std::enable_shared_from_this<HttpCacheStateMachine> {
 private:
 	enum class StreamState {
@@ -79,7 +80,7 @@ private:
 			}
 		}
 		std::weak_ptr<HttpCacheStateMachine> weakThis = shared_from_this();
-		await concurrency::create_task(tce);
+		co_await concurrency::create_task(tce);
 		auto that = weakThis.lock();
 		if (!that) {
 			concurrency::cancel_current_task();
@@ -102,7 +103,7 @@ private:
 			}
 		}
 		std::weak_ptr<HttpCacheStateMachine> weakThis = shared_from_this();
-		await concurrency::create_task(tce);
+		co_await concurrency::create_task(tce);
 		auto that = weakThis.lock();
 		if (!that) {
 			concurrency::cancel_current_task();
@@ -120,12 +121,12 @@ private:
 			try {
 				auto that = weakThis.lock();
 				if (!that) {
-					await concurrency::task_from_result();
+					co_await concurrency::task_from_result();
 					return;
 				}
 				auto cancelToken = _cts.get_token();
 				if (!_webStream) {
-					await initializeAsync(cancelToken);
+					co_await initializeAsync(cancelToken);
 				}
 
 
@@ -140,7 +141,7 @@ private:
 
 					auto timeoutProvider = std::make_shared<tools::async::TimeoutCancelTokenProvider>(tools::time::ToWindowsTimeSpan(std::chrono::seconds(5)));
 
-					resultBuffer = await concurrency::create_task(_webStream->ReadAsync(buffer, 128*1024, InputStreamOptions::ReadAhead), tools::async::combineCancelTokens(cancelToken, timeoutProvider->get_token()));
+					resultBuffer = co_await concurrency::create_task(_webStream->ReadAsync(buffer, 128*1024, InputStreamOptions::ReadAhead), tools::async::combineCancelTokens(cancelToken, timeoutProvider->get_token()));
 				}
 				catch (concurrency::task_canceled&) {
 					if (cancelToken.is_canceled()) {
@@ -166,7 +167,7 @@ private:
 					auto ownershipTask = TakeWriteOwnershipAsync();
 					that = nullptr;
 
-					auto ownership = await ownershipTask;
+					auto ownership = co_await ownershipTask;
 					that = weakThis.lock();
 					if (!that) {
 						return;
@@ -175,11 +176,11 @@ private:
 						_fileStream->Seek(track.local_size);
 					}
 
-					auto written = await concurrency::create_task(_fileStream->WriteAsync(resultBuffer));
-					await concurrency::create_task(_fileStream->FlushAsync());
+					auto written = co_await concurrency::create_task(_fileStream->WriteAsync(resultBuffer));
+					co_await concurrency::create_task(_fileStream->FlushAsync());
 					track.local_size += written;
 					_track = track;
-					await cache::updateCachedTrackInfoAsync(localdata::getDb(), track, concurrency::cancellation_token::none());
+					co_await cache::updateCachedTrackInfoAsync(localdata::getDb(), track, concurrency::cancellation_token::none());
 				}
 
 			}
@@ -212,7 +213,7 @@ public:
 			count = _track.server_size - position;
 		}
 		std::weak_ptr<HttpCacheStateMachine> weakThis = shared_from_this();
-		auto ownership = await TakeReadOwnershipAsync(count + position);
+		auto ownership = co_await TakeReadOwnershipAsync(count + position);
 		auto that = weakThis.lock();
 		if (!that) {
 			concurrency::cancel_current_task();
@@ -220,7 +221,7 @@ public:
 		if (position != _fileStream->Position) {
 			_fileStream->Seek(position);
 		}
-		auto result = await concurrency::create_task(_fileStream->ReadAsync(buffer, count, InputStreamOptions::None));
+		auto result = co_await concurrency::create_task(_fileStream->ReadAsync(buffer, count, InputStreamOptions::None));
 		tools::debug_stream << L"end read" << std::endl;
 		return result;
 	}
@@ -232,8 +233,8 @@ public:
 
 		api::GetTrackStreamUrlQuery q(dynamic_cast<Platform::String^>(settingsValues->Lookup(L"SessionId")), dynamic_cast<Platform::String^>(settingsValues->Lookup(L"CountryCode")), _track.id, toString(_soundQuality));
 		try {
-			auto urlInfo = await q.executeAsync(cancelToken);
-			auto webStream = await WebStream::CreateWebStreamAsync(tools::strings::toWindowsString(urlInfo->url), tools::async::combineCancelTokens(cancelToken, timeoutProvider->get_token()));
+			auto urlInfo = co_await q.executeAsync(cancelToken);
+			auto webStream = co_await WebStream::CreateWebStreamAsync(tools::strings::toWindowsString(urlInfo->url), tools::async::combineCancelTokens(cancelToken, timeoutProvider->get_token()));
 			if (_track.server_size != webStream->Size || _track.quality != static_cast<std::uint32_t>(_soundQuality) || _track.server_timestamp != webStream->Modified.UniversalTime) {
 				_track.server_size = webStream->Size;
 				_track.local_size = 0;
@@ -264,7 +265,7 @@ public:
 		_downloadTask =
 			tools::async::retryWithDelays([weakThis]() {
 			auto that = weakThis.lock();
-			if (that) {
+			if (that && that->_track.local_size != that->_track.server_size) {
 				return that->continueDownloadingAsync(weakThis);
 			}
 			else {
@@ -365,15 +366,16 @@ concurrency::task<cached_stream_info> getCompleteStreamAsync(localdata::cached_t
 	if (cancelToken.is_canceled()) {
 		concurrency::cancel_current_task();
 	}
-	auto folder = await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFolderAsync(L"track_cache", Windows::Storage::CreationCollisionOption::OpenIfExists));
+	auto folder = co_await Windows::Storage::ApplicationData::Current->LocalFolder->CreateFolderAsync(L"track_cache", Windows::Storage::CreationCollisionOption::OpenIfExists);
 	if (cancelToken.is_canceled()) {
 		concurrency::cancel_current_task();
 	}
-	auto file = await concurrency::create_task(folder->GetFileAsync(track.id.ToString()));
+	auto file = co_await folder->GetFileAsync(track.id.ToString());
 	if (cancelToken.is_canceled()) {
 		concurrency::cancel_current_task();
 	}
-	IRandomAccessStream^ stream = await concurrency::create_task(file->OpenReadAsync());
+	IRandomAccessStream^ stream = co_await file->OpenReadAsync();
+	file = nullptr;
 	if (cancelToken.is_canceled()) {
 		concurrency::cancel_current_task();
 	}
@@ -382,7 +384,7 @@ concurrency::task<cached_stream_info> getCompleteStreamAsync(localdata::cached_t
 	}
 
 	track.last_playpack_time = std::chrono::system_clock::now().time_since_epoch().count();
-	await cache::updateCachedTrackInfoAsync(localdata::getDb(), track, cancelToken);
+	co_await cache::updateCachedTrackInfoAsync(localdata::getDb(), track, cancelToken);
 	if (cancelToken.is_canceled()) {
 		concurrency::cancel_current_task();
 	}
@@ -398,15 +400,16 @@ concurrency::task<cached_stream_info> getPartialStreamAsync(localdata::cached_tr
 	if (cancelToken.is_canceled()) {
 		concurrency::cancel_current_task();
 	}
-	auto folder = await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFolderAsync(L"track_cache", Windows::Storage::CreationCollisionOption::OpenIfExists));
+	auto folder = co_await Windows::Storage::ApplicationData::Current->LocalFolder->CreateFolderAsync(L"track_cache", Windows::Storage::CreationCollisionOption::OpenIfExists);
 	if (cancelToken.is_canceled()) {
 		concurrency::cancel_current_task();
 	}
-	auto file = await concurrency::create_task(folder->CreateFileAsync(track.id.ToString(), Windows::Storage::CreationCollisionOption::OpenIfExists));
+	auto file = co_await folder->CreateFileAsync(track.id.ToString(), Windows::Storage::CreationCollisionOption::OpenIfExists);
 	if (cancelToken.is_canceled()) {
 		concurrency::cancel_current_task();
 	}
-	auto stream = await concurrency::create_task(file->OpenAsync(Windows::Storage::FileAccessMode::ReadWrite));
+	auto stream = co_await file->OpenAsync(Windows::Storage::FileAccessMode::ReadWrite);
+	file = nullptr;
 	if (cancelToken.is_canceled()) {
 		concurrency::cancel_current_task();
 	}
@@ -414,12 +417,13 @@ concurrency::task<cached_stream_info> getPartialStreamAsync(localdata::cached_tr
 
 
 	track.last_playpack_time = std::chrono::system_clock::now().time_since_epoch().count();
-	await cache::updateCachedTrackInfoAsync(localdata::getDb(), track, cancelToken);
+	co_await cache::updateCachedTrackInfoAsync(localdata::getDb(), track, cancelToken);
 	if (cancelToken.is_canceled()) {
 		concurrency::cancel_current_task();
 	}
 	auto sm = std::make_shared< HttpCacheStateMachine>(track.id, quality, stream, track, cancelToken);
-	await sm->initializeAsync(cancelToken);
+	stream = nullptr;
+	co_await sm->initializeAsync(cancelToken);
 	if (cancelToken.is_canceled()) {
 		concurrency::cancel_current_task();
 	}
@@ -435,14 +439,14 @@ concurrency::task<cached_stream_info> getPartialStreamAsync(localdata::cached_tr
 }
 concurrency::task<cached_stream_info> resolveCachedStreamAsync(std::int64_t id, concurrency::cancellation_token cancelToken)
 {
-	auto importState = await LocalDB::executeAsyncWithCancel<localdata::GetImportedTrackInfoQuery>(localdata::getDb(), cancelToken, id);
+	auto importState = co_await LocalDB::executeAsyncWithCancel<localdata::GetImportedTrackInfoQuery>(localdata::getDb(), cancelToken, id);
 	if (importState->size() > 0) {
 		auto state = importState->at(0);
 		state.last_playpack_time = std::chrono::system_clock::now().time_since_epoch().count();
-		await LocalDB::executeAsyncWithCancel<localdata::imported_trackUpdateDbQuery>(localdata::getDb(), cancelToken, state);
+		co_await LocalDB::executeAsyncWithCancel<localdata::imported_trackUpdateDbQuery>(localdata::getDb(), cancelToken, state);
 		auto uri = ref new Windows::Foundation::Uri(L"ms-appdata:///local/imports/" + id.ToString());
 		auto streamRef = RandomAccessStreamReference::CreateFromUri(uri);
-		IRandomAccessStream^ stream = await concurrency::create_task(streamRef->OpenReadAsync(), cancelToken);
+		IRandomAccessStream^ stream = co_await concurrency::create_task(streamRef->OpenReadAsync(), cancelToken);
 		if (state.obuscated == 1) {
 			stream = ref new ObfuscateStream(stream, state.id);
 		}
@@ -462,11 +466,11 @@ concurrency::task<cached_stream_info> resolveCachedStreamAsync(std::int64_t id, 
 	}
 	auto streamingQuality = parseSoundQuality(streamingQualityTxt);
 
-	auto currentCacheState = await cache::getOrCreateCachedTrackInfoAsync(localdata::getDb(), id, cancelToken);
+	auto currentCacheState = co_await cache::getOrCreateCachedTrackInfoAsync(localdata::getDb(), id, cancelToken);
 	if (currentCacheState.quality == static_cast<std::int32_t>(streamingQuality)) {
 		if (currentCacheState.local_size == currentCacheState.server_size && currentCacheState.server_size != 0) {
-			return await getCompleteStreamAsync(currentCacheState, cancelToken);
+			return co_await getCompleteStreamAsync(currentCacheState, cancelToken);
 		}
 	}
-	return await getPartialStreamAsync(currentCacheState, streamingQuality, cancelToken);
+	return co_await getPartialStreamAsync(currentCacheState, streamingQuality, cancelToken);
 }

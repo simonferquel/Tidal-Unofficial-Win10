@@ -34,7 +34,7 @@ concurrency::task<void> Tidal::Videos::LoadAsync()
 	try {
 		auto videoSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
 
-		auto allLists = await getSublistsAsync(concurrency::cancellation_token::none());
+		auto allLists = co_await getSublistsAsync(concurrency::cancellation_token::none());
 		for (auto&& info : *allLists) {
 			if (info.hasVideos) {
 				auto item = ref new SublistItemVM(info);

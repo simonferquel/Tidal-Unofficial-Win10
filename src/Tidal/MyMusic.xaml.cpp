@@ -32,7 +32,7 @@ MyMusic::MyMusic()
 
 concurrency::task<void> Tidal::MyMusic::LoadAsync()
 {
-	await getFavoriteService().refreshAsync(concurrency::cancellation_token::none());
+	co_await getFavoriteService().refreshAsync(concurrency::cancellation_token::none());
 	this->albumsGV->ItemsSource = getFavoriteService().Albums();
 	this->playlistsGV->ItemsSource = getFavoriteService().Playlists();
 	this->myPlaylistsGV->ItemsSource = getFavoriteService().MyPlaylists();

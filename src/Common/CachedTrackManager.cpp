@@ -5,7 +5,7 @@
 concurrency::task<localdata::cached_track> cache::getOrCreateCachedTrackInfoAsync( LocalDB::DBContext ctx, std::int64_t id, concurrency::cancellation_token cancelToken)
 {
 	localdata::cached_track result;
-	await ctx.executeAsync([id, ctx, &result, cancelToken](sqlite3* db) {
+	co_await ctx.executeAsync([id, ctx, &result, cancelToken](sqlite3* db) {
 		auto localCtx = ctx;
 		LocalDB::SynchronousTransactionScope trans(localCtx, db);
 		auto existing = LocalDB::executeSynchronouslyWithCancel<localdata::GetCachedTrackInfoQuery>(localCtx, db, cancelToken, id);

@@ -42,7 +42,7 @@ String^ bytesToString(std::int64_t bytes) {
 
 concurrency::task<void> Tidal::Settings::loadStorageStatisticsAsync()
 {
-	auto stats = await localdata::getStorageStatisticsAsync(concurrency::cancellation_token::none());
+	auto stats = co_await localdata::getStorageStatisticsAsync(concurrency::cancellation_token::none());
 	cacheTotal->Text = bytesToString(stats->totalCacheSize);
 	cache8Days->Text = bytesToString(stats->cachedNotPlayedFor8DaysSize);
 	importTotal->Text = bytesToString(stats->totalImportSize);

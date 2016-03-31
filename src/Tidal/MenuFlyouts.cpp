@@ -63,8 +63,8 @@ Windows::UI::Xaml::Controls::MenuFlyout ^ getPlaylistMenuFlyout(const std::wstri
 concurrency::task<void> removeTrackFromPlaylist(std::int64_t trackId, std::wstring playlistId) {
 	auto authState = getAuthenticationService().authenticationState();
 	try {
-		auto playlist = await api::GetPlaylistQuery(playlistId, authState.sessionId(), authState.countryCode()).executeAsync(concurrency::cancellation_token::none());
-		auto tracks = await api::GetPlaylistTracksQuery(playlistId, playlist->numberOfTracks, 0, authState.sessionId(), authState.countryCode()).executeAsync(concurrency::cancellation_token::none());
+		auto playlist = co_await api::GetPlaylistQuery(playlistId, authState.sessionId(), authState.countryCode()).executeAsync(concurrency::cancellation_token::none());
+		auto tracks = co_await api::GetPlaylistTracksQuery(playlistId, playlist->numberOfTracks, 0, authState.sessionId(), authState.countryCode()).executeAsync(concurrency::cancellation_token::none());
 		std::int32_t index = -1;
 		for (auto ix = 0; ix < tracks->items.size(); ++ix) {
 			if (tracks->items[ix].id == trackId) {
@@ -73,7 +73,7 @@ concurrency::task<void> removeTrackFromPlaylist(std::int64_t trackId, std::wstri
 			}
 		}
 		if (index != -1) {
-			await api::RemoveItemFromPlaylistQuery(playlistId, tools::strings::toWindowsString( tracks->etag), authState.sessionId(), authState.countryCode(), index).executeAsync(concurrency::cancellation_token::none());
+			co_await api::RemoveItemFromPlaylistQuery(playlistId, tools::strings::toWindowsString( tracks->etag), authState.sessionId(), authState.countryCode(), index).executeAsync(concurrency::cancellation_token::none());
 			ItemRemovedFromPlaylist ev;
 			ev.playlistId = playlistId;
 			ev.trackId = trackId;

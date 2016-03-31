@@ -60,7 +60,7 @@ public:
 
 concurrency::task<std::shared_ptr<imported_album>> localdata::getImportedAlbumIfExistsAsync(std::int64_t id, concurrency::cancellation_token cancelToken)
 {
-	auto resultSet = await LocalDB::executeAsyncWithCancel<GetImportedAlbumIfExistsQuery>(getDb(), cancelToken, id);
+	auto resultSet = co_await LocalDB::executeAsyncWithCancel<GetImportedAlbumIfExistsQuery>(getDb(), cancelToken, id);
 	if (resultSet->size() == 0) {
 		return nullptr;
 	}
@@ -72,7 +72,7 @@ concurrency::task<std::shared_ptr<imported_album>> localdata::getImportedAlbumIf
 
 concurrency::task<std::shared_ptr<imported_playlist>> localdata::getImportedPlaylistIfExistsAsync(const std::wstring & id, concurrency::cancellation_token cancelToken)
 {
-	auto resultSet = await LocalDB::executeAsyncWithCancel<GetImportedPlaylistIfExistsQuery>(getDb(), cancelToken, id);
+	auto resultSet = co_await LocalDB::executeAsyncWithCancel<GetImportedPlaylistIfExistsQuery>(getDb(), cancelToken, id);
 	if (resultSet->size() == 0) {
 		return nullptr;
 	}

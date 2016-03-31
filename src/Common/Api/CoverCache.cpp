@@ -18,40 +18,40 @@ concurrency::task<Windows::Storage::StorageFolder^> ensureCoverFolderAsync() {
 }
 Concurrency::task<Windows::Storage::Streams::IBuffer^> DownloadAsync(Platform::String^ url, concurrency::cancellation_token cancelToken) {
 	auto client = ref new Windows::Web::Http::HttpClient();
-	auto response = await concurrency::create_task(client->GetAsync(ref new Windows::Foundation::Uri(url)), cancelToken);
+	auto response = co_await concurrency::create_task(client->GetAsync(ref new Windows::Foundation::Uri(url)), cancelToken);
 	if (response->StatusCode == Windows::Web::Http::HttpStatusCode::NotFound) {
 		return (Windows::Storage::Streams::IBuffer^)nullptr;
 	}
 	response->EnsureSuccessStatusCode();
-	return await concurrency::create_task(response->Content->ReadAsBufferAsync(), cancelToken);
+	return co_await concurrency::create_task(response->Content->ReadAsBufferAsync(), cancelToken);
 }
 
 concurrency::task<Platform::String^> api::EnsureCoverInCacheAsync(std::int64_t id, Platform::String ^ imageId, concurrency::cancellation_token cancelToken)
 {
-	auto coversFolder = await ensureCoverFolderAsync();
-	auto existing = await concurrency::create_task(coversFolder->TryGetItemAsync(id.ToString() + L".jpg"));
+	auto coversFolder = co_await ensureCoverFolderAsync();
+	auto existing = co_await concurrency::create_task(coversFolder->TryGetItemAsync(id.ToString() + L".jpg"));
 	if (existing) {
 		return ref new Platform::String( L"ms-appdata:///local/covers/") + id.ToString() + L".jpg";
 	}
 	while(!cancelToken.is_canceled()){
 		try {
 			if (imageId == nullptr || imageId->Length() == 0) {
-				return await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", cancelToken);
+				return co_await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", cancelToken);
 			}
-			auto buffer = await DownloadAsync(resolveImageUri(imageId->Data(), 320, 320), cancelToken);
+			auto buffer = co_await DownloadAsync(resolveImageUri(imageId->Data(), 320, 320), cancelToken);
 			if (!buffer) {
-				return await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", cancelToken);
+				return co_await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", cancelToken);
 			}
 			
-			auto file = await concurrency::create_task(coversFolder->CreateFileAsync(id.ToString() + L".jpg", Windows::Storage::CreationCollisionOption::ReplaceExisting));
-			await concurrency::create_task(Windows::Storage::FileIO::WriteBufferAsync(file, buffer));
+			auto file = co_await concurrency::create_task(coversFolder->CreateFileAsync(id.ToString() + L".jpg", Windows::Storage::CreationCollisionOption::ReplaceExisting));
+			co_await concurrency::create_task(Windows::Storage::FileIO::WriteBufferAsync(file, buffer));
 			return ref new Platform::String(L"ms-appdata:///local/covers/") + id.ToString() + L".jpg";
 		}
 		catch (...) {
 
 		}
 		// something went wrong
-		await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
+		co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
 	}
 	concurrency::cancel_current_task();
 }
@@ -59,30 +59,30 @@ concurrency::task<Platform::String^> api::EnsureCoverInCacheAsync(std::int64_t i
 concurrency::task<Platform::String^> api::EnsureCoverInCacheAsync(std::int64_t id, Platform::String ^ imageId, int width, int height, concurrency::cancellation_token cancelToken)
 {
 	auto fileName = id.ToString() + L"." + width.ToString() + L"x" + height.ToString() + L".jpg";
-	auto coversFolder = await ensureCoverFolderAsync();
-	auto existing = await concurrency::create_task(coversFolder->TryGetItemAsync(fileName));
+	auto coversFolder = co_await ensureCoverFolderAsync();
+	auto existing = co_await concurrency::create_task(coversFolder->TryGetItemAsync(fileName));
 	if (existing) {
 		return ref new Platform::String(L"ms-appdata:///local/covers/") + fileName;
 	}
 	while (!cancelToken.is_canceled()) {
 		try {
 			if (imageId == nullptr || imageId->Length() == 0) {
-				return await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", width, height, cancelToken);
+				return co_await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", width, height, cancelToken);
 			}
-			auto buffer = await DownloadAsync(resolveImageUri(imageId->Data(), width, height), cancelToken);
+			auto buffer = co_await DownloadAsync(resolveImageUri(imageId->Data(), width, height), cancelToken);
 			if (!buffer) {
-				return await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", width, height, cancelToken);
+				return co_await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", width, height, cancelToken);
 			}
 
-			auto file = await concurrency::create_task(coversFolder->CreateFileAsync(fileName, Windows::Storage::CreationCollisionOption::ReplaceExisting));
-			await concurrency::create_task(Windows::Storage::FileIO::WriteBufferAsync(file, buffer));
+			auto file = co_await concurrency::create_task(coversFolder->CreateFileAsync(fileName, Windows::Storage::CreationCollisionOption::ReplaceExisting));
+			co_await concurrency::create_task(Windows::Storage::FileIO::WriteBufferAsync(file, buffer));
 			return ref new Platform::String(L"ms-appdata:///local/covers/") + fileName;
 		}
 		catch (...) {
 
 		}
 		// something went wrong
-		await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
+		co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
 	}
 	concurrency::cancel_current_task();
 }
@@ -90,8 +90,8 @@ concurrency::task<Platform::String^> api::EnsureCoverInCacheAsync(std::int64_t i
 concurrency::task<Platform::String^> api::GetCoverUriAndFallbackToWebAsync(std::int64_t id, Platform::String ^ imageId, int width, int height, concurrency::cancellation_token cancelToken)
 {
 	auto fileName = id.ToString() + L"." + width.ToString() + L"x" + height.ToString() + L".jpg";
-	auto coversFolder = await ensureCoverFolderAsync();
-	auto existing = await concurrency::create_task(coversFolder->TryGetItemAsync(fileName));
+	auto coversFolder = co_await ensureCoverFolderAsync();
+	auto existing = co_await concurrency::create_task(coversFolder->TryGetItemAsync(fileName));
 	if (existing) {
 		return ref new Platform::String(L"ms-appdata:///local/covers/") + fileName;
 	}
@@ -112,30 +112,30 @@ Platform::String ^ api::getOfflineCoverUrl(std::int64_t id)
 concurrency::task<Platform::String^> api::EnsurePlaylistCoverInCacheAsync(const std::wstring & id, Platform::String ^ imageId, int width, int height, concurrency::cancellation_token cancelToken)
 {
 	auto fileName = tools::strings::toWindowsString(id) + L"." + width.ToString() + L"x" + height.ToString() + L".jpg";
-	auto coversFolder = await ensureCoverFolderAsync();
-	auto existing = await concurrency::create_task(coversFolder->TryGetItemAsync(fileName));
+	auto coversFolder = co_await ensureCoverFolderAsync();
+	auto existing = co_await concurrency::create_task(coversFolder->TryGetItemAsync(fileName));
 	if (existing) {
 		return ref new Platform::String(L"ms-appdata:///local/covers/") + fileName;
 	}
 	while (!cancelToken.is_canceled()) {
 		try {
 			if (imageId == nullptr || imageId->Length() == 0) {
-				return await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", width, height, cancelToken);
+				return co_await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", width, height, cancelToken);
 			}
-			auto buffer = await DownloadAsync(resolveImageUri(imageId->Data(), width, height), cancelToken);
+			auto buffer = co_await DownloadAsync(resolveImageUri(imageId->Data(), width, height), cancelToken);
 			if (!buffer) {
-				return await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", width, height, cancelToken);
+				return co_await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", width, height, cancelToken);
 			}
 
-			auto file = await concurrency::create_task(coversFolder->CreateFileAsync(fileName, Windows::Storage::CreationCollisionOption::ReplaceExisting));
-			await concurrency::create_task(Windows::Storage::FileIO::WriteBufferAsync(file, buffer));
+			auto file = co_await concurrency::create_task(coversFolder->CreateFileAsync(fileName, Windows::Storage::CreationCollisionOption::ReplaceExisting));
+			co_await concurrency::create_task(Windows::Storage::FileIO::WriteBufferAsync(file, buffer));
 			return ref new Platform::String(L"ms-appdata:///local/covers/") + fileName;
 		}
 		catch (...) {
 
 		}
 		// something went wrong
-		await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
+		co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
 	}
 	concurrency::cancel_current_task();
 }
@@ -143,8 +143,8 @@ concurrency::task<Platform::String^> api::EnsurePlaylistCoverInCacheAsync(const 
 concurrency::task<Platform::String^> api::GetPlaylistCoverUriAndFallbackToWebAsync(const std::wstring & id, Platform::String ^ imageId, int width, int height, concurrency::cancellation_token cancelToken)
 {
 	auto fileName = tools::strings::toWindowsString(id) + L"." + width.ToString() + L"x" + height.ToString() + L".jpg";
-	auto coversFolder = await ensureCoverFolderAsync();
-	auto existing = await concurrency::create_task(coversFolder->TryGetItemAsync(fileName));
+	auto coversFolder = co_await ensureCoverFolderAsync();
+	auto existing = co_await concurrency::create_task(coversFolder->TryGetItemAsync(fileName));
 	if (existing) {
 		return ref new Platform::String(L"ms-appdata:///local/covers/") + fileName;
 	}

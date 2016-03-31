@@ -81,7 +81,7 @@ void Tidal::LoginView::UpdateForAuthenticationState(const AuthenticationState & 
 concurrency::task<void> Tidal::LoginView::loginAsync()
 {
 	auto dialog = ref new LoginDialog();
-	await dialog->ShowAsync();
+	co_await dialog->ShowAsync();
 	if (dialog->DialogResult == LoginDialogResult::FacebookLoginRequested) {
 		auto flyout = ref new FacebookLoginFlyout();
 		flyout->ShowAt(dynamic_cast<FrameworkElement^>(Window::Current->Content));

@@ -29,8 +29,8 @@ concurrency::task<void> DownloadService::StartDownloadAlbumAsync(std::int64_t id
 		showUnauthenticatedDialog();
 		return;
 	}
-	auto albumInfo = await albums::getAlbumResumeAsync(id, concurrency::cancellation_token::none());
-	auto tracks = await albums::getAlbumTracksAsync(id, albumInfo->numberOfTracks, concurrency::cancellation_token::none());
+	auto albumInfo = co_await albums::getAlbumResumeAsync(id, concurrency::cancellation_token::none());
+	auto tracks = co_await albums::getAlbumTracksAsync(id, albumInfo->numberOfTracks, concurrency::cancellation_token::none());
 	std::vector<concurrency::task<Platform::String^>> coversTasks;
 	coversTasks.push_back(api::EnsureCoverInCacheAsync(albumInfo->id, tools::strings::toWindowsString(albumInfo->cover), concurrency::cancellation_token::none()));
 	coversTasks.push_back(api::EnsureCoverInCacheAsync(albumInfo->id, tools::strings::toWindowsString(albumInfo->cover), 80, 80, concurrency::cancellation_token::none()));
@@ -38,11 +38,11 @@ concurrency::task<void> DownloadService::StartDownloadAlbumAsync(std::int64_t id
 	coversTasks.push_back(api::EnsureCoverInCacheAsync(albumInfo->id, tools::strings::toWindowsString(albumInfo->cover), 320, 320, concurrency::cancellation_token::none()));
 	coversTasks.push_back(api::EnsureCoverInCacheAsync(albumInfo->id, tools::strings::toWindowsString(albumInfo->cover), 1080, 1080, concurrency::cancellation_token::none()));
 	for (auto& t : coversTasks) {
-		await t;
+		co_await t;
 	}
 
 	auto ctx = localdata::getDb();
-	await ctx.executeAsync([ctx, tracks, albumInfo](sqlite3* db) {
+	co_await ctx.executeAsync([ctx, tracks, albumInfo](sqlite3* db) {
 		auto localCtx = ctx;
 		LocalDB::SynchronousTransactionScope trans(localCtx, db);
 		localdata::imported_album importedAlbum;
@@ -81,7 +81,7 @@ concurrency::task<void> DownloadService::StartDownloadAlbumAsync(std::int64_t id
 
 		trans.commit();
 	});
-	await getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
+	co_await getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
 	getTrackImportLaunchedMediator().raise(true);
 }
 
@@ -92,8 +92,8 @@ concurrency::task<void> DownloadService::StartDownloadPlaylistAsync(const std::w
 		return;
 	}
 	std::wstring id = idRef;
-	auto playlist = await playlists::getPlaylistAsync(id, concurrency::cancellation_token::none(), true);
-	auto tracks = await playlists::getPlaylistTracksAsync(id, playlist->numberOfTracks, concurrency::cancellation_token::none(), true);
+	auto playlist = co_await playlists::getPlaylistAsync(id, concurrency::cancellation_token::none(), true);
+	auto tracks = co_await playlists::getPlaylistTracksAsync(id, playlist->numberOfTracks, concurrency::cancellation_token::none(), true);
 	std::map<std::int64_t, std::wstring> albumCovers;
 	for (auto trk : tracks->items) {
 		albumCovers.insert(std::make_pair(trk.album.id, trk.album.cover));
@@ -107,12 +107,12 @@ concurrency::task<void> DownloadService::StartDownloadPlaylistAsync(const std::w
 	coversTasks.push_back(api::EnsurePlaylistCoverInCacheAsync(id, tools::strings::toWindowsString(playlist->image), 160, 107, concurrency::cancellation_token::none()));
 	coversTasks.push_back(api::EnsurePlaylistCoverInCacheAsync(id, tools::strings::toWindowsString(playlist->image), 1080, 720, concurrency::cancellation_token::none()));
 	for (auto& t : coversTasks) {
-		await t;
+		co_await t;
 	}
 
 
 	auto ctx = localdata::getDb();
-	await ctx.executeAsync([ctx, tracks, playlist](sqlite3* db) {
+	co_await ctx.executeAsync([ctx, tracks, playlist](sqlite3* db) {
 		auto localCtx = ctx;
 		LocalDB::SynchronousTransactionScope trans(localCtx, db);
 		localdata::imported_playlist importedPlaylist;
@@ -151,7 +151,7 @@ concurrency::task<void> DownloadService::StartDownloadPlaylistAsync(const std::w
 
 		trans.commit();
 	});
-	await getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
+	co_await getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
 	getTrackImportLaunchedMediator().raise(true);
 }
 
@@ -164,7 +164,7 @@ concurrency::task<void> DownloadService::StartDownloadTracksAsync(const std::vec
 	}
 	std::vector<std::int64_t> ids = idsRef;
 	for (auto id : ids) {
-		auto track = await api::GetTrackInfoQuery(id, authState.sessionId(), authState.countryCode()).executeAsync(concurrency::cancellation_token::none());
+		auto track = co_await api::GetTrackInfoQuery(id, authState.sessionId(), authState.countryCode()).executeAsync(concurrency::cancellation_token::none());
 		std::vector<concurrency::task<Platform::String^>> coversTasks;
 		coversTasks.push_back(api::EnsureCoverInCacheAsync(track->album.id, tools::strings::toWindowsString(track->album.cover), concurrency::cancellation_token::none()));
 		coversTasks.push_back(api::EnsureCoverInCacheAsync(track->album.id, tools::strings::toWindowsString(track->album.cover), 80, 80, concurrency::cancellation_token::none()));
@@ -172,10 +172,10 @@ concurrency::task<void> DownloadService::StartDownloadTracksAsync(const std::vec
 		coversTasks.push_back(api::EnsureCoverInCacheAsync(track->album.id, tools::strings::toWindowsString(track->album.cover), 320, 320, concurrency::cancellation_token::none()));
 		coversTasks.push_back(api::EnsureCoverInCacheAsync(track->album.id, tools::strings::toWindowsString(track->album.cover), 1080, 1080, concurrency::cancellation_token::none()));
 		for (auto& t : coversTasks) {
-			await t;
+			co_await t;
 		}
 		auto ctx = localdata::getDb();
-		await ctx.executeAsync([ctx, track](sqlite3* db) {
+		co_await ctx.executeAsync([ctx, track](sqlite3* db) {
 			auto localCtx = ctx;
 			LocalDB::SynchronousTransactionScope trans(localCtx, db);
 			localdata::track_import_job job;
@@ -199,7 +199,7 @@ concurrency::task<void> DownloadService::StartDownloadTracksAsync(const std::vec
 
 			trans.commit();
 		});
-		await getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
+		co_await getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
 		getTrackImportLaunchedMediator().raise(true);
 	}
 

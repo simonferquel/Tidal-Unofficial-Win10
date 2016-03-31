@@ -34,7 +34,7 @@ concurrency::task<void> Tidal::VideoPlayer::launchVideo(Platform::String ^ id)
 		}
 		else {
 			api::GetVideoUrlQuery query(authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode(), id);
-			auto urlInfo = await query.executeAsync(concurrency::cancellation_token::none());
+			auto urlInfo = co_await query.executeAsync(concurrency::cancellation_token::none());
 			me->Source = ref new Uri(tools::strings::toWindowsString(urlInfo->url));
 		}
 	}

@@ -41,8 +41,8 @@ concurrency::task<void> Tidal::SearchView::DoSearchAsync()
 	auto cancelToken = _currentSearchCts.get_token();
 	backToResultsLnk->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 	try {
-		await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(150)), cancelToken);
-		auto results = await searchAllAsync(searchBox->Text, cancelToken);
+		co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(150)), cancelToken);
+		auto results = co_await searchAllAsync(searchBox->Text, cancelToken);
 		searchLV->ItemsSource = results;
 	}
 	catch (...) {}

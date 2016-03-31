@@ -36,9 +36,9 @@ Playlists::Playlists()
 concurrency::task<void> Tidal::Playlists::LoadAsync()
 {
 	try {
-		auto moods = await getSublistsAsync(concurrency::cancellation_token::none(), L"moods");
-		auto featured = await getSublistsAsync(concurrency::cancellation_token::none());
-		//	auto moods = await moodsTask;
+		auto moods = co_await getSublistsAsync(concurrency::cancellation_token::none(), L"moods");
+		auto featured = co_await getSublistsAsync(concurrency::cancellation_token::none());
+		//	auto moods = co_await moodsTask;
 		auto moodsSource = ref new Platform::Collections::Vector<SublistItemVM^>();
 		for (auto&& info : *moods) {
 			moodsSource->Append(ref new SublistItemVM(info));
@@ -70,8 +70,8 @@ concurrency::task<void> Tidal::Playlists::LoadMoodAsync(SublistItemVM ^ item)
 		moodHeaderZone->Visibility = Windows::UI::Xaml::Visibility::Visible;
 		moodHeaderImage->Source = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(ref new Uri(item->HeadingUrl));
 		moodHeaderTxt->Text = item->Name;
-		await firstLoadTask;
-		await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(100)), concurrency::cancellation_token::none());
+		co_await firstLoadTask;
+		co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(100)), concurrency::cancellation_token::none());
 		auto sv = FindOwningScrollViewer(moodHeaderZone);
 		auto ttv = moodHeaderZone->TransformToVisual(sv);
 		auto offset = ttv->TransformPoint(Point(0, 0));

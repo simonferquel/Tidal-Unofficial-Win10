@@ -60,7 +60,7 @@ namespace tools {
 			using namespace std::chrono;
 			using namespace date;
 			auto unixEpoch = day_point{ 1970_y / 1 / 1 };
-			return floor<seconds>(system_clock::now() - unixEpoch).count();
+			return date::floor<seconds>(system_clock::now() - unixEpoch).count();
 		}
 		inline std::wstring toStringMMSS(const std::chrono::seconds& totalSecs) {
 			auto hours = totalSecs.count() / 3600;

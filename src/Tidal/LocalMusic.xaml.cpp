@@ -41,7 +41,7 @@ LocalMusic::LocalMusic()
 
 concurrency::task<void> Tidal::LocalMusic::LoadAsync()
 {
-	auto downloads = await LocalDB::executeAsync<localdata::GetTrackImportQueueQuery>(localdata::getDb());
+	auto downloads = co_await LocalDB::executeAsync<localdata::GetTrackImportQueueQuery>(localdata::getDb());
 	for (localdata::track_import_job& item : *downloads) {
 		auto vm = ref new DownloadItemVM();
 		vm->Artist = tools::strings::toWindowsString( item.artist);

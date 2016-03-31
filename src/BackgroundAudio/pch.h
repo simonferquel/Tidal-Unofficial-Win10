@@ -9,6 +9,7 @@
 #include <ppltasks.h>
 #include <ppl.h>
 #include <experimental\resumable>
+using namespace Platform;
 #include <pplawait.h>
 
 #undef min

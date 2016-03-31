@@ -22,7 +22,7 @@ api::GetSimilarArtistsQuery::GetSimilarArtistsQuery(std::int64_t id, int limit, 
 concurrency::task<std::shared_ptr<PaginatedList<ArtistInfo>>> api::GetSimilarArtistsQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
 	try {
-		auto json = await getAsync(cancelToken);
+		auto json = co_await getAsync(cancelToken);
 		tools::strings::WindowsWIStream stream(json);
 		auto jsonVal = web::json::value::parse(stream);
 		return std::make_shared<PaginatedList<ArtistInfo>>(jsonVal);

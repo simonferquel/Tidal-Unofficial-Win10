@@ -63,7 +63,7 @@ concurrency::task<void> Tidal::GenrePage::LoadAsync(Windows::UI::Xaml::Navigatio
 	}
 
 	if (decoder->GetFirstValueByName(L"hasTracks") == L"true") {
-		auto tracks = await getNewsTrackItemsAsync(concurrency::cancellation_token::none(), L"genres", path);
+		auto tracks = co_await getNewsTrackItemsAsync(concurrency::cancellation_token::none(), L"genres", path);
 		tracksLV->ItemsSource = tracks;
 		_playbackStateManager = std::make_shared<TracksPlaybackStateManager>();
 		_playbackStateManager->initialize(tracks, Dispatcher);

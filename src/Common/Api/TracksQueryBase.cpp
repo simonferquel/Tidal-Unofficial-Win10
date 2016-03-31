@@ -20,7 +20,7 @@ api::GetTracksQueryBase::GetTracksQueryBase(int limit, int offset, Platform::Str
 concurrency::task<std::shared_ptr<PaginatedList<TrackInfo>>> api::GetTracksQueryBase::executeAsync(concurrency::cancellation_token cancelToken)
 {
 	auto responseHolder = std::make_shared<ResponseHolder>();
-	auto json = await getAsync(cancelToken, responseHolder);
+	auto json = co_await getAsync(cancelToken, responseHolder);
 	tools::strings::WindowsWIStream stream(json);
 	auto jsonVal = web::json::value::parse(stream);
 	

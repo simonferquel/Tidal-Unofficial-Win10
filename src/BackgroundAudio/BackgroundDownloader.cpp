@@ -21,40 +21,40 @@ concurrency::task<void> handleJobAsync(localdata::track_import_job job, concurre
 	}
 	auto importQuality = parseSoundQuality(importQualityTxt);
 
-	auto existing = await localdata::getExistingImportedTrackIfExistsAsync(localdata::getDb(), job.id, cancelToken);
+	auto existing = co_await localdata::getExistingImportedTrackIfExistsAsync(localdata::getDb(), job.id, cancelToken);
 	bool existingValid = false;
 	if (existing && existing->quality == static_cast<std::int32_t>(importQuality)) {
 		
 	}
 	else if (existing) {
 
-		await localdata::deleteImportedTrackAsync(localdata::getDb(), job.id, cancelToken);
+		co_await localdata::deleteImportedTrackAsync(localdata::getDb(), job.id, cancelToken);
 	}
 	if (existingValid) {
 
 	}
 	else if (job.local_size == job.server_size && job.server_size != 0) {
-		await localdata::transformTrackImportJobToImportedTrackAsync(localdata::getDb(), job.id, cancelToken);
+		co_await localdata::transformTrackImportJobToImportedTrackAsync(localdata::getDb(), job.id, cancelToken);
 	}
 	else {
 		
 		bool unauthorized = false;
 		api::GetTrackStreamUrlQuery q(dynamic_cast<Platform::String^>(settingsValues->Lookup(L"SessionId")), dynamic_cast<Platform::String^>(settingsValues->Lookup(L"CountryCode")), job.id, importQualityTxt, true);
 		try {
-			auto urlInfo = await q.executeAsync(cancelToken);
+			auto urlInfo = co_await q.executeAsync(cancelToken);
 
 			//auto streamReference = Windows::Storage::Streams::RandomAccessStreamReference::CreateFromUri(ref new Windows::Foundation::Uri(tools::strings::toWindowsString(urlInfo->url)));
-			auto webStream = await WebStream::CreateWebStreamAsync(tools::strings::toWindowsString(urlInfo->url), cancelToken);
+			auto webStream = co_await WebStream::CreateWebStreamAsync(tools::strings::toWindowsString(urlInfo->url), cancelToken);
 			if (webStream->Size != job.server_size || job.quality != static_cast<std::int32_t>(importQuality) || webStream->Modified.UniversalTime != job.server_timestamp) {
 				job.local_size = 0;
 				job.server_size = webStream->Size;
 				job.server_timestamp = webStream->Modified.UniversalTime;
 				job.quality = static_cast<std::int32_t>(importQuality);
-				await LocalDB::executeAsyncWithCancel<localdata::track_import_jobUpdateDbQuery>(localdata::getDb(), cancelToken, job);
+				co_await LocalDB::executeAsyncWithCancel<localdata::track_import_jobUpdateDbQuery>(localdata::getDb(), cancelToken, job);
 			}
-			auto folder = await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFolderAsync(L"imports", Windows::Storage::CreationCollisionOption::OpenIfExists));
-			auto file = await concurrency::create_task(folder->CreateFileAsync(job.id.ToString(), Windows::Storage::CreationCollisionOption::OpenIfExists));
-			Windows::Storage::Streams::IRandomAccessStream^ fileStream = await concurrency::create_task(file->OpenAsync(Windows::Storage::FileAccessMode::ReadWrite));
+			auto folder = co_await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFolderAsync(L"imports", Windows::Storage::CreationCollisionOption::OpenIfExists));
+			auto file = co_await concurrency::create_task(folder->CreateFileAsync(job.id.ToString(), Windows::Storage::CreationCollisionOption::OpenIfExists));
+			Windows::Storage::Streams::IRandomAccessStream^ fileStream = co_await concurrency::create_task(file->OpenAsync(Windows::Storage::FileAccessMode::ReadWrite));
 			if (fileStream->Position != job.local_size) {
 				fileStream->Seek(job.local_size);
 			}
@@ -71,11 +71,11 @@ concurrency::task<void> handleJobAsync(localdata::track_import_job job, concurre
 				if (job.server_size - job.local_size < count) {
 					count = job.server_size - job.local_size;
 				}
-				auto readBuffer = await concurrency::create_task(webStream->ReadAsync(buffer, count, Windows::Storage::Streams::InputStreamOptions::None), cancelToken);
-				await concurrency::create_task(fileStream->WriteAsync(readBuffer));
-				await concurrency::create_task(fileStream->FlushAsync());
+				auto readBuffer = co_await concurrency::create_task(webStream->ReadAsync(buffer, count, Windows::Storage::Streams::InputStreamOptions::None), cancelToken);
+				co_await concurrency::create_task(fileStream->WriteAsync(readBuffer));
+				co_await concurrency::create_task(fileStream->FlushAsync());
 				job.local_size += readBuffer->Length;
-				await LocalDB::executeAsync<localdata::track_import_jobUpdateDbQuery>(localdata::getDb(), job);
+				co_await LocalDB::executeAsync<localdata::track_import_jobUpdateDbQuery>(localdata::getDb(), job);
 
 				auto progressSet = ref new Windows::Foundation::Collections::ValueSet();
 				progressSet->Insert(L"request", L"track_import_progress");
@@ -86,7 +86,7 @@ concurrency::task<void> handleJobAsync(localdata::track_import_job job, concurre
 
 			}
 
-			await localdata::transformTrackImportJobToImportedTrackAsync(localdata::getDb(), job.id, cancelToken);
+			co_await localdata::transformTrackImportJobToImportedTrackAsync(localdata::getDb(), job.id, cancelToken);
 			
 		}
 		catch (api::statuscode_exception& ex) {
@@ -98,7 +98,7 @@ concurrency::task<void> handleJobAsync(localdata::track_import_job job, concurre
 			}
 		}
 		if (unauthorized) {
-			await localdata::cancelTrackImportJobAsync(localdata::getDb(), job.id, cancelToken);
+			co_await localdata::cancelTrackImportJobAsync(localdata::getDb(), job.id, cancelToken);
 		}
 	}
 
@@ -108,12 +108,12 @@ concurrency::task<void> handleJobAsync(localdata::track_import_job job, concurre
 	Windows::Media::Playback::BackgroundMediaPlayer::SendMessageToForeground(ackSet);
 }
 concurrency::task<bool> handleNextJobAsync(concurrency::cancellation_token cancelToken) {
-	auto job = await LocalDB::executeAsyncWithCancel<localdata::GetNextTrackImportJobQuery>(localdata::getDb(), cancelToken);
+	auto job = co_await LocalDB::executeAsyncWithCancel<localdata::GetNextTrackImportJobQuery>(localdata::getDb(), cancelToken);
 	if (job->size() == 0) {
 		return false;
 	}
 	// do nothing for now 
-	await tools::async::retryWithDelays([cancelToken]() {
+	co_await tools::async::retryWithDelays([cancelToken]() {
 		return LocalDB::executeAsyncWithCancel<localdata::GetNextTrackImportJobQuery>(localdata::getDb(), cancelToken)
 			.then([cancelToken](std::shared_ptr<std::vector<localdata::track_import_job>> job) {
 
@@ -135,14 +135,14 @@ concurrency::task<void> BackgroundDownloader::startDownloadLoopAsync(concurrency
 		}
 
 		while (!cancelToken.is_canceled()) {
-			bool treatedJob = await handleNextJobAsync(cancelToken);
+			bool treatedJob = co_await handleNextJobAsync(cancelToken);
 			if (!treatedJob) {
 				break;
 			}
 		}
 		auto delayTask = tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(60)), cancelToken);
 		std::vector<concurrency::task<void>> waiters{ wakeupTask, delayTask };
-		await concurrency::when_any(waiters.begin(), waiters.end());
+		co_await concurrency::when_any(waiters.begin(), waiters.end());
 
 	}
 }
