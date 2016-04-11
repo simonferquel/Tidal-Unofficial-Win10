@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "IncrementalLoadingCollection.h"
+#include <experimental/coroutine>
 #include <pplawait.h>
 
 concurrency::task<Windows::UI::Xaml::Data::LoadMoreItemsResult> Tidal::IncrementalLoadingCollection::LoadMoreItemsAsync(unsigned int count, concurrency::cancellation_token cancelToken)

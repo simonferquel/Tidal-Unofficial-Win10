@@ -10,6 +10,7 @@
 #include <tools/AsyncHelpers.h>
 void BackgroundAudio::BackgroundAudioTask::AttachToEvents()
 {
+
 	Windows::Media::Playback::BackgroundMediaPlayer::MessageReceivedFromForeground += ref new Windows::Foundation::EventHandler<Windows::Media::Playback::MediaPlayerDataReceivedEventArgs ^>(this, &BackgroundAudio::BackgroundAudioTask::OnMessageReceivedFromForeground);
 	auto transportControls = Windows::Media::Playback::BackgroundMediaPlayer::Current->SystemMediaTransportControls;
 	transportControls->ButtonPressed += ref new Windows::Foundation::TypedEventHandler<Windows::Media::SystemMediaTransportControls ^, Windows::Media::SystemMediaTransportControlsButtonPressedEventArgs ^>(this, &BackgroundAudio::BackgroundAudioTask::OnMediaTransportButtonPressed);

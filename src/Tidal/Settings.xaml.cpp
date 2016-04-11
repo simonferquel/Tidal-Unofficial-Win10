@@ -28,15 +28,15 @@ Settings::Settings()
 
 String^ bytesToString(std::int64_t bytes) {
 	if (bytes < 1024) {
-		return bytes.ToString() + " B";
+		return bytes.ToString() + L" B";
 	}
 	if (bytes < 1024 * 1024) {
-		return (bytes / 1024.0).ToString() + " KB";
+		return (bytes / 1024.0).ToString() + L" KB";
 	}
 	if (bytes < 1024 * 1024 * 1024) {
-		return (bytes / (1024 * 1024.0)).ToString() + " MB";
+		return (bytes / (1024 * 1024.0)).ToString() + L" MB";
 	}
-	return (bytes / (1024 * 1024 * 1024.0)).ToString() + " GB";
+	return (bytes / (1024 * 1024 * 1024.0)).ToString() + L" GB";
 }
 
 
@@ -115,4 +115,65 @@ void Tidal::Settings::OnImportQualityChecked(Platform::Object^ sender, Windows::
 			settingsValues->Insert(L"importQuality", quality);
 		}
 	}
+}
+
+
+void Tidal::Settings::OnClearCache_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	storageProgressBar->IsIndeterminate = true;
+	concurrency::create_task([]() {
+		return localdata::clearCacheAndGetStorageStatisticsAsync();
+	}).then([this](std::shared_ptr<localdata::storage_statistics> stats) {
+		cacheTotal->Text = bytesToString(stats->totalCacheSize);
+		cache8Days->Text = bytesToString(stats->cachedNotPlayedFor8DaysSize);
+		importTotal->Text = bytesToString(stats->totalImportSize);
+		import8Days->Text = bytesToString(stats->importNotPlayedFor8DaysSize);
+		storageProgressBar->IsIndeterminate = false;
+	}, concurrency::task_continuation_context::get_current_winrt_context());
+
+}
+
+
+void Tidal::Settings::OnClearImports_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	storageProgressBar->IsIndeterminate = true;
+	concurrency::create_task([]() {
+		return localdata::clearImportsAndGetStorageStatisticsAsync();
+	}).then([this](std::shared_ptr<localdata::storage_statistics> stats) {
+		cacheTotal->Text = bytesToString(stats->totalCacheSize);
+		cache8Days->Text = bytesToString(stats->cachedNotPlayedFor8DaysSize);
+		importTotal->Text = bytesToString(stats->totalImportSize);
+		import8Days->Text = bytesToString(stats->importNotPlayedFor8DaysSize);
+		storageProgressBar->IsIndeterminate = false;
+	}, concurrency::task_continuation_context::get_current_winrt_context());
+}
+
+
+void Tidal::Settings::OnRemoveOldCacheTracks_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	storageProgressBar->IsIndeterminate = true;
+	concurrency::create_task([]() {
+		return localdata::clearCacheNotPlayedFor8DaysAngGetStorageStatisticsAsync();
+	}).then([this](std::shared_ptr<localdata::storage_statistics> stats) {
+		cacheTotal->Text = bytesToString(stats->totalCacheSize);
+		cache8Days->Text = bytesToString(stats->cachedNotPlayedFor8DaysSize);
+		importTotal->Text = bytesToString(stats->totalImportSize);
+		import8Days->Text = bytesToString(stats->importNotPlayedFor8DaysSize);
+		storageProgressBar->IsIndeterminate = false;
+	}, concurrency::task_continuation_context::get_current_winrt_context());
+}
+
+
+void Tidal::Settings::OnRemoveOldImportedTracks_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	storageProgressBar->IsIndeterminate = true;
+	concurrency::create_task([]() {
+		return localdata::clearImportsNotPlayedFor8DaysAngGetStorageStatisticsAsync();
+	}).then([this](std::shared_ptr<localdata::storage_statistics> stats) {
+		cacheTotal->Text = bytesToString(stats->totalCacheSize);
+		cache8Days->Text = bytesToString(stats->cachedNotPlayedFor8DaysSize);
+		importTotal->Text = bytesToString(stats->totalImportSize);
+		import8Days->Text = bytesToString(stats->importNotPlayedFor8DaysSize);
+		storageProgressBar->IsIndeterminate = false;
+	}, concurrency::task_continuation_context::get_current_winrt_context());
 }

@@ -11,4 +11,8 @@ namespace localdata {
 	};
 
 	concurrency::task<std::shared_ptr<storage_statistics>> getStorageStatisticsAsync(concurrency::cancellation_token cancelToken);
+	concurrency::task<std::shared_ptr<storage_statistics>> clearCacheAndGetStorageStatisticsAsync();
+	concurrency::task<std::shared_ptr<storage_statistics>> clearImportsAndGetStorageStatisticsAsync();
+	concurrency::task<std::shared_ptr<storage_statistics>> clearCacheNotPlayedFor8DaysAngGetStorageStatisticsAsync();
+	concurrency::task<std::shared_ptr<storage_statistics>> clearImportsNotPlayedFor8DaysAngGetStorageStatisticsAsync();
 }

@@ -261,6 +261,7 @@
     <ClInclude Include="localdata\GetTrackImportQueueQuery.h" />
     <ClInclude Include="localdata\StorageStatistics.h" />
     <ClInclude Include="localdata\TidalSchema.h" />
+    <ClInclude Include="LocalFileManager.h" />
     <ClInclude Include="ObfuscateStream.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SoundQuality.h" />
@@ -322,6 +323,7 @@
     <ClCompile Include="localdata\GetTrackImportQueueQuery.cpp" />
     <ClCompile Include="localdata\StorageStatistics.cpp" />
     <ClCompile Include="localdata\TidalSchema.cpp" />
+    <ClCompile Include="LocalFileManager.cpp" />
     <ClCompile Include="ObfuscateStream.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

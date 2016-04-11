@@ -61,6 +61,7 @@
     <ClCompile Include="Api\FavoriteQueries.cpp" />
     <ClCompile Include="ObfuscateStream.cpp" />
     <ClCompile Include="Api\PlaylistsQueries.cpp" />
+    <ClCompile Include="LocalFileManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -129,5 +130,6 @@
     <ClInclude Include="Api\FavoriteQueries.h" />
     <ClInclude Include="ObfuscateStream.h" />
     <ClInclude Include="Api\PlaylistsQueries.h" />
+    <ClInclude Include="LocalFileManager.h" />
   </ItemGroup>
 </Project>

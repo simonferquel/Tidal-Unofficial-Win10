@@ -36,6 +36,10 @@
             </PivotItem>
             <PivotItem Header="Storage" Margin="0">
                 <ScrollViewer>
+                    <Grid>
+                        
+                        <ProgressBar VerticalAlignment="Top"
+                                     x:Name="storageProgressBar"/>
                     <StackPanel>
                         <TextBlock Margin="12" Text="Cached tracks" />
                         <TextBlock Margin="12,0" Style="{StaticResource CaptionTextBlockStyle}">
@@ -46,8 +50,8 @@
                             <Run x:Name="cache8Days" />
                         </TextBlock>
                         <StackPanel Orientation="Horizontal" Margin="12,4">
-                            <Button Content="Clear all" />
-                            <Button Margin="4,0" Content="Clear not played for 8 days" />
+                            <Button Content="Clear all" Click="OnClearCache_Click" />
+                            <Button Margin="4,0" Content="Clear not played for 8 days" Click="OnRemoveOldCacheTracks_Click" />
                         </StackPanel>
                         <TextBlock Margin="12" Text="Imported tracks" />
                         <TextBlock Margin="12,0" Style="{StaticResource CaptionTextBlockStyle}">
@@ -58,10 +62,12 @@
                             <Run x:Name="import8Days" />
                         </TextBlock>
                         <StackPanel Orientation="Horizontal" Margin="12,4">
-                            <Button Content="Clear all" />
-                            <Button Margin="4,0" Content="Clear not played for 8 days" />
+                            <Button Content="Clear all" Click="OnClearImports_Click"/>
+                            <Button Margin="4,0" Content="Clear not played for 8 days" Click="OnRemoveOldImportedTracks_Click" />
                         </StackPanel>
                     </StackPanel>
+                        
+                    </Grid>
                 </ScrollViewer>
             </PivotItem>
         </Pivot>

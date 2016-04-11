@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ObfuscateStream.h"
 #include <ppltasks.h>
+#include <experimental/coroutine>
 #include <pplawait.h>
 #include <wrl.h>
 #include <robuffer.h>

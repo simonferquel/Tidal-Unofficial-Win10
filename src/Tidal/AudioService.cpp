@@ -160,8 +160,8 @@ concurrency::task<void> AudioService::resetPlaylistAndPlay(const std::vector<api
 		json[json.size()] = track.toJson();
 	}
 	auto jsonText = tools::strings::toWindowsString( json.serialize());
-	auto file = co_await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFileAsync(L"current_playlist.json", Windows::Storage::CreationCollisionOption::OpenIfExists), cancelToken);
-	co_await concurrency::create_task(Windows::Storage::FileIO::WriteTextAsync(file, jsonText), cancelToken);
+	auto file = co_await concurrency::create_task(Windows::Storage::ApplicationData::Current->LocalFolder->CreateFileAsync(L"current_playlist.json", Windows::Storage::CreationCollisionOption::ReplaceExisting), cancelToken);
+	co_await concurrency::create_task(Windows::Storage::FileIO::WriteTextAsync(file, jsonText, Windows::Storage::Streams::UnicodeEncoding::Utf8), cancelToken);
 	co_await _connection->ensureConnectionActiveAsync(cancelToken);
 	auto resetPlayListValues = ref new Windows::Foundation::Collections::ValueSet();
 	resetPlayListValues->Insert(L"request", L"reset_playlist");
