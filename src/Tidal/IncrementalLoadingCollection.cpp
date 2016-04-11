@@ -5,16 +5,19 @@
 concurrency::task<Windows::UI::Xaml::Data::LoadMoreItemsResult> Tidal::IncrementalLoadingCollection::LoadMoreItemsAsync(unsigned int count, concurrency::cancellation_token cancelToken)
 {
 	auto sizeBefore = _innerVector->Size;
-	HasMoreItems = co_await _loadMoreItemsCallback(_innerVector, count, cancelToken);
+	return _loadMoreItemsCallback(_innerVector, count, cancelToken).then([this, sizeBefore](bool hasMoreItems) {
+		this->HasMoreItems = hasMoreItems;
+		auto sizeAfter = _innerVector->Size;
+		Windows::UI::Xaml::Data::LoadMoreItemsResult result;
+		result.Count = sizeAfter - sizeBefore;
+		for (auto& tce : _nextLoadTces) {
+			tce.set();
+		}
+		_nextLoadTces.clear();
+		return result;
+	}, concurrency::task_continuation_context::get_current_winrt_context());
 	
-	auto sizeAfter = _innerVector->Size;
-	Windows::UI::Xaml::Data::LoadMoreItemsResult result;
-	result.Count = sizeAfter - sizeBefore;
-	for (auto& tce : _nextLoadTces) {
-		tce.set();
-	}
-	_nextLoadTces.clear();
-	return result;
+	
 }
 
 

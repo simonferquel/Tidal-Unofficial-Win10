@@ -22,10 +22,11 @@ api::SearchQuery::SearchQuery(Platform::String ^ query, Platform::String ^ types
 
 concurrency::task<std::shared_ptr<api::SearchResults>> api::SearchQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto json = co_await getAsync(cancelToken);
-	tools::strings::WindowsWIStream stream(json);
-	auto jsonVal = web::json::value::parse(stream);
-	return std::make_shared<api::SearchResults>(jsonVal);
+	return getAsync(cancelToken).then([](Platform::String^ json) {
+		tools::strings::WindowsWIStream stream(json);
+		auto jsonVal = web::json::value::parse(stream);
+		return std::make_shared<api::SearchResults>(jsonVal);
+	});
 }
 
 std::wstring api::SearchQuery::url() const

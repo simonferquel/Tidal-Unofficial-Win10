@@ -91,7 +91,7 @@ concurrency::task<Platform::String^> api::GetCoverUriAndFallbackToWebAsync(std::
 {
 	auto fileName = id.ToString() + L"." + width.ToString() + L"x" + height.ToString() + L".jpg";
 	auto coversFolder = co_await ensureCoverFolderAsync();
-	auto existing = co_await concurrency::create_task(coversFolder->TryGetItemAsync(fileName));
+	auto existing = co_await coversFolder->TryGetItemAsync(fileName);
 	if (existing) {
 		return ref new Platform::String(L"ms-appdata:///local/covers/") + fileName;
 	}

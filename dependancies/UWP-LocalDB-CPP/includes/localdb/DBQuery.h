@@ -205,7 +205,7 @@ namespace LocalDB {
 	template<typename TQuery, typename... TParams>
 	auto executeAsyncWithCancel(DBContext& ctx, concurrency::cancellation_token cancelToken, TParams&&... args) {
 		std::shared_ptr<TQuery> q = std::make_shared<TQuery>(ctx, std::forward<TParams>(args)...);
-		return q->ExecuteAsync(cancelToken);
+		return q->ExecuteAsync(cancelToken).then([q](auto r) {return r; });
 	}
 
 	// execute a query synchronously (within a DBContext::executeAsync call)

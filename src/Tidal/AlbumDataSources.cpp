@@ -36,11 +36,11 @@ concurrency::task<std::shared_ptr<api::PaginatedList<api::TrackInfo>>> albums::g
 	}
 	auto& authSvc = getAuthenticationService();
 	if (!authSvc.authenticationState().isAuthenticated()) {
-		api::GetAlbumTracksQuery q(id, trackCount, 0, L"US");
-		return co_await q.executeAsync(cancelToken);
+		auto q = std::make_shared<api::GetAlbumTracksQuery>(id, trackCount, 0, ref new Platform::String(L"US"));
+		co_return co_await q->executeAsync(cancelToken);
 	}
 	else {
-		api::GetAlbumTracksQuery q(id, trackCount, 0, authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode());
-		return co_await q.executeAsync(cancelToken);
+		auto q = std::make_shared<api::GetAlbumTracksQuery>(id, trackCount, 0, authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode());
+		co_return co_await q->executeAsync(cancelToken);
 	}
 }

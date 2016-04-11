@@ -101,6 +101,7 @@ public:
 			_pongAwaiters.push_back(tce);
 		}
 		auto resultTask = concurrency::create_task(tce, cancelToken);
+		auto that = shared_from_this();
 		for (;;) {
 			try {
 				auto pingValueSet = ref new Windows::Foundation::Collections::ValueSet();
@@ -116,7 +117,7 @@ public:
 			}
 			catch (...) {
 				// connection lost
-				ResetEventHandler();
+				that.get()->ResetEventHandler();
 			}
 		}
 	}

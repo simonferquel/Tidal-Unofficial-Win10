@@ -21,16 +21,20 @@ api::GetSimilarArtistsQuery::GetSimilarArtistsQuery(std::int64_t id, int limit, 
 
 concurrency::task<std::shared_ptr<PaginatedList<ArtistInfo>>> api::GetSimilarArtistsQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	try {
-		auto json = co_await getAsync(cancelToken);
+	return getAsync(cancelToken).then([](Platform::String^ json) {
 		tools::strings::WindowsWIStream stream(json);
 		auto jsonVal = web::json::value::parse(stream);
 		return std::make_shared<PaginatedList<ArtistInfo>>(jsonVal);
-	}
-	catch (statuscode_exception& ex) {
-		if (ex.getStatusCode() == Windows::Web::Http::HttpStatusCode::NotFound) {
-			return std::make_shared<PaginatedList<ArtistInfo>>();
+	}).then([](concurrency::task<std::shared_ptr<PaginatedList<ArtistInfo>>> t) {
+		try {
+			return t.get();
 		}
-		throw;
-	}
+		catch (statuscode_exception& ex) {
+			if (ex.getStatusCode() == Windows::Web::Http::HttpStatusCode::NotFound) {
+				return std::make_shared<PaginatedList<ArtistInfo>>();
+			}
+			throw;
+		}
+	});
+
 }

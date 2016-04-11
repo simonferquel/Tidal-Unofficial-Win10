@@ -10,9 +10,12 @@ namespace api {
 	class GetFavoriteAlbumsQuery : public QueryBase {
 	private:
 		std::int64_t _userId;
-	public:
+
 		GetFavoriteAlbumsQuery(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode);
-		
+	public:
+		static std::shared_ptr<GetFavoriteAlbumsQuery> Make(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode) {
+			return std::shared_ptr<GetFavoriteAlbumsQuery>(new GetFavoriteAlbumsQuery(userId, sessionId, countryCode));
+		}
 		// Inherited via QueryBase
 		virtual std::wstring url() const override;
 
@@ -22,9 +25,11 @@ namespace api {
 	class GetFavoriteArtistsQuery : public QueryBase {
 	private:
 		std::int64_t _userId;
-	public:
 		GetFavoriteArtistsQuery(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode);
-
+	public:
+		static std::shared_ptr<GetFavoriteArtistsQuery> Make(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode) {
+			return std::shared_ptr<GetFavoriteArtistsQuery>(new GetFavoriteArtistsQuery(userId, sessionId, countryCode));
+		}
 		// Inherited via QueryBase
 		virtual std::wstring url() const override;
 
@@ -35,9 +40,11 @@ namespace api {
 	class AddFavoriteArtistQuery : public QueryBase {
 	private:
 		std::int64_t _userId;
-	public:
 		AddFavoriteArtistQuery(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, std::int64_t id);
-
+	public:
+		static std::shared_ptr<AddFavoriteArtistQuery> Make(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, std::int64_t id) {
+			return std::shared_ptr<AddFavoriteArtistQuery>(new AddFavoriteArtistQuery(userId, sessionId, countryCode, id));
+		}
 		// Inherited via QueryBase
 		virtual std::wstring url() const override;
 
@@ -49,8 +56,11 @@ namespace api {
 	private:
 		std::int64_t _userId;
 		std::int64_t _id;
-	public:
 		RemoveFavoriteArtisttQuery(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, std::int64_t id);
+	public:
+		static std::shared_ptr<RemoveFavoriteArtisttQuery> Make(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, std::int64_t id) {
+			return std::shared_ptr<RemoveFavoriteArtisttQuery>(new RemoveFavoriteArtisttQuery(userId, sessionId, countryCode, id));
+		}
 
 		// Inherited via QueryBase
 		virtual std::wstring url() const override;
@@ -63,9 +73,11 @@ namespace api {
 	class AddFavoriteAlbumQuery : public QueryBase {
 	private:
 		std::int64_t _userId;
-	public:
 		AddFavoriteAlbumQuery(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, std::int64_t id);
-
+	public:
+		static std::shared_ptr<AddFavoriteAlbumQuery> Make(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, std::int64_t id) {
+			return std::shared_ptr<AddFavoriteAlbumQuery>(new AddFavoriteAlbumQuery(userId, sessionId, countryCode, id));
+		}
 		// Inherited via QueryBase
 		virtual std::wstring url() const override;
 
@@ -77,8 +89,13 @@ namespace api {
 	private:
 		std::int64_t _userId;
 		std::int64_t _id;
-	public:
 		RemoveFavoriteAlbumQuery(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, std::int64_t id);
+	public:
+
+
+		static std::shared_ptr<RemoveFavoriteAlbumQuery> Make(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, std::int64_t id) {
+			return std::shared_ptr<RemoveFavoriteAlbumQuery>(new RemoveFavoriteAlbumQuery(userId, sessionId, countryCode, id));
+		}
 
 		// Inherited via QueryBase
 		virtual std::wstring url() const override;
@@ -90,8 +107,11 @@ namespace api {
 	class AddFavoriteTrackQuery : public QueryBase {
 	private:
 		std::int64_t _userId;
-	public:
 		AddFavoriteTrackQuery(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, std::int64_t id);
+	public:
+		static std::shared_ptr<AddFavoriteTrackQuery> Make(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, std::int64_t id) {
+			return std::shared_ptr<AddFavoriteTrackQuery>(new AddFavoriteTrackQuery(userId, sessionId, countryCode, id));
+		}
 
 		// Inherited via QueryBase
 		virtual std::wstring url() const override;
@@ -104,8 +124,11 @@ namespace api {
 	private:
 		std::int64_t _userId;
 		std::int64_t _id;
-	public:
 		RemoveFavoriteTrackQuery(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, std::int64_t id);
+	public:
+		static std::shared_ptr<RemoveFavoriteTrackQuery> Make(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, std::int64_t id) {
+			return std::shared_ptr<RemoveFavoriteTrackQuery>(new RemoveFavoriteTrackQuery(userId, sessionId, countryCode, id));
+		}
 
 		// Inherited via QueryBase
 		virtual std::wstring url() const override;
@@ -117,8 +140,11 @@ namespace api {
 	class GetFavoriteTracksQuery : public QueryBase {
 	private:
 		std::int64_t _userId;
-	public:
 		GetFavoriteTracksQuery(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode);
+	public:
+		static std::shared_ptr<GetFavoriteTracksQuery> Make(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode) {
+			return std::shared_ptr<GetFavoriteTracksQuery>(new GetFavoriteTracksQuery(userId, sessionId, countryCode));
+		}
 
 		// Inherited via QueryBase
 		virtual std::wstring url() const override;
@@ -131,9 +157,11 @@ namespace api {
 	class GetFavoritePlaylistsQuery : public QueryBase {
 	private:
 		std::int64_t _userId;
-	public:
 		GetFavoritePlaylistsQuery(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode);
-
+	public:
+		static std::shared_ptr<GetFavoritePlaylistsQuery> Make(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode) {
+			return std::shared_ptr<GetFavoritePlaylistsQuery>(new GetFavoritePlaylistsQuery(userId, sessionId, countryCode));
+		}
 		// Inherited via QueryBase
 		virtual std::wstring url() const override;
 
@@ -144,8 +172,11 @@ namespace api {
 	class AddFavoritePlaylistQuery : public QueryBase {
 	private:
 		std::int64_t _userId;
-	public:
 		AddFavoritePlaylistQuery(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, Platform::String^ playlistId);
+	public:
+		static std::shared_ptr<AddFavoritePlaylistQuery> Make(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, Platform::String^ playlistId) {
+			return std::shared_ptr<AddFavoritePlaylistQuery>(new AddFavoritePlaylistQuery(userId, sessionId, countryCode, playlistId));
+		}
 
 		// Inherited via QueryBase
 		virtual std::wstring url() const override;
@@ -158,9 +189,11 @@ namespace api {
 	private:
 		std::int64_t _userId;
 		Platform::String^ _playlistId;
-	public:
 		RemoveFavoritePlaylistQuery(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, Platform::String^ playlistId);
-
+	public:
+		static std::shared_ptr<RemoveFavoritePlaylistQuery> Make(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode, Platform::String^ playlistId) {
+			return std::shared_ptr<RemoveFavoritePlaylistQuery>(new RemoveFavoritePlaylistQuery(userId, sessionId, countryCode, playlistId));
+		}
 		// Inherited via QueryBase
 		virtual std::wstring url() const override;
 
@@ -172,9 +205,11 @@ namespace api {
 	class GetMyPlaylistsQuery : public QueryBase {
 	private:
 		std::int64_t _userId;
-	public:
 		GetMyPlaylistsQuery(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode);
-
+	public:
+		static std::shared_ptr<GetMyPlaylistsQuery> Make(std::int64_t userId, Platform::String^ sessionId, Platform::String^ countryCode) {
+			return std::shared_ptr<GetMyPlaylistsQuery>(new GetMyPlaylistsQuery(userId, sessionId, countryCode));
+		}
 		// Inherited via QueryBase
 		virtual std::wstring url() const override;
 

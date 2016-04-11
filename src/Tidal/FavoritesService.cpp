@@ -41,11 +41,11 @@ concurrency::task<void> FavoritesService::doRefreshAsync(concurrency::cancellati
 		co_await concurrency::task_from_result();
 	}
 	else {
-		auto albumsTask = api::GetFavoriteAlbumsQuery(authState.userId(), authState.sessionId(), authState.countryCode()).executeAsync(cancelToken);
-		auto artistsTask = api::GetFavoriteArtistsQuery(authState.userId(), authState.sessionId(), authState.countryCode()).executeAsync(cancelToken);
-		auto tracksTask = api::GetFavoriteTracksQuery(authState.userId(), authState.sessionId(), authState.countryCode()).executeAsync(cancelToken);
-		auto playlistsTask = api::GetFavoritePlaylistsQuery(authState.userId(), authState.sessionId(), authState.countryCode()).executeAsync(cancelToken);
-		auto myPlaylistsTask = api::GetMyPlaylistsQuery(authState.userId(), authState.sessionId(), authState.countryCode()).executeAsync(cancelToken);
+		auto albumsTask = api::GetFavoriteAlbumsQuery::Make(authState.userId(), authState.sessionId(), authState.countryCode())->executeAsync(cancelToken);
+		auto artistsTask = api::GetFavoriteArtistsQuery::Make(authState.userId(), authState.sessionId(), authState.countryCode())->executeAsync(cancelToken);
+		auto tracksTask = api::GetFavoriteTracksQuery::Make(authState.userId(), authState.sessionId(), authState.countryCode())->executeAsync(cancelToken);
+		auto playlistsTask = api::GetFavoritePlaylistsQuery::Make(authState.userId(), authState.sessionId(), authState.countryCode())->executeAsync(cancelToken);
+		auto myPlaylistsTask = api::GetMyPlaylistsQuery::Make(authState.userId(), authState.sessionId(), authState.countryCode())->executeAsync(cancelToken);
 
 		try {
 			auto albums = co_await albumsTask;
@@ -194,7 +194,7 @@ concurrency::task<void> FavoritesService::addPlaylistAsync(const std::wstring & 
 		co_await concurrency::task_from_result();
 	}
 	else {
-		co_await api::AddFavoritePlaylistQuery(authState.userId(), authState.sessionId(), authState.countryCode(), tools::strings::toWindowsString(id)).executeAsync(concurrency::cancellation_token::none());
+		co_await api::AddFavoritePlaylistQuery::Make(authState.userId(), authState.sessionId(), authState.countryCode(), tools::strings::toWindowsString(id))->executeAsync(concurrency::cancellation_token::none());
 		auto playlist = co_await api::GetPlaylistQuery(id, authState.sessionId(), authState.countryCode()).executeAsync(concurrency::cancellation_token::none());
 
 		_playlistIds.insert(playlist->uuid);
@@ -210,7 +210,7 @@ concurrency::task<void> FavoritesService::removePlaylistAsync(const std::wstring
 		co_await concurrency::task_from_result();
 	}
 	else {
-		co_await api::RemoveFavoritePlaylistQuery(authState.userId(), authState.sessionId(), authState.countryCode(), tools::strings::toWindowsString(id)).executeAsync(concurrency::cancellation_token::none());
+		co_await api::RemoveFavoritePlaylistQuery::Make(authState.userId(), authState.sessionId(), authState.countryCode(), tools::strings::toWindowsString(id))->executeAsync(concurrency::cancellation_token::none());
 
 		_playlistIds.erase(id);
 		auto found = std::find_if(begin(_playlists), end(_playlists), [uuid = tools::strings::toWindowsString(id)](Tidal::PlaylistResumeItemVM^ item) {
@@ -230,7 +230,7 @@ concurrency::task<void> FavoritesService::addAlbumAsync(std::int64_t id)
 		co_await concurrency::task_from_result();
 	}
 	else {
-		co_await api::AddFavoriteAlbumQuery(authState.userId(), authState.sessionId(), authState.countryCode(), id).executeAsync(concurrency::cancellation_token::none());
+		co_await api::AddFavoriteAlbumQuery::Make(authState.userId(), authState.sessionId(), authState.countryCode(), id)->executeAsync(concurrency::cancellation_token::none());
 		auto album = co_await api::GetAlbumResumeQuery(id, authState.sessionId(), authState.countryCode()).executeAsync(concurrency::cancellation_token::none());
 
 		_albumIds.insert(id);
@@ -245,7 +245,7 @@ concurrency::task<void> FavoritesService::removeAlbumAsync(std::int64_t id)
 		co_await concurrency::task_from_result();
 	}
 	else {
-		co_await api::RemoveFavoriteAlbumQuery(authState.userId(), authState.sessionId(), authState.countryCode(), id).executeAsync(concurrency::cancellation_token::none());
+		co_await api::RemoveFavoriteAlbumQuery::Make(authState.userId(), authState.sessionId(), authState.countryCode(), id)->executeAsync(concurrency::cancellation_token::none());
 
 		_albumIds.erase(id);
 		auto found = std::find_if(begin(_albums), end(_albums), [id](Tidal::AlbumResumeItemVM^ item) {
@@ -265,7 +265,7 @@ concurrency::task<void> FavoritesService::addArtistAsync(std::int64_t id)
 		co_await concurrency::task_from_result();
 	}
 	else {
-		co_await api::AddFavoriteArtistQuery(authState.userId(), authState.sessionId(), authState.countryCode(), id).executeAsync(concurrency::cancellation_token::none());
+		co_await api::AddFavoriteArtistQuery::Make(authState.userId(), authState.sessionId(), authState.countryCode(), id)->executeAsync(concurrency::cancellation_token::none());
 		auto item = co_await api::GetArtistInfoQuery(id, authState.sessionId(), authState.countryCode()).executeAsync(concurrency::cancellation_token::none());
 
 		_artistIds.insert(id);
@@ -280,7 +280,7 @@ concurrency::task<void> FavoritesService::removeArtistAsync(std::int64_t id)
 		co_await concurrency::task_from_result();
 	}
 	else {
-		co_await api::RemoveFavoriteArtisttQuery(authState.userId(), authState.sessionId(), authState.countryCode(), id).executeAsync(concurrency::cancellation_token::none());
+		co_await api::RemoveFavoriteArtisttQuery::Make(authState.userId(), authState.sessionId(), authState.countryCode(), id)->executeAsync(concurrency::cancellation_token::none());
 
 		_artistIds.erase(id);
 		auto found = std::find_if(begin(_artists), end(_artists), [id](Tidal::ArtistItemVM^ item) {
@@ -300,7 +300,7 @@ concurrency::task<void> FavoritesService::addTrackAsync(std::int64_t id)
 		co_await concurrency::task_from_result();
 	}
 	else {
-		co_await api::AddFavoriteTrackQuery(authState.userId(), authState.sessionId(), authState.countryCode(), id).executeAsync(concurrency::cancellation_token::none());
+		co_await api::AddFavoriteTrackQuery::Make(authState.userId(), authState.sessionId(), authState.countryCode(), id)->executeAsync(concurrency::cancellation_token::none());
 		auto item = co_await api::GetTrackInfoQuery(id, authState.sessionId(), authState.countryCode()).executeAsync(concurrency::cancellation_token::none());
 
 		_trackIds.insert(id);
@@ -315,7 +315,7 @@ concurrency::task<void> FavoritesService::removeTrackAsync(std::int64_t id)
 		co_await concurrency::task_from_result();
 	}
 	else {
-		co_await api::RemoveFavoriteTrackQuery(authState.userId(), authState.sessionId(), authState.countryCode(), id).executeAsync(concurrency::cancellation_token::none());
+		co_await api::RemoveFavoriteTrackQuery::Make(authState.userId(), authState.sessionId(), authState.countryCode(), id)->executeAsync(concurrency::cancellation_token::none());
 
 		_trackIds.erase(id);
 		auto found = std::find_if(begin(_tracks), end(_tracks), [id](Tidal::TrackItemVM^ item) {

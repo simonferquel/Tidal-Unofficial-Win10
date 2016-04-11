@@ -27,8 +27,9 @@ std::wstring api::GetNewVideosQuery::url() const
 
 concurrency::task<std::shared_ptr<PaginatedList<VideoInfo>>> api::GetNewVideosQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto json = co_await getAsync(cancelToken);
-	tools::strings::WindowsWIStream stream(json);
-	auto jsonVal = web::json::value::parse(stream);
-	co_return std::make_shared<api::PaginatedList<VideoInfo>>(jsonVal);
+	return getAsync(cancelToken).then([](Platform::String^ json) {
+		tools::strings::WindowsWIStream stream(json);
+		auto jsonVal = web::json::value::parse(stream);
+		return std::make_shared<api::PaginatedList<VideoInfo>>(jsonVal);
+	});
 }

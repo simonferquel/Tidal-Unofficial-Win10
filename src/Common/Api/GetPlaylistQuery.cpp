@@ -24,8 +24,9 @@ std::wstring api::GetPlaylistQuery::url() const
 
 concurrency::task<std::shared_ptr<PlaylistResume>> api::GetPlaylistQuery::executeAsync(concurrency::cancellation_token cancelToken)
 {
-	auto json = co_await getAsync(cancelToken);
-	tools::strings::WindowsWIStream stream(json);
-	auto jsonVal = web::json::value::parse(stream);
-	return std::make_shared<api::PlaylistResume>(jsonVal);
+	return getAsync(cancelToken).then([](Platform::String^ json) {
+		tools::strings::WindowsWIStream stream(json);
+		auto jsonVal = web::json::value::parse(stream);
+		return std::make_shared<api::PlaylistResume>(jsonVal);
+	});
 }

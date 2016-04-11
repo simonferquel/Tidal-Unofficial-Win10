@@ -25,48 +25,98 @@
 using namespace Platform;
 using namespace Platform::Collections;
 using namespace concurrency;
+
+template<typename TQuery>
+struct incremental_loding_traits {
+	using result_task_type = decltype(((TQuery*)nullptr)->executeAsync(concurrency::cancellation_token::none()));
+	using result_type = decltype(((result_task_type*)nullptr)->get());
+
+	using build_query_type = std::function<std::shared_ptr<TQuery>(size_t toSkip)>;
+	using handle_results_type = std::function<bool(Vector<Object^>^ toFill, const result_type& result)>;
+};
+
+template <typename TQuery>
+class IncrementalLoadingCallback {
+public:
+	using result_task_type = typename incremental_loding_traits<TQuery>::result_task_type;
+	using result_type =  typename incremental_loding_traits<TQuery>::result_type;
+protected:
+	typename incremental_loding_traits<TQuery>::build_query_type _buildQuery;
+	typename incremental_loding_traits<TQuery>::handle_results_type _handleResults;
+public:
+	IncrementalLoadingCallback(const typename incremental_loding_traits<TQuery>::build_query_type& buildQuery, const typename incremental_loding_traits<TQuery>::handle_results_type& handleResults) :
+		_buildQuery(buildQuery),
+		_handleResults(handleResults)
+	{
+
+	}
+	task<bool> operator() (Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) const {
+		auto query = _buildQuery(toFill->Size);
+		return query->executeAsync(cancelToken)
+			.then([handleResults = _handleResults, toFill, cancelToken](result_task_type resultTask) {
+			try {
+				return task_from_result(handleResults(toFill, resultTask.get()));
+			}
+			catch (...) {
+				return tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken).then([]() {return true; });
+			}
+		}, task_continuation_context::get_current_winrt_context());
+	}
+};
+
+template<typename TQuery>
+struct IncrementalLoadingCollectionBuilder1 {
+	typename incremental_loding_traits<TQuery>::build_query_type _buildQuery;
+	IncrementalLoadingCollectionBuilder1(const typename incremental_loding_traits<TQuery>::build_query_type& buildQuery) : _buildQuery(buildQuery) {
+
+	}
+	Tidal::IncrementalLoadingCollection ^ with_handle_results(const typename incremental_loding_traits<TQuery>::handle_results_type& handleResults) {
+		return ref new Tidal::IncrementalLoadingCollection(IncrementalLoadingCallback<TQuery>(_buildQuery, handleResults));
+	}
+
+};
+
+template<typename TQuery>
+struct IncrementalLoadingCollectionBuilder0 {
+	IncrementalLoadingCollectionBuilder1<TQuery> with_build_query(const typename incremental_loding_traits<TQuery>::build_query_type& buildQuery) {
+		return IncrementalLoadingCollectionBuilder1<TQuery>(buildQuery);
+	}
+};
+
+template<typename TQuery>
+IncrementalLoadingCollectionBuilder0<TQuery> BuildIncrementalLoadingCollection() {
+	return IncrementalLoadingCollectionBuilder0<TQuery>();
+}
+
 Tidal::IncrementalLoadingCollection ^ getNewsPromotionsDataSource(Platform::String^ list)
 {
 	auto& authSvc = getAuthenticationService();
 	if (!authSvc.authenticationState().isAuthenticated()) {
-		return ref new Tidal::IncrementalLoadingCollection([list](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
-			try {
-				api::GetPromotionsQuery query(40, toFill->Size, list, L"US");
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::PromotionItemVM(article));
-				}
-				return toFill->Size < result->totalNumberOfItems;
+		return BuildIncrementalLoadingCollection<api::GetPromotionsQuery>()
+			.with_build_query([list](auto toSkip) {
+			return std::make_shared<api::GetPromotionsQuery>(40, toSkip, list, ref new String(L"US"));
+		})
+			.with_handle_results([](Vector<Object^>^ toFill, const auto& result) {
+			for (auto& article : result->items) {
+				toFill->Append(ref new Tidal::PromotionItemVM(article));
 			}
-			catch (...) {
-			}
-
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
-
+			return toFill->Size < result->totalNumberOfItems;
 		});
 	}
 	else {
-		return ref new Tidal::IncrementalLoadingCollection([list,subType = authSvc.authenticationState().subscribtionType(), userId = authSvc.authenticationState().userId(), sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
-			try {
-				api::GetPromotionsQuery query(40, toFill->Size, list,subType, userId, sessionId, countryCode);
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::PromotionItemVM(article));
-				}
-				return toFill->Size < result->totalNumberOfItems;
+		return BuildIncrementalLoadingCollection<api::GetPromotionsQuery>()
+			.with_build_query([list, subType = authSvc.authenticationState().subscribtionType(), userId = authSvc.authenticationState().userId(), sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](auto toSkip) {
+			return std::make_shared<api::GetPromotionsQuery>(40, toSkip, list, subType, userId, sessionId, countryCode);
+		})
+			.with_handle_results([](Vector<Object^>^ toFill, const auto& result) {
+			for (auto& article : result->items) {
+				toFill->Append(ref new Tidal::PromotionItemVM(article));
 			}
-			catch (...) {
-			}
-
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
-
+			return toFill->Size < result->totalNumberOfItems;
 		});
+
+
+
 	}
 }
 
@@ -74,46 +124,46 @@ Tidal::IncrementalLoadingCollection ^ getNewsVideosDataSource(Platform::String^ 
 {
 	auto& authSvc = getAuthenticationService();
 	if (!authSvc.authenticationState().isAuthenticated()) {
-		return ref new Tidal::IncrementalLoadingCollection([list, group](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
-			try {
-				api::GetNewVideosQuery query(40, toFill->Size, L"US");
-				query.withCustomListGroup(list, group);
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::VideoItemVM(article));
+		return BuildIncrementalLoadingCollection<api::GetNewVideosQuery>()
+			.with_build_query(
+				[list, group](auto toSkip) {
+					auto retval = std::make_shared<api::GetNewVideosQuery>(40, toSkip, ref new String(L"US"));
+					retval->withCustomListGroup(list, group);
+					return retval;
 				}
-				return toFill->Size < result->totalNumberOfItems;
-			}
-			catch (...) {
-			}
+			)
+			.with_handle_results(
+				[](auto toFill, const auto& result) {
+					for (auto& article : result->items) {
+						toFill->Append(ref new Tidal::VideoItemVM(article));
+					}
+					return toFill->Size < result->totalNumberOfItems;
+				}
+		);
 
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
 
-		});
+
 	}
 	else {
-		return ref new Tidal::IncrementalLoadingCollection([list, group, sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken)->task<bool> {
-			try {
-				api::GetNewVideosQuery query(40, toFill->Size, sessionId, countryCode);
-				query.withCustomListGroup(list, group);
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::VideoItemVM(article));
-				}
-				return toFill->Size < result->totalNumberOfItems;
-			}
-			catch (...) {
-			}
 
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
+		return BuildIncrementalLoadingCollection<api::GetNewVideosQuery>()
+			.with_build_query(
+				[list, group, sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](auto toSkip) {
+			auto retval = std::make_shared<api::GetNewVideosQuery>(40, toSkip, sessionId, countryCode);
+			retval->withCustomListGroup(list, group);
+			return retval;
+		}
+			)
+			.with_handle_results(
+				[](auto toFill, const auto& result) {
+			for (auto& article : result->items) {
+				toFill->Append(ref new Tidal::VideoItemVM(article));
+			}
+			return toFill->Size < result->totalNumberOfItems;
+		}
+		);
 
-		});
+
 	}
 }
 
@@ -121,46 +171,47 @@ Tidal::IncrementalLoadingCollection ^ getNewsAlbumsDataSource(Platform::String^ 
 {
 	auto& authSvc = getAuthenticationService();
 	if (!authSvc.authenticationState().isAuthenticated()) {
-		return ref new Tidal::IncrementalLoadingCollection([list,group](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
-			try {
-				api::GetNewAlbumsQuery query(40, toFill->Size, L"US");
-				query.withCustomListGroup(list, group);
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::AlbumResumeItemVM(article));
+
+		return BuildIncrementalLoadingCollection<api::GetNewAlbumsQuery>()
+			.with_build_query(
+				[list, group](auto toSkip) {
+					auto query = std::make_shared<api::GetNewAlbumsQuery>(40, toSkip, ref new String(L"US"));
+					query->withCustomListGroup(list, group);
+					return query;
 				}
-				return toFill->Size < result->totalNumberOfItems;
-			}
-			catch (...) {
-			}
+			)
+			.with_handle_results(
+				[](auto toFill, const auto& result) {
+					for (auto& article : result->items) {
+						toFill->Append(ref new Tidal::AlbumResumeItemVM(article));
+					}
+					return toFill->Size < result->totalNumberOfItems;
+				}
+			);
 
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
-
-		});
+		
 	}
 	else {
-		return ref new Tidal::IncrementalLoadingCollection([list, group,sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken)->task<bool> {
-			try {
-				api::GetNewAlbumsQuery query(40, toFill->Size, sessionId, countryCode);
-				query.withCustomListGroup(list, group);
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::AlbumResumeItemVM(article));
+
+		return BuildIncrementalLoadingCollection<api::GetNewAlbumsQuery>()
+			.with_build_query(
+				[list, group, sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](auto toSkip) {
+					auto query = std::make_shared<api::GetNewAlbumsQuery>(40, toSkip, sessionId, countryCode);
+					query->withCustomListGroup(list, group);
+					return query;
 				}
-				return toFill->Size < result->totalNumberOfItems;
+			)
+			.with_handle_results(
+				[](auto toFill, const auto& result) {
+			for (auto& article : result->items) {
+				toFill->Append(ref new Tidal::AlbumResumeItemVM(article));
 			}
-			catch (...) {
-			}
+			return toFill->Size < result->totalNumberOfItems;
+		}
+		);
 
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
 
-		});
+
 	}
 }
 
@@ -168,44 +219,40 @@ Tidal::IncrementalLoadingCollection ^ getArtistAlbumsDataSource(std::int64_t art
 {
 	auto& authSvc = getAuthenticationService();
 	if (!authSvc.authenticationState().isAuthenticated()) {
-		return ref new Tidal::IncrementalLoadingCollection([artistId](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
-			try {
-				api::GetArtistAlbumsQuery query(artistId, 40, toFill->Size, L"US");
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::AlbumResumeItemVM(article));
-				}
-				return toFill->Size < result->totalNumberOfItems;
+		return BuildIncrementalLoadingCollection<api::GetArtistAlbumsQuery>()
+			.with_build_query(
+				[artistId](auto toSkip) {
+			return std::make_shared<api::GetArtistAlbumsQuery>(artistId, 40, toSkip, ref new String(L"US"));
+		}
+			)
+			.with_handle_results(
+				[](auto toFill, const auto& result) {
+			for (auto& article : result->items) {
+				toFill->Append(ref new Tidal::AlbumResumeItemVM(article));
 			}
-			catch (...) {
-			}
+			return toFill->Size < result->totalNumberOfItems;
+		}
+		);
 
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
 
-		});
 	}
 	else {
-		return ref new Tidal::IncrementalLoadingCollection([artistId, sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken)->task<bool> {
-			try {
-				api::GetArtistAlbumsQuery query(artistId, 40, toFill->Size, sessionId, countryCode);
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::AlbumResumeItemVM(article));
-				}
-				return toFill->Size < result->totalNumberOfItems;
-			}
-			catch (...) {
-			}
 
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
+		return BuildIncrementalLoadingCollection<api::GetArtistAlbumsQuery>()
+			.with_build_query(
+				[artistId, sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](auto toSkip) {
+			return std::make_shared<api::GetArtistAlbumsQuery>(artistId, 40, toSkip, sessionId, countryCode);
+		}
+			)
+			.with_handle_results(
+				[](auto toFill, const auto& result) {
+			for (auto& article : result->items) {
+				toFill->Append(ref new Tidal::AlbumResumeItemVM(article));
+			}
+			return toFill->Size < result->totalNumberOfItems;
+		}
+		);
 
-		});
 	}
 }
 
@@ -213,44 +260,31 @@ Tidal::IncrementalLoadingCollection ^ getArtistVideosDataSource(std::int64_t art
 {
 	auto& authSvc = getAuthenticationService();
 	if (!authSvc.authenticationState().isAuthenticated()) {
-		return ref new Tidal::IncrementalLoadingCollection([artistId](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
-			try {
-				api::GetArtistVideosQuery query(artistId, 40, toFill->Size, L"US");
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::VideoItemVM(article));
-				}
-				return toFill->Size < result->totalNumberOfItems;
-			}
-			catch (...) {
-			}
 
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
-
+		return BuildIncrementalLoadingCollection<api::GetArtistVideosQuery>()
+			.with_build_query([artistId](auto toSkip) {
+			return std::make_shared<api::GetArtistVideosQuery>(artistId, 40, toSkip, ref new String(L"US"));
+		})
+			.with_handle_results([](auto toFill, const auto& result) {
+			for (auto& article : result->items) {
+				toFill->Append(ref new Tidal::VideoItemVM(article));
+			}
+			return toFill->Size < result->totalNumberOfItems;
 		});
+
 	}
 	else {
-		return ref new Tidal::IncrementalLoadingCollection([artistId, sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken)->task<bool> {
-			try {
-				api::GetArtistVideosQuery query(artistId, 40, toFill->Size, sessionId, countryCode);
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::VideoItemVM(article));
-				}
-				return toFill->Size < result->totalNumberOfItems;
+		return BuildIncrementalLoadingCollection<api::GetArtistVideosQuery>()
+			.with_build_query([artistId, sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](auto toSkip) {
+			return std::make_shared<api::GetArtistVideosQuery>(artistId, 40, toSkip, sessionId, countryCode);
+		})
+			.with_handle_results([](auto toFill, const auto& result) {
+			for (auto& article : result->items) {
+				toFill->Append(ref new Tidal::VideoItemVM(article));
 			}
-			catch (...) {
-			}
-
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
-
+			return toFill->Size < result->totalNumberOfItems;
 		});
+		
 	}
 }
 
@@ -258,44 +292,31 @@ Tidal::IncrementalLoadingCollection ^ getSimilarArtistsDataSource(std::int64_t a
 {
 	auto& authSvc = getAuthenticationService();
 	if (!authSvc.authenticationState().isAuthenticated()) {
-		return ref new Tidal::IncrementalLoadingCollection([artistId](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
-			try {
-				api::GetSimilarArtistsQuery query(artistId, 40, toFill->Size, L"US");
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::ArtistItemVM(article));
-				}
-				return toFill->Size < result->totalNumberOfItems;
+		return BuildIncrementalLoadingCollection<api::GetSimilarArtistsQuery>()
+			.with_build_query([artistId](auto toSkip) {
+			return std::make_shared<api::GetSimilarArtistsQuery>(artistId, 40, toSkip, ref new String( L"US"));
+		})
+			.with_handle_results([](auto toFill, const auto& result) {
+			for (auto& article : result->items) {
+				toFill->Append(ref new Tidal::ArtistItemVM(article));
 			}
-			catch (...) {
-			}
-
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
-
+			return toFill->Size < result->totalNumberOfItems;
 		});
+		
 	}
 	else {
-		return ref new Tidal::IncrementalLoadingCollection([artistId, sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken)->task<bool> {
-			try {
-				api::GetSimilarArtistsQuery query(artistId, 40, toFill->Size, sessionId, countryCode);
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::ArtistItemVM(article));
-				}
-				return toFill->Size < result->totalNumberOfItems;
+		return BuildIncrementalLoadingCollection<api::GetSimilarArtistsQuery>()
+			.with_build_query([artistId, sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](auto toSkip) {
+			return std::make_shared<api::GetSimilarArtistsQuery>(artistId, 40, toSkip, sessionId, countryCode);
+		})
+			.with_handle_results([](auto toFill, const auto& result) {
+			for (auto& article : result->items) {
+				toFill->Append(ref new Tidal::ArtistItemVM(article));
 			}
-			catch (...) {
-			}
-
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
-
+			return toFill->Size < result->totalNumberOfItems;
 		});
+
+		
 	}
 }
 
@@ -303,46 +324,37 @@ Tidal::IncrementalLoadingCollection ^ getNewsPlaylistsDataSource(Platform::Strin
 {
 	auto& authSvc = getAuthenticationService();
 	if (!authSvc.authenticationState().isAuthenticated()) {
-		return ref new Tidal::IncrementalLoadingCollection([list,group](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
-			try {
-				api::GetNewPlaylistsQuery query(40, toFill->Size, L"US");
-				query.withCustomListGroup(list, group);
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::PlaylistResumeItemVM(article));
-				}
-				return toFill->Size < result->totalNumberOfItems;
-			}
-			catch (...) {
-			}
 
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
-
+		return BuildIncrementalLoadingCollection<api::GetNewPlaylistsQuery>()
+			.with_build_query([list, group](auto toSkip) {
+			auto query = std::make_shared<api::GetNewPlaylistsQuery>(40, toSkip, ref new String(L"US"));
+			query->withCustomListGroup(list, group);
+			return query;
+		})
+			.with_handle_results([](auto toFill, const auto& result) {
+			for (auto& article : result->items) {
+				toFill->Append(ref new Tidal::PlaylistResumeItemVM(article));
+			}
+			return toFill->Size < result->totalNumberOfItems;
 		});
+		
 	}
 	else {
-		return ref new Tidal::IncrementalLoadingCollection([list,group,sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken)->task<bool> {
-			try {
-				api::GetNewPlaylistsQuery query(40, toFill->Size, sessionId, countryCode);
-				query.withCustomListGroup(list, group);
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& article : result->items) {
-					toFill->Append(ref new Tidal::PlaylistResumeItemVM(article));
-				}
-				return toFill->Size < result->totalNumberOfItems;
-			}
-			catch (...) {
-			}
 
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
-
+		return BuildIncrementalLoadingCollection<api::GetNewPlaylistsQuery>()
+			.with_build_query([list, group, sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](auto toSkip) {
+			auto query = std::make_shared<api::GetNewPlaylistsQuery>(40, toSkip, sessionId, countryCode);
+			query->withCustomListGroup(list, group);
+			return query;
+		})
+			.with_handle_results([](auto toFill, const auto& result) {
+			for (auto& article : result->items) {
+				toFill->Append(ref new Tidal::PlaylistResumeItemVM(article));
+			}
+			return toFill->Size < result->totalNumberOfItems;
 		});
+
+		
 	}
 }
 
@@ -351,9 +363,9 @@ concurrency::task<Platform::Collections::Vector<Tidal::TrackItemVM^>^> getNewsTr
 	auto& authSvc = getAuthenticationService();
 	auto retval = ref new Platform::Collections::Vector<Tidal::TrackItemVM^>();
 	if (authSvc.authenticationState().isAuthenticated()) {
-		api::GetNewTracksQuery query(25, 0, authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode());
-		query.withCustomListGroup(list, group);
-		auto result = co_await query.executeAsync(cancelToken);
+		auto query = std::make_shared<api::GetNewTracksQuery>(25, 0, authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode());
+		query->withCustomListGroup(list, group);
+		auto result = co_await query->executeAsync(cancelToken);
 		for (auto& article : result->items) {
 			auto item = ref new Tidal::TrackItemVM(article);
 			retval->Append(item);
@@ -362,9 +374,9 @@ concurrency::task<Platform::Collections::Vector<Tidal::TrackItemVM^>^> getNewsTr
 		return retval;
 	}
 	else {
-		api::GetNewTracksQuery query(25, 0, L"US");
-		query.withCustomListGroup(list, group);
-		auto result = co_await query.executeAsync(cancelToken);
+		auto query = std::make_shared<api::GetNewTracksQuery>(25, 0, ref new String(L"US"));
+		query->withCustomListGroup(list, group);
+		auto result = co_await query->executeAsync(cancelToken);
 		for (auto& article : result->items) {
 			auto item = ref new Tidal::TrackItemVM(article);
 			retval->Append(item);
@@ -380,7 +392,7 @@ concurrency::task<std::shared_ptr<std::vector<api::SublistInfo>>> getSublistsAsy
 	auto retval = ref new Platform::Collections::Vector<Tidal::TrackItemVM^>();
 	if (authSvc.authenticationState().isAuthenticated()) {
 		api::GetListSublistsQuery query(list, authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode());
-		
+
 		return co_await query.executeAsync(cancelToken);
 	}
 	else {
@@ -482,70 +494,57 @@ Tidal::IncrementalLoadingCollection ^ getFilteredSearchSource(Platform::String ^
 {
 	auto& authSvc = getAuthenticationService();
 	if (!authSvc.authenticationState().isAuthenticated()) {
-		return ref new Tidal::IncrementalLoadingCollection([query, filter](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
-			try {
-				api::SearchQuery query(query, filter, 40, toFill->Size, L"US");
-				auto beforeCount = toFill->Size;
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& info : result->albums.items) {
-					toFill->Append(ref new Tidal::AlbumResumeItemVM(info));
-				}
-				for (auto& info : result->artists.items) {
-					toFill->Append(ref new Tidal::ArtistItemVM(info));
-				}
-				for (auto& info : result->playlists.items) {
-					toFill->Append(ref new Tidal::PlaylistResumeItemVM(info));
-				}
-				for (auto& info : result->tracks.items) {
-					toFill->Append(ref new Tidal::TrackItemVM(info));
-				}
-				for (auto& info : result->videos.items) {
-					toFill->Append(ref new Tidal::VideoItemVM(info));
-				}
-				return toFill->Size > beforeCount;
-			}
-			catch (...) {
-			}
 
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
-
+		return BuildIncrementalLoadingCollection<api::SearchQuery>()
+			.with_build_query([query, filter](auto toSkip) {
+			return std::make_shared<api::SearchQuery>(query, filter, 40, toSkip, ref new String(L"US"));
+		})
+			.with_handle_results([](auto toFill, const auto& result) {
+			auto beforeCount = toFill->Size;
+			for (auto& info : result->albums.items) {
+				toFill->Append(ref new Tidal::AlbumResumeItemVM(info));
+			}
+			for (auto& info : result->artists.items) {
+				toFill->Append(ref new Tidal::ArtistItemVM(info));
+			}
+			for (auto& info : result->playlists.items) {
+				toFill->Append(ref new Tidal::PlaylistResumeItemVM(info));
+			}
+			for (auto& info : result->tracks.items) {
+				toFill->Append(ref new Tidal::TrackItemVM(info));
+			}
+			for (auto& info : result->videos.items) {
+				toFill->Append(ref new Tidal::VideoItemVM(info));
+			}
+			return toFill->Size > beforeCount;
 		});
+
 	}
 	else {
-		return ref new Tidal::IncrementalLoadingCollection([query, filter, sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken)->task<bool> {
-			try {
-				api::SearchQuery query(query, filter, 40, toFill->Size, sessionId, countryCode);
-				auto beforeCount = toFill->Size;
-				auto result = co_await query.executeAsync(cancelToken);
-				for (auto& info : result->albums.items) {
-					toFill->Append(ref new Tidal::AlbumResumeItemVM(info));
-				}
-				for (auto& info : result->artists.items) {
-					toFill->Append(ref new Tidal::ArtistItemVM(info));
-				}
-				for (auto& info : result->playlists.items) {
-					toFill->Append(ref new Tidal::PlaylistResumeItemVM(info));
-				}
-				for (auto& info : result->tracks.items) {
-					toFill->Append(ref new Tidal::TrackItemVM(info));
-				}
-				for (auto& info : result->videos.items) {
-					toFill->Append(ref new Tidal::VideoItemVM(info));
-				}
-				return toFill->Size > beforeCount;
+		return BuildIncrementalLoadingCollection<api::SearchQuery>()
+			.with_build_query([query, filter, sessionId = authSvc.authenticationState().sessionId(), countryCode = authSvc.authenticationState().countryCode()](auto toSkip) {
+			return std::make_shared<api::SearchQuery>(query, filter, 40, toSkip, sessionId, countryCode);
+		})
+			.with_handle_results([](auto toFill, const auto& result) {
+			auto beforeCount = toFill->Size;
+			for (auto& info : result->albums.items) {
+				toFill->Append(ref new Tidal::AlbumResumeItemVM(info));
 			}
-			catch (...) {
+			for (auto& info : result->artists.items) {
+				toFill->Append(ref new Tidal::ArtistItemVM(info));
 			}
-
-			// something wron append.
-			// delay and retry on next scroll event
-			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-			return true;
-
+			for (auto& info : result->playlists.items) {
+				toFill->Append(ref new Tidal::PlaylistResumeItemVM(info));
+			}
+			for (auto& info : result->tracks.items) {
+				toFill->Append(ref new Tidal::TrackItemVM(info));
+			}
+			for (auto& info : result->videos.items) {
+				toFill->Append(ref new Tidal::VideoItemVM(info));
+			}
+			return toFill->Size > beforeCount;
 		});
+		
 	}
 }
 
@@ -554,7 +553,7 @@ Tidal::IncrementalLoadingCollection ^ getLocalAlbumsDataSource()
 	return ref new Tidal::IncrementalLoadingCollection([](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
 		try {
 			auto data = co_await localdata::getImportedAlbumsAsync(toFill->Size, desiredCount, cancelToken);
-			
+
 			for (auto& article : *data) {
 				api::AlbumResume r(web::json::value::parse(article.json));
 				toFill->Append(ref new Tidal::AlbumResumeItemVM(r, true));
