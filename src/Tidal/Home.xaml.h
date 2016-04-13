@@ -15,6 +15,8 @@
 #include "Home.g.h"
 #include "SublistItemVM.h"
 #include "TracksPlaybackStateManager.h"
+#include "IPageWithPreservedState.h"
+#include "Shell.xaml.h"
 
 namespace Tidal
 {
@@ -22,19 +24,22 @@ namespace Tidal
 	/// An empty page that can be used on its own or navigated to within a Frame.
 	/// </summary>
 	[Windows::Foundation::Metadata::WebHostHidden]
-	public ref class Home sealed
+	public ref class Home sealed :  public IPageWithPreservedState
 	{
 	private:
 		concurrency::cancellation_token_source _cts;
 		std::shared_ptr<TracksPlaybackStateManager> _tracksPlaybackManager;
+		bool _isRestoringState = false;
 	public:
 		Home();
+		virtual	Platform::Object^ GetStateToPreserve() ;
 	protected:
 
 		virtual void OnNavigatedFrom(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override {
 			_cts.cancel();
 			_cts = concurrency::cancellation_token_source();
 		}
+		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
 	private:
 		void OnPromotionClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
 		void OnVideoClicked(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);

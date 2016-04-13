@@ -177,7 +177,9 @@
                     </StackPanel>
                 </ScrollViewer>
             </SplitView.Pane>
-            <Frame x:Name="navFrame" Navigated="OnNavigated" />
+            <Frame x:Name="navFrame" Navigated="OnNavigated"
+                   
+                   />
 
             
         </SplitView>

@@ -7,6 +7,11 @@
 #include "ShellMenuItem.h"
 #include "Shell.g.h"
 #include "Mediator.h"
+#include <stack>
+#include "IPageWithPreservedState.h"
+struct PageState {
+	Platform::Object^ state;
+};
 namespace Tidal
 {
 	/// <summary>
@@ -16,6 +21,8 @@ namespace Tidal
 	public ref class Shell sealed
 	{
 	private:
+		IPageWithPreservedState^ _currentPage;
+		std::stack<PageState> _persistedPageStates;
 		Windows::UI::Core::SystemNavigationManager^ _systemNavManager;
 		std::vector<RegistrationToken> _mediatorTokens;
 	public:
@@ -25,6 +32,12 @@ namespace Tidal
 				return navFrame;
 			}
 		}
+		property Platform::Object^ CurrentPageState {Platform::Object^ get() {
+			if (_persistedPageStates.empty()) {
+				return nullptr;
+			}
+			return _persistedPageStates.top().state;
+		}}
 	private:
 		void OnToggleSplitView(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnSelectedMenuItemChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);

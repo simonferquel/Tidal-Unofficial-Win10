@@ -234,6 +234,7 @@
     </ClInclude>
     <ClInclude Include="GroupedAlbums.h" />
     <ClInclude Include="IGo.h" />
+    <ClInclude Include="IPageWithPreservedState.h" />
     <ClInclude Include="LoadingView.h" />
     <ClInclude Include="LocalMusic.xaml.h">
       <DependentUpon>LocalMusic.xaml</DependentUpon>
@@ -505,6 +506,7 @@
     <ClCompile Include="GenrePage.xaml.cpp">
       <DependentUpon>GenrePage.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="IPageWithPreservedState.cpp" />
     <ClCompile Include="LoadingView.cpp" />
     <ClCompile Include="LocalMusic.xaml.cpp">
       <DependentUpon>LocalMusic.xaml</DependentUpon>

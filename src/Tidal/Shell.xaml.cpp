@@ -82,6 +82,18 @@ void Tidal::Shell::OnSelectedMenuItemChanged(Platform::Object^ sender, Windows::
 
 void Tidal::Shell::OnNavigated(Platform::Object^ sender, Windows::UI::Xaml::Navigation::NavigationEventArgs^ e)
 {
+	if (e->NavigationMode == NavigationMode::Back) {
+		_persistedPageStates.pop();
+	}
+	else if (e->NavigationMode == NavigationMode::New || e->NavigationMode == NavigationMode::Forward) {
+		if (_currentPage) {
+			_persistedPageStates.top().state = _currentPage->GetStateToPreserve();
+		}
+		_persistedPageStates.push(PageState{});
+	}
+
+	_currentPage = dynamic_cast<IPageWithPreservedState^>(e->Content);
+
 	auto itemIt = std::find_if(begin(menuEntriesLV->Items), end(menuEntriesLV->Items), [type = e->SourcePageType](Platform::Object^ item) {
 		return static_cast<ShellMenuItem^>(item)->Match(type);
 	});
