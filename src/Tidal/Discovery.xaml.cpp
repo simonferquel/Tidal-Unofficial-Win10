@@ -9,6 +9,7 @@
 #include "AlbumResumeItemVM.h"
 #include "IncrementalDataSources.h"
 #include "AudioService.h"
+#include "Shell.xaml.h"
 
 using namespace Tidal;
 
@@ -30,6 +31,31 @@ Discovery::Discovery()
 	InitializeComponent();
 }
 
+ref class DiscoveryPageState {
+public:
+	property int SelectedPivotItemIndex;
+};
+
+
+Platform::Object ^ Tidal::Discovery::GetStateToPreserve()
+{
+	auto result = ref new DiscoveryPageState();
+	result->SelectedPivotItemIndex = pivot->SelectedIndex;
+	return result;
+}
+
+
+void Tidal::Discovery::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ e)
+{
+	if (e->NavigationMode == NavigationMode::Back) {
+		auto stateObj = dynamic_cast<Shell^>(Windows::UI::Xaml::Window::Current->Content)->CurrentPageState;
+		auto state = dynamic_cast<DiscoveryPageState^>(stateObj);
+		if (state) {
+			pivot->SelectedIndex = state->SelectedPivotItemIndex;
+		}
+	}
+	loadAsync();
+}
 
 concurrency::task<void> Tidal::Discovery::loadAsync()
 {
@@ -66,7 +92,6 @@ void Tidal::Discovery::OnAlbumClicked(Platform::Object^ sender, Windows::UI::Xam
 
 void Tidal::Discovery::OnPageLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	loadAsync();
 }
 
 
