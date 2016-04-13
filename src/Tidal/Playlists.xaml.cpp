@@ -12,6 +12,7 @@
 #include <tools/TimeUtils.h>
 #include <tools/AsyncHelpers.h>
 #include "XamlHelpers.h"
+#include "Shell.xaml.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -27,13 +28,37 @@ using namespace Windows::UI::Xaml::Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
+
+
 Playlists::Playlists()
 {
 	InitializeComponent();
 }
+ref class PlaylistsPageState sealed{
+public:
+	property int FeaturedPlaylistSelectedFilterIndex;
+	property int SelectedMoodIndex;
+
+};
+Platform::Object ^ Tidal::Playlists::GetStateToPreserve()
+{
+	auto state = ref new PlaylistsPageState();
+	state->FeaturedPlaylistSelectedFilterIndex = allPlaylistsFilter->SelectedIndex;
+	state->SelectedMoodIndex = moodsGV->SelectedIndex;
+	return state;
+}
+void Tidal::Playlists::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ e)
+{
+	if (e->NavigationMode == NavigationMode::Back) {
+		LoadAsync(true);
+	}
+	else {
+		LoadAsync(false);
+	}
+}
 
 
-concurrency::task<void> Tidal::Playlists::LoadAsync()
+concurrency::task<void> Tidal::Playlists::LoadAsync(bool loadPreservedState)
 {
 	try {
 		auto moods = co_await getSublistsAsync(concurrency::cancellation_token::none(), L"moods");
@@ -52,6 +77,17 @@ concurrency::task<void> Tidal::Playlists::LoadAsync()
 			}
 		}
 		allPlaylistsFilter->SublistSource = featuredSource;
+		if (loadPreservedState) {
+			auto state = dynamic_cast<PlaylistsPageState^>( dynamic_cast<Shell^>(Window::Current->Content)->CurrentPageState);
+			if (state) {
+				if (state->SelectedMoodIndex == -1 && state->FeaturedPlaylistSelectedFilterIndex != -1) {
+					allPlaylistsFilter->SelectedIndex = state->FeaturedPlaylistSelectedFilterIndex;
+				}
+				else if (state->SelectedMoodIndex != 1) {
+					moodsGV->SelectedIndex = state->SelectedMoodIndex;
+				}
+			}
+		}
 	}
 	catch (...) {
 
@@ -84,7 +120,6 @@ concurrency::task<void> Tidal::Playlists::LoadMoodAsync(SublistItemVM ^ item)
 
 void Tidal::Playlists::OnPageLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	LoadAsync();
 }
 
 

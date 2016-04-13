@@ -28,7 +28,7 @@ namespace Tidal
 		}
 		}
 
-		property int SelectedIndex {int get() { return lv->SelectedIndex; }}
+		property int SelectedIndex {int get() { return lv->SelectedIndex; } void set(int value) { lv->SelectedIndex = value; }}
 		void SetSourceAndSelectedIndex(Windows::Foundation::Collections::IVector<SublistItemVM^>^ value, int selectedIndex) {
 			SetValue(SublistSourceProperty, value);
 			lv->ItemsSource = value;
