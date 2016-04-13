@@ -9,6 +9,7 @@
 #include "AlbumResumeItemVM.h"
 #include "IncrementalDataSources.h"
 #include "AudioService.h"
+#include "Shell.xaml.h"
 
 using namespace Tidal;
 
@@ -25,11 +26,38 @@ using namespace Windows::UI::Xaml::Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
+
+
 Rising::Rising()
 {
 	InitializeComponent();
 }
 
+
+
+ref class RisingPageState {
+public:
+	property int SelectedPivotItemIndex;
+};
+
+Platform::Object ^ Tidal::Rising::GetStateToPreserve()
+{
+	auto result = ref new RisingPageState();
+	result->SelectedPivotItemIndex = pivot->SelectedIndex;
+	return result;
+}
+
+void Tidal::Rising::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ e)
+{
+	if (e->NavigationMode == NavigationMode::Back) {
+		auto stateObj = dynamic_cast<Shell^>(Windows::UI::Xaml::Window::Current->Content)->CurrentPageState;
+		auto state = dynamic_cast<RisingPageState^>(stateObj);
+		if (state) {
+			pivot->SelectedIndex = state->SelectedPivotItemIndex;
+		}
+	}
+	loadAsync();
+}
 
 concurrency::task<void> Tidal::Rising::loadAsync()
 {
@@ -66,7 +94,6 @@ void Tidal::Rising::OnAlbumClicked(Platform::Object^ sender, Windows::UI::Xaml::
 
 void Tidal::Rising::OnPageLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	loadAsync();
 }
 
 

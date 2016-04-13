@@ -69,7 +69,7 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 		catch (...) {}
 	});
 
-	localdata::initializeDbAsync().then([e]() {
+	localdata::initializeDbAsync().then([this,e]() {
 		getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
 		auto rootFrame = dynamic_cast<Shell^>(Window::Current->Content);
 
@@ -105,6 +105,14 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 			}
 			// Ensure the current window is active
 			Window::Current->Activate();
+			_backMouseToken = Window::Current->CoreWindow->PointerPressed += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>([](Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^ args) {
+				if (args->CurrentPoint->Properties->IsXButton1Pressed) {
+					auto frame = dynamic_cast<Shell^>(Window::Current->Content)->Frame;
+					if (frame->CanGoBack) {
+						frame->GoBack();
+					}
+				}
+			});
 		}
 	}, concurrency::task_continuation_context::get_current_winrt_context());
 }

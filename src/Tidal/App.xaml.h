@@ -19,6 +19,7 @@ namespace Tidal
 	{
 	private:
 		std::unique_ptr<SmtcService> _smtcService;
+		Windows::Foundation::EventRegistrationToken _backMouseToken;
 	protected:
 		virtual void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs^ e) override;
 		virtual void OnActivated(Windows::ApplicationModel::Activation::IActivatedEventArgs^ e) override;
