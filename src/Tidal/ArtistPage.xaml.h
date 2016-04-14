@@ -10,6 +10,7 @@
 #include "GroupedAlbums.h"
 #include "ArtistPage.g.h"
 #include "TracksPlaybackStateManager.h"
+#include "IPageWithPreservedState.h"
 
 namespace Tidal
 {
@@ -17,7 +18,7 @@ namespace Tidal
 	/// An empty page that can be used on its own or navigated to within a Frame.
 	/// </summary>
 	[Windows::Foundation::Metadata::WebHostHidden]
-	public ref class ArtistPage sealed
+	public ref class ArtistPage sealed : public IPageWithPreservedState
 	{
 	private:
 		std::int64_t _artistId;
@@ -27,6 +28,8 @@ namespace Tidal
 		Platform::Collections::Vector<TrackItemVM^>^ _popularTracks;
 	public:
 		ArtistPage();
+		// Inherited via IPageWithPreservedState
+		virtual Platform::Object ^ GetStateToPreserve();
 	protected:
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override {
 			LoadAsync(e);
@@ -48,5 +51,6 @@ namespace Tidal
 		void OnRemoveFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnPlayPopularTracks(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnRadioClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+
 	};
 }

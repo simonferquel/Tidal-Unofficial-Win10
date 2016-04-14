@@ -102,8 +102,22 @@ void parseBio(TextBlock^ txtBlock, std::wstring bioText) {
 
 }
 
+ref class ArtistPageState sealed {
+public:
+	property int SelectedPivotIndex;
+	ArtistPageState(int selectedPivotIndex) {
+		SelectedPivotIndex = selectedPivotIndex;
+	}
+};
+
+Platform::Object ^ Tidal::ArtistPage::GetStateToPreserve()
+{
+	return ref new ArtistPageState(pivot->SelectedIndex);
+}
+
 concurrency::task<void> Tidal::ArtistPage::LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ args)
 {
+	auto preservedState = GetCurrentPagePreservedState<ArtistPageState>();
 	auto cancelToken = _cts.get_token();
 	try {
 		loadingView->LoadingState = Tidal::LoadingState::Loading;
@@ -209,7 +223,9 @@ concurrency::task<void> Tidal::ArtistPage::LoadAsync(Windows::UI::Xaml::Navigati
 				throw;
 			}
 		}
-
+		if (preservedState) {
+			pivot->SelectedIndex = preservedState->SelectedPivotIndex;
+		}
 		loadingView->LoadingState = Tidal::LoadingState::Loaded;
 	}
 	catch (...) {
@@ -365,3 +381,4 @@ void Tidal::ArtistPage::OnRadioClick(Platform::Object^ sender, Windows::UI::Xaml
 {
 	PlayRadio(this->_artistId);
 }
+
