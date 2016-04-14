@@ -170,6 +170,52 @@ void showTrackDisplayInfo(const api::TrackInfo& trackInfo, bool canGoNext, bool 
 	smtc->DisplayUpdater->Thumbnail = Windows::Storage::Streams::RandomAccessStreamReference::CreateFromUri(coverUri);
 	smtc->DisplayUpdater->AppMediaId = trackInfo.id.ToString();
 	smtc->DisplayUpdater->Update();
+	/*
+	<tile>
+    <visual>
+      <binding template="TileSquarePeekImageAndText01">
+        <image id="1" src="image1" alt="alt text"/>
+        <text id="1">Text Header 1</text>
+        <text id="2">Text 2</text>
+        <text id="3">Text 3</text>
+        <text id="4">Text 4</text>
+      </binding>  
+    </visual>
+  </tile>
+
+*/
+
+	auto doc = ref new Windows::Data::Xml::Dom::XmlDocument();
+	auto xmlText = doc->CreateTextNode(L"");
+	xmlText->Data = coverUri->RawUri;
+	auto uriText = xmlText->GetXml();
+	xmlText->Data = tools::strings::toWindowsString(trackInfo.title);
+	auto titleText = xmlText->GetXml();
+	xmlText->Data = tools::strings::toWindowsString(trackInfo.artists[0].name);
+	auto artistText = xmlText->GetXml();
+	xmlText->Data = tools::strings::toWindowsString(trackInfo.album.title);
+	auto albumText = xmlText->GetXml();
+	std::wstring tileContent = L"<tile><visual><binding template=\"TileSquarePeekImageAndText01\">\
+        <image id=\"1\" src=\"" + std::wstring(uriText->Data()) + L"\" alt=\"alt text\"/>\
+        <text id=\"1\">"+std::wstring(titleText->Data())+L"</text>\
+        <text id=\"2\">" + std::wstring(artistText->Data()) + L"</text>\
+        <text id=\"3\">" + std::wstring(albumText->Data()) + L"</text>\
+        <text id=\"4\">Tidal unofficial</text>\
+      </binding>\
+<binding template=\"TileWide310x150PeekImage02\">\
+        <image id=\"1\" src=\"" + std::wstring(uriText->Data()) + L"\" alt=\"alt text\"/>\
+        <text id=\"1\">" + std::wstring(titleText->Data()) + L"</text>\
+        <text id=\"2\">" + std::wstring(artistText->Data()) + L"</text>\
+        <text id=\"3\">" + std::wstring(albumText->Data()) + L"</text>\
+        <text id=\"4\">Tidal unofficial</text>\
+      </binding>\
+    </visual>\
+  </tile>";
+
+	auto tileUpdater = Windows::UI::Notifications::TileUpdateManager::CreateTileUpdaterForApplication(L"App");
+	doc->LoadXml(tools::strings::toWindowsString(tileContent));
+	tileUpdater->Clear();
+	tileUpdater->Update(ref new Windows::UI::Notifications::TileNotification(doc));
 
 	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
 	settingsValues->Insert(L"CurrentPlaybackTrackId", trackInfo.id);

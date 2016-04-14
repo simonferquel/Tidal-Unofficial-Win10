@@ -45,6 +45,8 @@ void BackgroundAudio::BackgroundAudioTask::Run(Windows::ApplicationModel::Backgr
 
 void BackgroundAudio::BackgroundAudioTask::OnCanceled(Windows::ApplicationModel::Background::IBackgroundTaskInstance ^sender, Windows::ApplicationModel::Background::BackgroundTaskCancellationReason reason)
 {
+	auto tileUpdater = Windows::UI::Notifications::TileUpdateManager::CreateTileUpdaterForApplication(L"App");
+	tileUpdater->Clear();
 	auto r = reason;
 	auto deferral = _taskDeferral.Get();
 	if (deferral) {
