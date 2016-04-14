@@ -4,5 +4,12 @@ namespace Tidal {
 	{
 		Platform::Object^ GetStateToPreserve();
 	};
+
+	Platform::Object^ GetCurrentPagePreservedState();
+
+	template<typename T> 
+	T^ GetCurrentPagePreservedState() {
+		return dynamic_cast<T^>(GetCurrentPagePreservedState());
+	}
 }
 

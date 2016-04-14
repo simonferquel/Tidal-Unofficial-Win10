@@ -8,13 +8,14 @@
 #include "GenrePage.g.h"
 #include "IGo.h"
 #include "TracksPlaybackStateManager.h"
+#include "IPageWithPreservedState.h"
 namespace Tidal
 {
 	/// <summary>
 	/// An empty page that can be used on its own or navigated to within a Frame.
 	/// </summary>
 	[Windows::Foundation::Metadata::WebHostHidden]
-	public ref class GenrePage sealed
+	public ref class GenrePage sealed : public IPageWithPreservedState
 	{
 	private:
 		concurrency::task<void> LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e);
@@ -28,6 +29,7 @@ namespace Tidal
 			_cts = concurrency::cancellation_token_source();
 		}
 	public:
+		virtual	Platform::Object^ GetStateToPreserve();
 		GenrePage();
 	private:
 		void OnItemClick(IGo^ item);

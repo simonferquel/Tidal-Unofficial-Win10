@@ -75,10 +75,26 @@ concurrency::task<void> Tidal::GenrePage::LoadAsync(Windows::UI::Xaml::Navigatio
 		}
 	}
 }
-
+ref class GenrePagePreservedState sealed {
+public:
+	property int SelectedPivotItemIndex;
+};
 void Tidal::GenrePage::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ e)
 {
 	LoadAsync(e);
+	if (e->NavigationMode == NavigationMode::Back) {
+		auto state = GetCurrentPagePreservedState<GenrePagePreservedState>();
+		if (state) {
+			pivot->SelectedIndex = state->SelectedPivotItemIndex;
+		}
+	}
+}
+
+Platform::Object ^ Tidal::GenrePage::GetStateToPreserve()
+{
+	auto state = ref new GenrePagePreservedState();
+	state->SelectedPivotItemIndex = pivot->SelectedIndex;
+	return state;
 }
 
 GenrePage::GenrePage()
