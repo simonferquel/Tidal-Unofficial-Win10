@@ -141,7 +141,7 @@
         <Border BorderThickness="1,1,0,1"   Height="48" BorderBrush="Black" Background="#FF171717">
             <TextBlock Style="{StaticResource PageTitleStyle}" FontSize="16">MY MUSIC</TextBlock>
         </Border>
-        <Pivot Grid.Row="1">
+        <Pivot Grid.Row="1" x:Name="pivot">
             <PivotItem Margin="0">
                 <PivotItem.Header>
                     <StackPanel Orientation="Horizontal" >

@@ -29,6 +29,29 @@ MyMusic::MyMusic()
 	InitializeComponent();
 }
 
+ref class MyMusicPageState sealed {
+public:
+	property int SelectedPivotItemIndex;
+	MyMusicPageState(int selectedPivotItemIndex) {
+		SelectedPivotItemIndex = selectedPivotItemIndex;
+	}
+};
+
+void Tidal::MyMusic::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ e)
+{
+	LoadAsync();
+	if (e->NavigationMode == NavigationMode::Back) {
+		auto state = GetCurrentPagePreservedState<MyMusicPageState>();
+		if (state) {
+			pivot->SelectedIndex = state->SelectedPivotItemIndex;
+		}
+	}
+}
+
+Platform::Object ^ Tidal::MyMusic::GetStateToPreserve()
+{
+	return ref new MyMusicPageState(pivot->SelectedIndex);
+}
 
 concurrency::task<void> Tidal::MyMusic::LoadAsync()
 {
@@ -80,5 +103,5 @@ void Tidal::MyMusic::OnTrackClick(Platform::Object^ sender, Windows::UI::Xaml::C
 
 void Tidal::MyMusic::OnViewLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	LoadAsync();
 }
+
