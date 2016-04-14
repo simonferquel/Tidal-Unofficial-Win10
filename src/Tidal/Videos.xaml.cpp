@@ -23,13 +23,31 @@ using namespace Windows::UI::Xaml::Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
+ref class VideosPageState sealed {
+public:
+	property int SelectedFilterIndex;
+	VideosPageState(int selectedFilterIndex) {
+		SelectedFilterIndex = selectedFilterIndex;
+	}
+};
+
+void Tidal::Videos::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ e)
+{
+	LoadAsync(e->NavigationMode == NavigationMode::Back);
+}
+
+Platform::Object ^ Tidal::Videos::GetStateToPreserve()
+{
+	return ref new VideosPageState(videosFilter->SelectedIndex);
+}
+
 Videos::Videos()
 {
 	InitializeComponent();
 }
 
 
-concurrency::task<void> Tidal::Videos::LoadAsync()
+concurrency::task<void> Tidal::Videos::LoadAsync(bool reloadPreservedState)
 {
 	try {
 		auto videoSublists = ref new Platform::Collections::Vector<Tidal::SublistItemVM^>();
@@ -43,6 +61,12 @@ concurrency::task<void> Tidal::Videos::LoadAsync()
 			}
 		}
 		videosFilter->SublistSource = videoSublists;
+		if (reloadPreservedState) {
+			auto state = GetCurrentPagePreservedState<VideosPageState>();
+			if (state) {
+				videosFilter->SelectedIndex = state->SelectedFilterIndex;
+			}
+		}
 	}
 	catch (...) {
 
@@ -51,7 +75,6 @@ concurrency::task<void> Tidal::Videos::LoadAsync()
 
 void Tidal::Videos::OnPageLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	LoadAsync();
 }
 
 

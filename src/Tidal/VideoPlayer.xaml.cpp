@@ -8,6 +8,7 @@
 #include "AuthenticationService.h"
 #include "Api/GetVideoUrlQuery.h"
 #include "tools/StringUtils.h"
+#include "AudioService.h"
 
 using namespace Tidal;
 
@@ -36,6 +37,7 @@ concurrency::task<void> Tidal::VideoPlayer::launchVideo(Platform::String ^ id)
 			api::GetVideoUrlQuery query(authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode(), id);
 			auto urlInfo = co_await query.executeAsync(concurrency::cancellation_token::none());
 			me->Source = ref new Uri(tools::strings::toWindowsString(urlInfo->url));
+			co_await getAudioService().pauseAsync();
 		}
 	}
 	catch (...) {}
