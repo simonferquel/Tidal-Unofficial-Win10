@@ -11,6 +11,7 @@
 #include <tools/ScopedEventRegistration.h>
 #include "AlbumResumeItemVM.h"
 #include "TracksPlaybackStateManager.h"
+#include "IPageWithPreservedState.h"
 
 namespace Tidal
 {
@@ -18,7 +19,7 @@ namespace Tidal
 	/// An empty page that can be used on its own or navigated to within a Frame.
 	/// </summary>
 	[Windows::Foundation::Metadata::WebHostHidden]
-	public ref class AlbumPage sealed
+	public ref class AlbumPage sealed : public IPageWithPreservedState
 	{
 	private:
 		std::shared_ptr<TracksPlaybackStateManager> _tracksPlaybackManager;
@@ -28,6 +29,8 @@ namespace Tidal
 	public:
 		AlbumPage();
 		virtual ~AlbumPage();
+		// Inherited via IPageWithPreservedState
+		virtual Platform::Object ^ GetStateToPreserve();
 	protected:
 
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
@@ -50,5 +53,6 @@ namespace Tidal
 		void OnMenuClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnAddFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnRemoveFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+
 	};
 }

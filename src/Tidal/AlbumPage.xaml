@@ -238,7 +238,7 @@
             <Border BorderThickness="1,1,0,1" BorderBrush="Black" Background="#FF171717" Height="48">
                 <TextBlock x:Name="pageHeader" Style="{StaticResource PageTitleStyle}" FontSize="16"></TextBlock>
             </Border>
-            <Pivot Grid.Row="1">
+            <Pivot Grid.Row="1" x:Name="pivot">
                 <PivotItem Header="Tracks" Padding="0" Margin="0">
                     <ListView x:Name="tracksLV" ItemContainerStyle="{StaticResource TrackListViewItemStyle}" ItemTemplate="{StaticResource TrackItemTemplateNarrow}">
                         <ListView.Header>

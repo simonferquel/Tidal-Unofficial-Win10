@@ -75,9 +75,24 @@ void Tidal::AlbumPage::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEv
 
 }
 
+ref class AlbumPagePreservedState sealed {
+public:
+	property int SelectedPivotIndex;
+	AlbumPagePreservedState(int selectedPivotIndex) {
+		SelectedPivotIndex = selectedPivotIndex;
+	}
+};
+
+Platform::Object ^ Tidal::AlbumPage::GetStateToPreserve()
+{
+	return ref new AlbumPagePreservedState(pivot->SelectedIndex);
+}
+
+
 
 concurrency::task<void> Tidal::AlbumPage::LoadAsync(std::int64_t id)
 {
+	auto preservedState = GetCurrentPagePreservedState<AlbumPagePreservedState>();
 	auto cancelToken = _cts.get_token();
 	try {
 		loadingView->LoadingState = Tidal::LoadingState::Loading;
@@ -122,6 +137,10 @@ concurrency::task<void> Tidal::AlbumPage::LoadAsync(std::int64_t id)
 			auto bgImageUrl = co_await api::GetCoverUriAndFallbackToWebAsync(id, tools::strings::toWindowsString(albumInfo->cover), 1080, 1080, cancelToken);
 
 			co_await loadImageAsync(bgImageUrl, cancelToken);
+		}
+
+		if (preservedState) {
+			pivot->SelectedIndex = preservedState->SelectedPivotIndex;
 		}
 		loadingView->LoadingState = Tidal::LoadingState::Loaded;
 	}
