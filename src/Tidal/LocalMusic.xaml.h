@@ -8,6 +8,7 @@
 #include "LocalMusic.g.h"
 #include <localdata/Entities.h>
 #include "Mediators.h"
+#include "IPageWithPreservedState.h"
 
 namespace Tidal
 {
@@ -57,14 +58,20 @@ namespace Tidal
 	/// An empty page that can be used on its own or navigated to within a Frame.
 	/// </summary>
 	[Windows::Foundation::Metadata::WebHostHidden]
-	public ref class LocalMusic sealed
+	public ref class LocalMusic sealed : public IPageWithPreservedState
 	{
 	private:
 		std::vector<RegistrationToken> _mediatorTokens;
 		Platform::Collections::Vector<DownloadItemVM^>^ _downloadQueue;
+	protected:
+
+		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
 	public:
 		LocalMusic();
 		property Windows::Foundation::Collections::IVector<DownloadItemVM^>^ DownloadQueue {Windows::Foundation::Collections::IVector<DownloadItemVM^>^ get() { return _downloadQueue; } }
+
+		// Inherited via IPageWithPreservedState
+		virtual Platform::Object ^ GetStateToPreserve();
 	private:
 		concurrency::task<void> LoadAsync();
 		void OnAlbumClicked(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
@@ -75,5 +82,6 @@ namespace Tidal
 
 		void OnTrackImportComplete(const std::int64_t& id);
 		void OnTrackImportProgress(const ImportProgress& progress);
+
 	};
 }

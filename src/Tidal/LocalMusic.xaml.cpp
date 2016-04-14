@@ -27,6 +27,27 @@ using namespace Windows::UI::Xaml::Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
+ref class LocalMusicPageState sealed {
+public:
+	property int SelectedPivotIndex;
+	LocalMusicPageState(int selectedPivotIndex) {
+		SelectedPivotIndex = selectedPivotIndex;
+	}
+};
+void Tidal::LocalMusic::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ e)
+{
+	LoadAsync();
+	auto state = GetCurrentPagePreservedState<LocalMusicPageState>();
+	if (state) {
+		pivot->SelectedIndex = state->SelectedPivotIndex;
+	}
+}
+
+Platform::Object ^ Tidal::LocalMusic::GetStateToPreserve()
+{
+	return ref new LocalMusicPageState(pivot->SelectedIndex);
+}
+
 LocalMusic::LocalMusic()
 {
 	_downloadQueue = ref new Platform::Collections::Vector<DownloadItemVM^>();
@@ -90,7 +111,6 @@ void Tidal::LocalMusic::OnPlaylistClick(Platform::Object^ sender, Windows::UI::X
 
 void Tidal::LocalMusic::OnViewLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	LoadAsync();
 }
 
 void Tidal::LocalMusic::OnTrackImportComplete(const std::int64_t & id)
