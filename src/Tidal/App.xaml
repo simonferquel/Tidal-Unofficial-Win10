@@ -18,6 +18,37 @@
             <Setter Property="FontFamily" Value="Segoe UI Semilight"/>
             <Setter Property="FontSize" Value="21.333"/>
         </Style>
+        <Style TargetType="AppBarButton">
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate  TargetType="AppBarButton">
+                        <ContentPresenter x:Name="contentPresenter" >
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="contentPresenter.(ContentPresenter.Foreground)" Value="{StaticResource TidalAccentBrush}"/>
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <PointerDownThemeAnimation TargetName="contentPresenter"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled"/>
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="contentPresenter.(ContentPresenter.Foreground)" Value="{StaticResource TidalAccentBrush}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </ContentPresenter>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
 
     </Application.Resources>
 </Application>
