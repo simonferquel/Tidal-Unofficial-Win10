@@ -25,7 +25,7 @@ using namespace Windows::UI::Xaml::Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-concurrency::task<void> Tidal::VideoPlayer::launchVideo(Platform::String ^ id)
+concurrency::task<void> Tidal::VideoPlayer::launchVideo(Hat<Platform::String> id)
 {
 	try {
 		auto& authSvc = getAuthenticationService();
@@ -34,7 +34,7 @@ concurrency::task<void> Tidal::VideoPlayer::launchVideo(Platform::String ^ id)
 			dlg->ShowAsync();
 		}
 		else {
-			api::GetVideoUrlQuery query(authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode(), id);
+			api::GetVideoUrlQuery query(authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode(), id.get());
 			auto urlInfo = co_await query.executeAsync(concurrency::cancellation_token::none());
 			me->Source = ref new Uri(tools::strings::toWindowsString(urlInfo->url));
 			co_await getAudioService().pauseAsync();

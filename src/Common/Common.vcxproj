@@ -251,6 +251,7 @@
     <ClInclude Include="Api\UserInfo.h" />
     <ClInclude Include="Api\VideoInfo.h" />
     <ClInclude Include="CachedTrackManager.h" />
+    <ClInclude Include="Hat.h" />
     <ClInclude Include="localdata\db.h" />
     <ClInclude Include="localdata\Entities.h" />
     <ClInclude Include="localdata\GetCachedTrackInfoQuery.h" />
@@ -264,6 +265,7 @@
     <ClInclude Include="LocalFileManager.h" />
     <ClInclude Include="ObfuscateStream.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="pplawait2.h" />
     <ClInclude Include="SoundQuality.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="tools\AsyncHelpers.h" />

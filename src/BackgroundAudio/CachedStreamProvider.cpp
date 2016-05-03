@@ -15,6 +15,7 @@
 #include <Api/ApiErrors.h>
 #include "WebStream.h"
 #include <ObfuscateStream.h>
+#include <Hat.h>
 using namespace Windows::Foundation;
 using namespace Windows::Storage::Streams;
 
@@ -207,7 +208,7 @@ public:
 		}
 	}
 
-	concurrency::task<IBuffer^> ReadBlockAsync(IBuffer^ buffer, unsigned long long position, unsigned int count) {
+	concurrency::task<IBuffer^> ReadBlockAsync(Hat<IBuffer> buffer, unsigned long long position, unsigned int count) {
 		tools::debug_stream << L"begin read. Position : " << position << " count : " << count << std::endl;
 		if (count + position > _track.server_size) {
 			count = _track.server_size - position;
@@ -221,7 +222,7 @@ public:
 		if (position != _fileStream->Position) {
 			_fileStream->Seek(position);
 		}
-		auto result = co_await concurrency::create_task(_fileStream->ReadAsync(buffer, count, InputStreamOptions::None));
+		auto result = co_await concurrency::create_task(_fileStream->ReadAsync(buffer.get(), count, InputStreamOptions::None));
 		tools::debug_stream << L"end read" << std::endl;
 		return result;
 	}

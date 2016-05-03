@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <vector>
 #include <ppltasks.h>
+#include <Hat.h>
 namespace Tidal
 {
 	[Windows::Foundation::Metadata::WebHostHidden]
@@ -18,7 +19,7 @@ namespace Tidal
 		bool _isNewPlaylistMode = false;
 		std::vector<std::int64_t> _trackIds;
 		concurrency::task<void> loadPlaylistsAsync();
-		concurrency::task<void> addToExistingPlaylistAsync(PlaylistResumeItemVM^ playlist);
+		concurrency::task<void> addToExistingPlaylistAsync(Hat<PlaylistResumeItemVM> playlist);
 		concurrency::task<void> addToNewPlaylistAsync();
 	internal:
 		AddToPlaylistDialog(const std::vector<std::int64_t>& trackIds);

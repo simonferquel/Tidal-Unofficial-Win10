@@ -1,5 +1,6 @@
 #pragma once
 #include <ppltasks.h>
+#include <Hat.h>
 ref class WebStream sealed : public Windows::Storage::Streams::IRandomAccessStream {
 private:
 	Windows::Foundation::Uri ^ _uri;
@@ -31,6 +32,6 @@ public:
 	virtual void Seek(unsigned long long position);
 	virtual Windows::Storage::Streams::IRandomAccessStream ^ CloneStream();
 internal:
-	static concurrency::task<WebStream^> CreateWebStreamAsync(Platform::String^ url, concurrency::cancellation_token cancelToken);
+	static concurrency::task<WebStream^> CreateWebStreamAsync(Hat<Platform::String> url, concurrency::cancellation_token cancelToken);
 
 };

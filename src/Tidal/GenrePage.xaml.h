@@ -9,6 +9,7 @@
 #include "IGo.h"
 #include "TracksPlaybackStateManager.h"
 #include "IPageWithPreservedState.h"
+#include <Hat.h>
 namespace Tidal
 {
 	/// <summary>
@@ -18,7 +19,7 @@ namespace Tidal
 	public ref class GenrePage sealed : public IPageWithPreservedState
 	{
 	private:
-		concurrency::task<void> LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e);
+		concurrency::task<void> LoadAsync(Hat<Windows::UI::Xaml::Navigation::NavigationEventArgs> e);
 		concurrency::cancellation_token_source _cts;
 		std::shared_ptr<TracksPlaybackStateManager> _playbackStateManager;
 	protected:

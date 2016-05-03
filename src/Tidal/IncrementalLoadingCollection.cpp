@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "IncrementalLoadingCollection.h"
 #include <experimental/coroutine>
-#include <pplawait.h>
+#include <pplawait2.h>
 
 concurrency::task<Windows::UI::Xaml::Data::LoadMoreItemsResult> Tidal::IncrementalLoadingCollection::LoadMoreItemsAsync(unsigned int count, concurrency::cancellation_token cancelToken)
 {
@@ -35,3 +35,13 @@ Tidal::IncrementalLoadingCollection::IncrementalLoadingCollection(const LoadMore
 	_innerVector->VectorChanged += ref new Windows::Foundation::Collections::VectorChangedEventHandler<Platform::Object ^>(this, &Tidal::IncrementalLoadingCollection::_storageVectorChanged);
 	HasMoreItems = true;
 }
+
+//Tidal::IncrementalLoadingCollection::IncrementalLoadingCollection(const LoadMoreCallbackWithHat & callback)
+//	: _loadMoreItemsCallback([callback](Platform::Collections::Vector<Platform::Object^>^ p1, unsigned int p2, concurrency::cancellation_token p3) {
+//	return callback(p1, p2, p3);
+//})
+//{
+//	_innerVector = ref new Platform::Collections::Vector<Platform::Object^>();
+//	_innerVector->VectorChanged += ref new Windows::Foundation::Collections::VectorChangedEventHandler<Platform::Object ^>(this, &Tidal::IncrementalLoadingCollection::_storageVectorChanged);
+//	HasMoreItems = true;
+//}

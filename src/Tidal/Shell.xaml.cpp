@@ -103,7 +103,7 @@ void Tidal::Shell::OnNavigated(Platform::Object^ sender, Windows::UI::Xaml::Navi
 	else {
 		menuEntriesLV->SelectedItem = *itemIt;
 	}
-	_systemNavManager->AppViewBackButtonVisibility = navFrame->CanGoBack ? Windows::UI::Core::AppViewBackButtonVisibility::Visible : Windows::UI::Core::AppViewBackButtonVisibility::Collapsed;
+	_systemNavManager->AppViewBackButtonVisibility = Windows::UI::Core::AppViewBackButtonVisibility::Collapsed; //navFrame->CanGoBack ? Windows::UI::Core::AppViewBackButtonVisibility::Visible : Windows::UI::Core::AppViewBackButtonVisibility::Collapsed;
 	auto backVisibility = Windows::UI::Xaml::Visibility::Collapsed;
 	if (navFrame->CanGoBack) {
 		if (!Windows::Foundation::Metadata::ApiInformation::IsApiContractPresent(L"Windows.Phone.PhoneContract", 1)) {

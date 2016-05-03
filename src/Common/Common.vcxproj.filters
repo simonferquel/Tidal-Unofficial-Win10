@@ -131,5 +131,7 @@
     <ClInclude Include="ObfuscateStream.h" />
     <ClInclude Include="Api\PlaylistsQueries.h" />
     <ClInclude Include="LocalFileManager.h" />
+    <ClInclude Include="pplawait2.h" />
+    <ClInclude Include="Hat.h" />
   </ItemGroup>
 </Project>
