@@ -74,6 +74,10 @@
     <ClCompile Include="TracksPlaybackStateManager.cpp" />
     <ClCompile Include="AddToPlaylistDialog.xaml.cpp" />
     <ClCompile Include="IPageWithPreservedState.cpp" />
+    <ClCompile Include="Background\BackgroundDownloader.cpp" />
+    <ClCompile Include="Background\CachedStreamProvider.cpp" />
+    <ClCompile Include="Background\MusicPlayer.cpp" />
+    <ClCompile Include="Background\WebStream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -144,6 +148,10 @@
     <ClInclude Include="TracksPlaybackStateManager.h" />
     <ClInclude Include="AddToPlaylistDialog.xaml.h" />
     <ClInclude Include="IPageWithPreservedState.h" />
+    <ClInclude Include="Background\BackgroundDownloader.h" />
+    <ClInclude Include="Background\CachedStreamProvider.h" />
+    <ClInclude Include="Background\MusicPlayer.h" />
+    <ClInclude Include="Background\WebStream.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\tidal-logo-large.png">

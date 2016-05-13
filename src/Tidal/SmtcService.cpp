@@ -14,7 +14,7 @@ void SmtcService::OnCurrentTrackChanged()
 		return;
 	}
 	auto smtc = Windows::Media::SystemMediaTransportControls::GetForCurrentView();
-	auto player = Windows::Media::Playback::BackgroundMediaPlayer::Current;
+	auto player = getAudioService().player();
 	if (player->CurrentState == Windows::Media::Playback::MediaPlayerState::Playing
 		|| player->CurrentState == Windows::Media::Playback::MediaPlayerState::Opening
 		|| player->CurrentState == Windows::Media::Playback::MediaPlayerState::Buffering) {
@@ -66,7 +66,7 @@ void SmtcService::OnCurrentTrackChanged()
 SmtcService::SmtcService(Windows::UI::Core::CoreDispatcher^ dispatcher) : _dispatcher(dispatcher)
 {
 	_mediatorTokens.push_back(getCurrentPlaybackTrackIdMediator().registerCallback([this](std::int64_t id) {this->OnCurrentTrackChanged(); }));
-	auto player = Windows::Media::Playback::BackgroundMediaPlayer::Current;
+	auto player = getAudioService().player();
 	auto token = player->CurrentStateChanged += ref new Windows::Foundation::TypedEventHandler<Windows::Media::Playback::MediaPlayer ^, Platform::Object ^>([this](Windows::Media::Playback::MediaPlayer ^ player, Platform::Object ^) {
 		this->OnCurrentTrackChanged();
 	});
@@ -92,7 +92,7 @@ void SmtcService::OnSmtcButtonPressed(Windows::Media::SystemMediaTransportContro
 		getAudioService().resumeAsync();
 		break;
 	case Windows::Media::SystemMediaTransportControlsButton::Pause:
-		Windows::Media::Playback::BackgroundMediaPlayer::Current->Pause();
+		getAudioService().player()->Pause();
 		break;
 	case Windows::Media::SystemMediaTransportControlsButton::Next:
 		getAudioService().nextAsync();

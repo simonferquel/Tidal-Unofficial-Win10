@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tidal", "Tidal\Tidal.vcxproj", "{F6266C92-D287-4858-ACE4-4E3523E4DDAD}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpprestsdk140.uwp.staticlib", "..\dependancies\cpprestsdk\Release\src\build\vs14.uwp\cpprestsdk140.uwp.staticlib.vcxproj", "{47A5CFDC-C244-45A6-9830-38CB303CB495}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LocalDB", "..\dependancies\UWP-LocalDB-CPP\Build\LocalDB\LocalDB.vcxproj", "{47B2B80F-6B2F-42E1-802E-8FD509C3BDCD}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BackgroundAudio", "BackgroundAudio\BackgroundAudio.vcxproj", "{1404BFB3-F806-4EA7-A8B6-E994295BA93D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Common\Common.vcxproj", "{0B3B05B6-8216-491A-B3E7-E03BC38230F7}"
 EndProject
@@ -69,18 +67,6 @@ Global
 		{47B2B80F-6B2F-42E1-802E-8FD509C3BDCD}.Release|x64.Build.0 = Release|x64
 		{47B2B80F-6B2F-42E1-802E-8FD509C3BDCD}.Release|x86.ActiveCfg = Release|Win32
 		{47B2B80F-6B2F-42E1-802E-8FD509C3BDCD}.Release|x86.Build.0 = Release|Win32
-		{1404BFB3-F806-4EA7-A8B6-E994295BA93D}.Debug|ARM.ActiveCfg = Debug|ARM
-		{1404BFB3-F806-4EA7-A8B6-E994295BA93D}.Debug|ARM.Build.0 = Debug|ARM
-		{1404BFB3-F806-4EA7-A8B6-E994295BA93D}.Debug|x64.ActiveCfg = Debug|x64
-		{1404BFB3-F806-4EA7-A8B6-E994295BA93D}.Debug|x64.Build.0 = Debug|x64
-		{1404BFB3-F806-4EA7-A8B6-E994295BA93D}.Debug|x86.ActiveCfg = Debug|Win32
-		{1404BFB3-F806-4EA7-A8B6-E994295BA93D}.Debug|x86.Build.0 = Debug|Win32
-		{1404BFB3-F806-4EA7-A8B6-E994295BA93D}.Release|ARM.ActiveCfg = Release|ARM
-		{1404BFB3-F806-4EA7-A8B6-E994295BA93D}.Release|ARM.Build.0 = Release|ARM
-		{1404BFB3-F806-4EA7-A8B6-E994295BA93D}.Release|x64.ActiveCfg = Release|x64
-		{1404BFB3-F806-4EA7-A8B6-E994295BA93D}.Release|x64.Build.0 = Release|x64
-		{1404BFB3-F806-4EA7-A8B6-E994295BA93D}.Release|x86.ActiveCfg = Release|Win32
-		{1404BFB3-F806-4EA7-A8B6-E994295BA93D}.Release|x86.Build.0 = Release|Win32
 		{0B3B05B6-8216-491A-B3E7-E03BC38230F7}.Debug|ARM.ActiveCfg = Debug|ARM
 		{0B3B05B6-8216-491A-B3E7-E03BC38230F7}.Debug|ARM.Build.0 = Debug|ARM
 		{0B3B05B6-8216-491A-B3E7-E03BC38230F7}.Debug|x64.ActiveCfg = Debug|x64

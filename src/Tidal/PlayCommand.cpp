@@ -39,10 +39,10 @@ void Tidal::PlayCommand::Execute(Platform::Object ^parameter)
 	if (Track == nullptr || TrackList == nullptr) {
 		return;
 	}
-	if (getAudioService().getCurrentPlaybackTrackId() == Track->Id && Windows::Media::Playback::BackgroundMediaPlayer::Current->CurrentState != Windows::Media::Playback::MediaPlayerState::Closed
-		&& Windows::Media::Playback::BackgroundMediaPlayer::Current->CurrentState != Windows::Media::Playback::MediaPlayerState::Stopped) {
+	if (getAudioService().getCurrentPlaybackTrackId() == Track->Id && getAudioService().player()->CurrentState != Windows::Media::Playback::MediaPlayerState::Closed
+		&& getAudioService().player()->CurrentState != Windows::Media::Playback::MediaPlayerState::Stopped) {
 		try {
-			Windows::Media::Playback::BackgroundMediaPlayer::Current->Play();
+			getAudioService().player()->Play();
 		}
 		catch (...) {}
 		return;

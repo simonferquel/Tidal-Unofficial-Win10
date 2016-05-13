@@ -75,7 +75,7 @@ void Tidal::MiniPlayerView::UpdateState()
 		Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {UpdateState(); }));
 		return;
 	}
-	auto player = Windows::Media::Playback::BackgroundMediaPlayer::Current;
+	auto player = getAudioService().player();
 	if (player->CurrentState == Windows::Media::Playback::MediaPlayerState::Playing || player->CurrentState == Windows::Media::Playback::MediaPlayerState::Opening || player->CurrentState == Windows::Media::Playback::MediaPlayerState::Buffering) {
 		togglePlay->IsChecked = true;
 		playPauseIcon->Glyph = L"b";
@@ -89,7 +89,7 @@ void Tidal::MiniPlayerView::UpdateState()
 void Tidal::MiniPlayerView::AttachToPlayerEvents()
 {
 	try {
-		auto player = Windows::Media::Playback::BackgroundMediaPlayer::Current;
+		auto player = getAudioService().player();
 		auto token = player->CurrentStateChanged += ref new Windows::Foundation::TypedEventHandler<Windows::Media::Playback::MediaPlayer ^, Platform::Object ^>(this, &Tidal::MiniPlayerView::OnMediaPlayerStateChanged);
 		_eventRegistrations.push_back(tools::makeScopedEventRegistration(token, [player](const Windows::Foundation::EventRegistrationToken& token) {
 			try {
@@ -100,7 +100,6 @@ void Tidal::MiniPlayerView::AttachToPlayerEvents()
 	}
 	catch (Platform::COMException^ comEx) {
 		if (comEx->HResult == 0x800706BA) {
-			getAudioService().onBackgroundAudioFailureDetected();
 			AttachToPlayerEvents();
 			return;
 		}
@@ -184,7 +183,7 @@ void Tidal::MiniPlayerView::OnMediaPlayerStateChanged(Windows::Media::Playback::
 
 void Tidal::MiniPlayerView::OnPlayPauseClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	auto player = Windows::Media::Playback::BackgroundMediaPlayer::Current;
+	auto player = getAudioService().player();
 	if (player->CurrentState == Windows::Media::Playback::MediaPlayerState::Playing || player->CurrentState == Windows::Media::Playback::MediaPlayerState::Opening || player->CurrentState == Windows::Media::Playback::MediaPlayerState::Buffering) {
 		getAudioService().pauseAsync();
 	}

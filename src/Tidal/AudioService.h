@@ -4,10 +4,10 @@
 #include <Api/TrackInfo.h>
 #include "Mediators.h"
 class AudioService {
-	class BackgroundAudioConnection;
 private:
+	struct BackgroundState;
 	AudioService();
-	std::shared_ptr<BackgroundAudioConnection> _connection;
+	std::unique_ptr<BackgroundState> _bgState;
 public:
 	~AudioService();
 
@@ -18,7 +18,7 @@ public:
 	std::int64_t getCurrentPlaybackTrackId() const;
 	void onSuspending();
 	void onResuming();
-	void onBackgroundAudioFailureDetected();
+
 	concurrency::task<void> wakeupDownloaderAsync(concurrency::cancellation_token cancelToken);
 	concurrency::task<void> playAllLocalMusicAsync();
 	concurrency::task<void> resumeAsync();
@@ -28,4 +28,6 @@ public:
 
 	concurrency::task<void> shuffleChangeAsync();
 	concurrency::task<void> repeatChangeAsync();
+
+	Windows::Media::Playback::MediaPlayer^ player();
 };

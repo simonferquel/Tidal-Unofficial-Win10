@@ -48,7 +48,7 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 	if (_smtcService) {
 		return;
 	}
-	_smtcService = std::make_unique<SmtcService>(Windows::UI::Core::CoreWindow::GetForCurrentThread()->Dispatcher);
+	
 	Windows::Graphics::Display::DisplayInformation::AutoRotationPreferences = Windows::Graphics::Display::DisplayOrientations::Landscape
 		| Windows::Graphics::Display::DisplayOrientations::LandscapeFlipped
 		| Windows::Graphics::Display::DisplayOrientations::Portrait
@@ -70,6 +70,7 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 	});
 
 	localdata::initializeDbAsync().then([this,e]() {
+		_smtcService = std::make_unique<SmtcService>(Windows::UI::Core::CoreWindow::GetForCurrentThread()->Dispatcher);
 		getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
 		auto rootFrame = dynamic_cast<Shell^>(Window::Current->Content);
 

@@ -223,6 +223,10 @@
     </ClInclude>
     <ClInclude Include="AudioService.h" />
     <ClInclude Include="AuthenticationVisualStateTrigger.h" />
+    <ClInclude Include="Background\BackgroundDownloader.h" />
+    <ClInclude Include="Background\CachedStreamProvider.h" />
+    <ClInclude Include="Background\MusicPlayer.h" />
+    <ClInclude Include="Background\WebStream.h" />
     <ClInclude Include="CurrentPlaylistPage.xaml.h">
       <DependentUpon>CurrentPlaylistPage.xaml</DependentUpon>
     </ClInclude>
@@ -497,6 +501,10 @@
     </ClCompile>
     <ClCompile Include="AudioService.cpp" />
     <ClCompile Include="AuthenticationVisualStateTrigger.cpp" />
+    <ClCompile Include="Background\BackgroundDownloader.cpp" />
+    <ClCompile Include="Background\CachedStreamProvider.cpp" />
+    <ClCompile Include="Background\MusicPlayer.cpp" />
+    <ClCompile Include="Background\WebStream.cpp" />
     <ClCompile Include="CurrentPlaylistPage.xaml.cpp">
       <DependentUpon>CurrentPlaylistPage.xaml</DependentUpon>
     </ClCompile>
@@ -614,9 +622,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\dependancies\UWP-LocalDB-CPP\Build\LocalDB\LocalDB.vcxproj">
       <Project>{47b2b80f-6b2f-42e1-802e-8fd509c3bdcd}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\BackgroundAudio\BackgroundAudio.vcxproj">
-      <Project>{1404bfb3-f806-4ea7-a8b6-e994295ba93d}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Common\Common.vcxproj">
       <Project>{0b3b05b6-8216-491a-b3e7-e03bc38230f7}</Project>
