@@ -6,6 +6,21 @@
 #include <LocalDB/DBQuery.h>
 #include <LocalDB/Sqlite3Extensions.h>
 namespace localdata {
+
+	struct playback_reports {
+		std::int64_t id;
+		std::wstring json;
+		static std::string getOrderedColumnsForSelect() {
+			return "id, json";
+		}
+		static playback_reports createFromSqlRecord(sqlite3_stmt* stmt) {
+			playback_reports data;
+			data.id = sqlite3_column_int64(stmt, 0);
+			data.json = LocalDB::sqlite3_column_wstring(stmt, 1);
+			return data;
+		}
+	};
+
 	struct cached_track {
 		std::int64_t id;
 		std::int64_t quality;

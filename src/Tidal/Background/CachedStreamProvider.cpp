@@ -207,7 +207,9 @@ public:
 			_cts = concurrency::cancellation_token_source::create_linked_source(cancelToken);
 		}
 	}
-
+	SoundQuality quality() const {
+		return static_cast<SoundQuality>(_track.quality);
+	}
 	concurrency::task<IBuffer^> ReadBlockAsync(Hat<IBuffer> buffer, unsigned long long position, unsigned int count) {
 		tools::debug_stream << L"begin read. Position : " << position << " count : " << count << std::endl;
 		if (count + position > _track.server_size) {
@@ -432,7 +434,7 @@ concurrency::task<cached_stream_info> getPartialStreamAsync(localdata::cached_tr
 	cached_stream_info result;
 
 	result.isImport = false;
-	result.soundQuality = static_cast<SoundQuality>(track.quality);
+	result.soundQuality = sm->quality();
 	result.stream = ref new RandomAccessStreamOverHttpCacheStateMachine(sm);
 	result.contentType = track.quality >= static_cast<std::int32_t>(SoundQuality::Lossless) ? L"audio/flac" : L"audio/mp4";
 	return result;

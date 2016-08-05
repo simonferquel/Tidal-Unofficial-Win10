@@ -8,7 +8,7 @@
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
     <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.10586.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformMinVersion>10.0.14393.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -116,7 +116,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <PackageCertificateKeyFile>Tidal_StoreKey.pfx</PackageCertificateKeyFile>
-    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
@@ -248,6 +248,7 @@
       <DependentUpon>MiniPlayerView.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="PauseCommand.h" />
+    <ClInclude Include="Background\PlaybackReportStateMachine.h" />
     <ClInclude Include="PlayCommand.h" />
     <ClInclude Include="PlayerSeekBar.xaml.h">
       <DependentUpon>PlayerSeekBar.xaml</DependentUpon>
@@ -550,6 +551,7 @@
       <DependentUpon>MiniPlayerView.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="PauseCommand.cpp" />
+    <ClCompile Include="Background\PlaybackReportStateMachine.cpp" />
     <ClCompile Include="PlayCommand.cpp" />
     <ClCompile Include="PlayerSeekBar.xaml.cpp">
       <DependentUpon>PlayerSeekBar.xaml</DependentUpon>

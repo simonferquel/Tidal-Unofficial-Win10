@@ -8,6 +8,7 @@
 #include <Api/CoverCache.h>
 #include <localdata/GetLocalAlbumsQuery.h>
 #include "../Mediators.h"
+#include "PlaybackReportStateMachine.h"
 
 using namespace Windows::Media::Playback;
 using namespace Windows::Media;
@@ -37,7 +38,7 @@ bool getShuffleMode() {
 }
 void MusicPlayer::onWmpStateChanged()
 {
-
+	PlaybackReportStateMachine::get().OnMediaPlayerStateChanged(_wmp->CurrentState);
 }
 
 void MusicPlayer::onWmpMediaOpened()
@@ -204,6 +205,7 @@ void showTrackDisplayInfo(const api::TrackInfo& trackInfo, Windows::Foundation::
 }
 void OnCurrentPlaylistItemChanged(MediaPlaybackList^ playList, CurrentMediaPlaybackItemChangedEventArgs^ args) {
 	if (!args->NewItem) {
+		PlaybackReportStateMachine::get().OnActiveTrackChanged(-1, SoundQuality::Unknown);
 		return;
 	}
 
@@ -216,7 +218,9 @@ void OnCurrentPlaylistItemChanged(MediaPlaybackList^ playList, CurrentMediaPlayb
 		playList->ShuffledItems->IndexOf(playList->CurrentItem, &itemIndex);
 	}
 	showTrackDisplayInfo(info,  args->NewItem->Source->CustomProperties, args->NewItem);
-
+	auto qualityBox = dynamic_cast<IBox<std::int32_t>^>(args->NewItem->Source->CustomProperties->Lookup(L"quality"));
+	auto quality = qualityBox ? static_cast<SoundQuality>(qualityBox->Value) : SoundQuality::Unknown;
+	PlaybackReportStateMachine::get().OnActiveTrackChanged(info.id, quality);
 }
 
 void MusicPlayer::initialize()

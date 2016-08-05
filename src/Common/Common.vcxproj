@@ -209,6 +209,7 @@
     <ClInclude Include="Api\ArtistInfo.h" />
     <ClInclude Include="Api\Config.h" />
     <ClInclude Include="Api\CoverCache.h" />
+    <ClInclude Include="Api\PlaybackReport.h" />
     <ClInclude Include="Api\PlaylistsQueries.h" />
     <ClInclude Include="Api\GetAlbumResumeQuery.h" />
     <ClInclude Include="Api\GetAlbumTracksQuery.h" />
@@ -260,6 +261,7 @@
     <ClInclude Include="localdata\GetLocalAlbumsQuery.h" />
     <ClInclude Include="localdata\GetNextTrackImportJobQuery.h" />
     <ClInclude Include="localdata\GetTrackImportQueueQuery.h" />
+    <ClInclude Include="localdata\InsertPlaybackReportQuery.h" />
     <ClInclude Include="localdata\StorageStatistics.h" />
     <ClInclude Include="localdata\TidalSchema.h" />
     <ClInclude Include="LocalFileManager.h" />
@@ -302,6 +304,7 @@
     <ClCompile Include="Api\LoginResult.cpp" />
     <ClCompile Include="Api\LoginWithFacebookQuery.cpp" />
     <ClCompile Include="Api\LoginWithPasswordQuery.cpp" />
+    <ClCompile Include="Api\PlaybackReport.cpp" />
     <ClCompile Include="Api\PlaylistResume.cpp" />
     <ClCompile Include="Api\PlaylistsQueries.cpp" />
     <ClCompile Include="Api\PromotionArticle.cpp" />
@@ -323,6 +326,7 @@
     <ClCompile Include="localdata\GetLocalAlbumsQuery.cpp" />
     <ClCompile Include="localdata\GetNextTrackImportJobQuery.cpp" />
     <ClCompile Include="localdata\GetTrackImportQueueQuery.cpp" />
+    <ClCompile Include="localdata\InsertPlaybackReportQuery.cpp" />
     <ClCompile Include="localdata\StorageStatistics.cpp" />
     <ClCompile Include="localdata\TidalSchema.cpp" />
     <ClCompile Include="LocalFileManager.cpp" />

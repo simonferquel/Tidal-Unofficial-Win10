@@ -83,6 +83,7 @@
     <ClCompile Include="XboxOneHub.cpp" />
     <ClCompile Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml.cpp" />
     <ClCompile Include="XboxUI\XboxHomeMyMusicWidget.xaml.cpp" />
+    <ClCompile Include="Background\PlaybackReportStateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="XboxOneHub.h" />
     <ClInclude Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml.h" />
     <ClInclude Include="XboxUI\XboxHomeMyMusicWidget.xaml.h" />
+    <ClInclude Include="Background\PlaybackReportStateMachine.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\tidal-logo-large.png">

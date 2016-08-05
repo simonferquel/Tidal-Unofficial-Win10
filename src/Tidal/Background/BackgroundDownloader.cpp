@@ -13,6 +13,9 @@
 #include "WebStream.h"
 #include <ObfuscateStream.h>
 #include "../Mediators.h"
+#include <localdata\InsertPlaybackReportQuery.h>
+#include <Api/Config.h>
+#include "../AuthenticationService.h"
 
 concurrency::task<void> handleJobAsync(localdata::track_import_job job, concurrency::cancellation_token cancelToken) {
 	auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
@@ -121,6 +124,42 @@ concurrency::task<bool> handleNextJobAsync(concurrency::cancellation_token cance
 
 	return true;
 }
+concurrency::task<void> SendPlaybackReportsAsync(std::shared_ptr<std::vector<localdata::playback_reports>> reports) {
+	using namespace Windows::Web::Http;
+	try {
+		auto jarr = web::json::value::array();
+		std::vector<std::int64_t> ids;
+		for (auto& report : *reports) {
+			jarr[jarr.size()] = web::json::value::parse(report.json);
+			ids.push_back(report.id);
+		}
+		auto completePayload = jarr.serialize();
+
+		auto filter = ref new Windows::Web::Http::Filters::HttpBaseProtocolFilter();
+		filter->AllowUI = false;
+		auto client = ref new Windows::Web::Http::HttpClient(filter);
+		client->DefaultRequestHeaders->UserAgent->Clear();
+		client->DefaultRequestHeaders->UserAgent->Append(ref new Windows::Web::Http::Headers::HttpProductInfoHeaderValue(L"Tidal-Unofficial.Windows10", Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily));
+		std::wstring urlBuilder(api::config::apiLocationPrefix()->Data());
+		urlBuilder.append(L"report/offlineplays");
+		urlBuilder.append(L"?countryCode=");
+		if (!getAuthenticationService().authenticationState().isAuthenticated()) {
+			return;
+		}
+		urlBuilder.append(Windows::Foundation::Uri::EscapeComponent(getAuthenticationService().authenticationState().countryCode())->Data());
+
+		auto message = ref new HttpRequestMessage(HttpMethod::Post, ref new Windows::Foundation::Uri(tools::strings::toWindowsString(urlBuilder)));
+		message->Headers->Append(L"X-Tidal-SessionId", getAuthenticationService().authenticationState().sessionId());
+		message->Content = ref new HttpStringContent(tools::strings::toWindowsString(completePayload), Windows::Storage::Streams::UnicodeEncoding::Utf8, L"application/json");
+		auto response = co_await concurrency::create_task(client->SendRequestAsync(message));
+		auto result = co_await concurrency::create_task(response->Content->ReadAsStringAsync());
+		response->EnsureSuccessStatusCode();
+		co_await localdata::DeletePlaybackReportsAsync(ids);
+		
+
+	}
+	catch(...){}
+}
 concurrency::task<void> BackgroundDownloader::startDownloadLoopAsync(concurrency::cancellation_token cancelToken)
 {
 	while (!cancelToken.is_canceled()) {
@@ -135,6 +174,10 @@ concurrency::task<void> BackgroundDownloader::startDownloadLoopAsync(concurrency
 		while (!cancelToken.is_canceled()) {
 			bool treatedJob = co_await handleNextJobAsync(cancelToken);
 			if (!treatedJob) {
+				auto reports = co_await localdata::GetPlaybackReportsAsync();
+				if (reports&&reports->size() > 0) {
+					SendPlaybackReportsAsync(reports);
+				}
 				break;
 			}
 		}

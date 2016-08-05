@@ -4,7 +4,17 @@ using namespace LocalDB;
 using namespace LocalDB::SchemaDefinition;
 void localdata::TidalSchema::BuildSchema(SchemaBuilder & builder)
 {
-	builder.table("cached_track")
+	builder
+		.table("playback_reports", 11)
+			.column("id", SqliteType::Int64)
+				.isPrimaryKey(true)
+				.nullable(false)
+			.endColumn()
+			.column("json", SqliteType::Text)
+				.nullable(false)
+			.endColumn()
+		.endTable()
+		.table("cached_track")
 			.column("id", SqliteType::Int64)
 				.isPrimaryKey(true)
 				.nullable(false)
@@ -184,6 +194,6 @@ void localdata::TidalSchema::BuildSchema(SchemaBuilder & builder)
 			.addColumn("import_timestamp")
 		.endIndex();
 			
-			/*auto entities = LocalDB::SchemaDefinition::generateEntitiesClasses(builder.definition(), { "localdata" });
-			OutputDebugStringA(entities.c_str());*/
+			//auto entities = LocalDB::SchemaDefinition::generateEntitiesClasses(builder.definition(), { "localdata" });
+			//OutputDebugStringA(entities.c_str());
 }

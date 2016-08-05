@@ -1,1 +1,1 @@
-C:\gitrepos\tidal.uwp\src\AppPackages\Tidal\Tidal_1.1.4.0\Tidal_1.1.4.0_x86_x64_arm.appxbundle
+C:\gitrepos\tidal.uwp\src\AppPackages\Tidal\Tidal_1.2.0.0\Tidal_1.2.0.0_x86_x64_arm.appxbundle
