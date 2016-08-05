@@ -19,7 +19,11 @@ concurrency::task<Windows::Storage::Streams::IInputStream^> WebStream::EnsureInp
 			headerValue.append(L"-");
 			message->Headers->Append(L"Range", ref new Platform::String(headerValue.c_str()));
 		}
-		auto client = ref new HttpClient();
+		auto filter = ref new Windows::Web::Http::Filters::HttpBaseProtocolFilter();
+		filter->AllowUI = false;
+		auto client = ref new Windows::Web::Http::HttpClient(filter);
+		client->DefaultRequestHeaders->UserAgent->Clear();
+		client->DefaultRequestHeaders->UserAgent->Append(ref new Windows::Web::Http::Headers::HttpProductInfoHeaderValue(L"Tidal-Unofficial.Windows10", Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily));
 		return  create_task(client->SendRequestAsync(message, HttpCompletionOption::ResponseHeadersRead), cancelToken)
 			.then([this, cancelToken](HttpResponseMessage^ response) {
 			return create_task(response->Content->ReadAsInputStreamAsync(), cancelToken)
@@ -100,7 +104,11 @@ concurrency::task<WebStream^> WebStream::CreateWebStreamAsync(Hat<Platform::Stri
 {
 	auto uri = ref new Uri(url.get());
 	auto request = ref new HttpRequestMessage(HttpMethod::Head, uri);
-	auto client = ref new HttpClient();
+	auto filter = ref new Windows::Web::Http::Filters::HttpBaseProtocolFilter();
+	filter->AllowUI = false;
+	auto client = ref new Windows::Web::Http::HttpClient(filter);
+	client->DefaultRequestHeaders->UserAgent->Clear();
+	client->DefaultRequestHeaders->UserAgent->Append(ref new Windows::Web::Http::Headers::HttpProductInfoHeaderValue(L"Tidal-Unofficial.Windows10", Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily));
 	auto response = co_await create_task(client->SendRequestAsync(request, HttpCompletionOption::ResponseHeadersRead), cancelToken);
 	auto modified = response->Content->Headers->LastModified->Value;
 	auto size = response->Content->Headers->ContentLength->Value;

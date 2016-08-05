@@ -25,8 +25,8 @@ namespace Tidal
 		std::stack<PageState> _persistedPageStates;
 		Windows::UI::Core::SystemNavigationManager^ _systemNavManager;
 		std::vector<RegistrationToken> _mediatorTokens;
+		tools::ScopedEventRegistrations _eventRegistrations;
 	public:
-		Shell();
 		property Windows::UI::Xaml::Controls::Frame^ Frame{
 			Windows::UI::Xaml::Controls::Frame^ get() {
 				return navFrame;
@@ -38,6 +38,9 @@ namespace Tidal
 			}
 			return _persistedPageStates.top().state;
 		}}
+	internal:
+		Shell(Platform::String^ navState, const std::stack<PageState>& persistedState);
+		std::stack<PageState> SavePageStateForBackground();
 	private:
 		void OnToggleSplitView(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnSelectedMenuItemChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);
@@ -52,5 +55,6 @@ namespace Tidal
 
 		void OnTrackImportComplete();
 		void OnVisibleBoundsChanged(Windows::UI::ViewManagement::ApplicationView ^sender, Platform::Object ^args);
+		void OnUnloaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

@@ -185,7 +185,29 @@
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="AdaptativeStates">
                 <VisualState x:Name="Narrow"/>
+                <VisualState x:Name="Xbox">
+                    <VisualState.Setters>
+                        <Setter Target="trackInfo.Visibility" Value="Collapsed" />
+                        <Setter Target="actionButtons.(RelativePanel.AlignLeftWithPanel)" Value="True" />
+                    </VisualState.Setters>
+                    <VisualState.StateTriggers>
+                        <StateTrigger x:Name="xboxStateTrigger"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
 
+                <VisualState x:Name="XboxTimeline">
+                    <VisualState.Setters>
+                        <Setter Target="actionButtons.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="qualityIndicator.(UIElement.Visibility)" Value="Collapsed"/>
+                        <Setter Target="trackInfo.(RelativePanel.LeftOf)" Value=""/>
+                        <Setter Target="playerSeekBar.(UIElement.Visibility)" Value="Visible"/>
+                        <Setter Target="playerSeekBar.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="playerSeekBar.(RelativePanel.RightOf)" Value="trackInfo"/>
+                    </VisualState.Setters>
+                    <VisualState.StateTriggers>
+                        <StateTrigger x:Name="xboxTimelineStateTrigger"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
                 <VisualState x:Name="NarrowTimeLine">
                     <VisualState.Setters>
                         <Setter Target="actionButtons.(UIElement.Visibility)" Value="Collapsed"/>

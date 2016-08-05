@@ -48,7 +48,15 @@ MiniPlayerView::MiniPlayerView()
 
 void Tidal::MiniPlayerView::UpdateAdaptiveState()
 {
-	if (ActualWidth >= 700) {
+	if (false) { // if xbox
+		narrowTimelineStateTrigger->IsActive = false;
+		largeStateTrigger->IsActive = false;
+		largeTimelineStateTrigger->IsActive = false;
+		extraLargeStateTrigger->IsActive = false;
+		xboxStateTrigger->IsActive = !toggleView->IsChecked->Value;
+		xboxTimelineStateTrigger->IsActive = toggleView->IsChecked->Value;
+	}
+	else if (ActualWidth >= 700) {
 		narrowTimelineStateTrigger->IsActive = false;
 		largeStateTrigger->IsActive = false;
 		largeTimelineStateTrigger->IsActive = false;

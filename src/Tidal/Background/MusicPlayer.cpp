@@ -37,13 +37,7 @@ bool getShuffleMode() {
 }
 void MusicPlayer::onWmpStateChanged()
 {
-	/*if (_wmp->CurrentState == MediaPlayerState::Playing) {
-		BackgroundMediaPlayer::Current->SystemMediaTransportControls->PlaybackStatus = MediaPlaybackStatus::Playing;
-	}
-	else {
 
-		BackgroundMediaPlayer::Current->SystemMediaTransportControls->PlaybackStatus = MediaPlaybackStatus::Paused;
-	}*/
 }
 
 void MusicPlayer::onWmpMediaOpened()
@@ -59,8 +53,6 @@ void MusicPlayer::onWmpMediaFailed(Windows::Media::Playback::MediaPlayerFailedEv
 }
 
 void SetMusicStateChanging() {
-	//auto smtc = Windows::Media::Playback::BackgroundMediaPlayer::Current->SystemMediaTransportControls;
-	//smtc->PlaybackStatus = Windows::Media::MediaPlaybackStatus::Changing;
 }
 
 concurrency::task<String^> loadPlaylistJsonAsync() {
@@ -155,36 +147,9 @@ MediaBinder^ createMediaBinderForTrack(const api::TrackInfo& info) {
 	return binder;
 }
 
-void showTrackDisplayInfo(const api::TrackInfo& trackInfo, bool canGoNext, bool canGoBack, SystemMediaTransportControls^ smtcOld, Windows::Foundation::Collections::ValueSet^ customProperties) {
+void showTrackDisplayInfo(const api::TrackInfo& trackInfo, Windows::Foundation::Collections::ValueSet^ customProperties, MediaPlaybackItem^ item) {
 	
-	/*smtc->IsPauseEnabled = true;
-	smtc->IsPlayEnabled = true;
-	smtc->IsNextEnabled = canGoNext;
-	smtc->IsPreviousEnabled = canGoBack;
-	auto coverUri = ref new Uri(api::EnsureCoverInCacheAsync(trackInfo.album.id, tools::strings::toWindowsString(trackInfo.album.cover), concurrency::cancellation_token::none()).get());
-
-	smtc->DisplayUpdater->ClearAll();
-	smtc->DisplayUpdater->Type = MediaPlaybackType::Music;
-	smtc->DisplayUpdater->MusicProperties->Artist = tools::strings::toWindowsString(trackInfo.artists[0].name);
-	smtc->DisplayUpdater->MusicProperties->AlbumTitle = tools::strings::toWindowsString(trackInfo.album.title);
-	smtc->DisplayUpdater->MusicProperties->Title = tools::strings::toWindowsString(trackInfo.title);
-	smtc->DisplayUpdater->Thumbnail = Windows::Storage::Streams::RandomAccessStreamReference::CreateFromUri(coverUri);
-	smtc->DisplayUpdater->AppMediaId = trackInfo.id.ToString();
-	smtc->DisplayUpdater->Update();*/
-	/*
-	<tile>
-    <visual>
-      <binding template="TileSquarePeekImageAndText01">
-        <image id="1" src="image1" alt="alt text"/>
-        <text id="1">Text Header 1</text>
-        <text id="2">Text 2</text>
-        <text id="3">Text 3</text>
-        <text id="4">Text 4</text>
-      </binding>  
-    </visual>
-  </tile>
-
-*/
+	
 	auto coverUri = ref new Uri(api::EnsureCoverInCacheAsync(trackInfo.album.id, tools::strings::toWindowsString(trackInfo.album.cover), concurrency::cancellation_token::none()).get());
 	auto doc = ref new Windows::Data::Xml::Dom::XmlDocument();
 	auto xmlText = doc->CreateTextNode(L"");
@@ -224,8 +189,16 @@ void showTrackDisplayInfo(const api::TrackInfo& trackInfo, bool canGoNext, bool 
 
 	settingsValues->Insert(L"CurrentPlaybackTrackIsImport", customProperties->Lookup(L"isImport"));
 	settingsValues->Insert(L"CurrentPlaybackTrackQuality", customProperties->Lookup(L"quality"));
-	settingsValues->Insert(L"CurrentPlaybackTrackCanGoBack", canGoBack);
-	settingsValues->Insert(L"CurrentPlaybackTrackCanGoNext", canGoNext);
+
+	auto props = item->GetDisplayProperties();
+
+	props->ClearAll();
+	props->Type = Windows::Media::MediaPlaybackType::Music;
+	props->MusicProperties->Artist = tools::strings::toWindowsString(trackInfo.artists[0].name);
+	props->MusicProperties->AlbumTitle = tools::strings::toWindowsString(trackInfo.album.title);
+	props->MusicProperties->Title = tools::strings::toWindowsString(trackInfo.title);
+	props->Thumbnail = Windows::Storage::Streams::RandomAccessStreamReference::CreateFromUri(coverUri);
+	item->ApplyDisplayProperties(props);
 	
 	getCurrentPlaybackTrackIdMediator().raise(trackInfo.id);
 }
@@ -242,7 +215,7 @@ void OnCurrentPlaylistItemChanged(MediaPlaybackList^ playList, CurrentMediaPlayb
 	if (playList->ShuffleEnabled) {
 		playList->ShuffledItems->IndexOf(playList->CurrentItem, &itemIndex);
 	}
-	showTrackDisplayInfo(info, itemIndex < playList->Items->Size - 1 || playList->AutoRepeatEnabled, itemIndex>0 || playList->AutoRepeatEnabled, nullptr, args->NewItem->Source->CustomProperties);
+	showTrackDisplayInfo(info,  args->NewItem->Source->CustomProperties, args->NewItem);
 
 }
 
@@ -329,10 +302,12 @@ void MusicPlayer::resetPlayqueueAndPlay(int index)
 		auto playList = ref new Windows::Media::Playback::MediaPlaybackList();
 		playList->CurrentItemChanged += ref new Windows::Foundation::TypedEventHandler<Windows::Media::Playback::MediaPlaybackList ^, Windows::Media::Playback::CurrentMediaPlaybackItemChangedEventArgs ^>(&OnCurrentPlaylistItemChanged);
 		playList->MaxPrefetchTime = tools::time::ToWindowsTimeSpan(std::chrono::seconds(30));
+		std::vector<api::TrackInfo> tracks;
 		if (playlistJson->Length() > 0) {
 			tools::strings::WindowsWIStream stream(playlistJson);
 			auto jval = web::json::value::parse(stream);
 			auto& jarr = jval.as_array();
+			
 			for (auto& jitem : jarr) {
 
 				api::TrackInfo info(jitem);
@@ -341,6 +316,7 @@ void MusicPlayer::resetPlayqueueAndPlay(int index)
 				if (playList->Items->Size == index + 1) {
 					playList->StartingItem = item;
 				}
+				tracks.push_back(info);
 			}
 		}
 		auto that = weakThis.lock();
@@ -351,6 +327,8 @@ void MusicPlayer::resetPlayqueueAndPlay(int index)
 			that->_wmp->Source = playList;
 			that->_wmp->Play();
 		}
+
+		getCurrentPlaylistMediator().raise(tracks);
 	});
 }
 
@@ -368,6 +346,7 @@ void MusicPlayer::resetPlayqueue(int index)
 		auto playList = ref new Windows::Media::Playback::MediaPlaybackList();
 		playList->CurrentItemChanged += ref new Windows::Foundation::TypedEventHandler<Windows::Media::Playback::MediaPlaybackList ^, Windows::Media::Playback::CurrentMediaPlaybackItemChangedEventArgs ^>(&OnCurrentPlaylistItemChanged);
 		playList->MaxPrefetchTime = tools::time::ToWindowsTimeSpan(std::chrono::seconds(30));
+		std::vector<api::TrackInfo> tracks;
 		if (playlistJson->Length() > 0) {
 			tools::strings::WindowsWIStream stream(playlistJson);
 			auto jval = web::json::value::parse(stream);
@@ -380,6 +359,7 @@ void MusicPlayer::resetPlayqueue(int index)
 				if (playList->Items->Size == index + 1) {
 					playList->StartingItem = item;
 				}
+				tracks.push_back(info);
 			}
 		}
 		auto that = weakThis.lock();
@@ -389,6 +369,7 @@ void MusicPlayer::resetPlayqueue(int index)
 			that->_currentPlayList = playList;
 			that->_wmp->Source = playList;
 		}
+		getCurrentPlaylistMediator().raise(tracks);
 	});
 }
 
@@ -406,6 +387,8 @@ void MusicPlayer::playAllLocalMusic()
 		auto playList = ref new Windows::Media::Playback::MediaPlaybackList();
 		playList->CurrentItemChanged += ref new Windows::Foundation::TypedEventHandler<Windows::Media::Playback::MediaPlaybackList ^, Windows::Media::Playback::CurrentMediaPlaybackItemChangedEventArgs ^>(&OnCurrentPlaylistItemChanged);
 		playList->MaxPrefetchTime = tools::time::ToWindowsTimeSpan(std::chrono::seconds(30));
+
+		std::vector<api::TrackInfo> tracks;
 		if (playlistJson->Length() > 0) {
 			tools::strings::WindowsWIStream stream(playlistJson);
 			auto jval = web::json::value::parse(stream);
@@ -415,6 +398,7 @@ void MusicPlayer::playAllLocalMusic()
 				api::TrackInfo info(jitem);
 				auto item = ref new MediaPlaybackItem(MediaSource::CreateFromMediaBinder(createMediaBinderForTrack(info)));
 				playList->Items->Append(item);
+				tracks.push_back(info);
 			}
 		}
 		auto that = weakThis.lock();
@@ -425,6 +409,8 @@ void MusicPlayer::playAllLocalMusic()
 			that->_wmp->Source = playList;
 			that->_wmp->Play();
 		}
+		getCurrentPlaylistMediator().raise(tracks);
+
 	});
 }
 

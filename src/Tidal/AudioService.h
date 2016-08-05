@@ -16,6 +16,8 @@ public:
 	concurrency::task<void> moveToIndex( int startIndex, concurrency::cancellation_token cancelToken);
 	concurrency::task<std::shared_ptr<std::vector<api::TrackInfo>>> getCurrentPlaylistAsync();
 	std::int64_t getCurrentPlaybackTrackId() const;
+	api::TrackInfo getCurrentPlaybackTrack() const;
+
 	void onSuspending();
 	void onResuming();
 

@@ -7,7 +7,7 @@
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
-    <WindowsTargetPlatformVersion>10.0.14332.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.10586.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
   </PropertyGroup>
@@ -332,6 +332,19 @@
     </ClInclude>
     <ClInclude Include="WrapPanel.h" />
     <ClInclude Include="XamlHelpers.h" />
+    <ClInclude Include="XboxOneHub.h" />
+    <ClInclude Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml.h">
+      <DependentUpon>XboxUI\XboxHomeCurrentPlaylistWidget.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="XboxUI\XboxHomeMyMusicWidget.xaml.h">
+      <DependentUpon>XboxUI\XboxHomeMyMusicWidget.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="XboxUI\XboxHomePage.xaml.h">
+      <DependentUpon>XboxUI\XboxHomePage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="XboxUI\XboxShell.xaml.h">
+      <DependentUpon>XboxUI\XboxShell.xaml</DependentUpon>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -419,6 +432,18 @@
     <Page Include="Videos.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxHomeMyMusicWidget.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxHomePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxShell.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -481,6 +506,7 @@
     <Image Include="Assets\Wide310x150Logo.scale-400.png">
       <DeploymentContent>true</DeploymentContent>
     </Image>
+    <Image Include="londone-eye-panoramic.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AccountPage.xaml.cpp">
@@ -611,6 +637,19 @@
       <DependentUpon>Videos.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="WrapPanel.cpp" />
+    <ClCompile Include="XboxOneHub.cpp" />
+    <ClCompile Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml.cpp">
+      <DependentUpon>XboxUI\XboxHomeCurrentPlaylistWidget.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="XboxUI\XboxHomeMyMusicWidget.xaml.cpp">
+      <DependentUpon>XboxUI\XboxHomeMyMusicWidget.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="XboxUI\XboxHomePage.xaml.cpp">
+      <DependentUpon>XboxUI\XboxHomePage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="XboxUI\XboxShell.xaml.cpp">
+      <DependentUpon>XboxUI\XboxShell.xaml</DependentUpon>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="SQLite.UWP.2015, Version=3.12.0" />

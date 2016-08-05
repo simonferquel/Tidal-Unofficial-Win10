@@ -18,7 +18,11 @@ concurrency::task<Windows::Storage::StorageFolder^> ensureCoverFolderAsync() {
 	return g_CoverFolderOnceTask;
 }
 Concurrency::task<Windows::Storage::Streams::IBuffer^> DownloadAsync(Hat<Platform::String> url, concurrency::cancellation_token cancelToken) {
-	auto client = ref new Windows::Web::Http::HttpClient();
+	auto filter = ref new Windows::Web::Http::Filters::HttpBaseProtocolFilter();
+	filter->AllowUI = false;
+	auto client = ref new Windows::Web::Http::HttpClient(filter);
+	client->DefaultRequestHeaders->UserAgent->Clear();
+	client->DefaultRequestHeaders->UserAgent->Append(ref new Windows::Web::Http::Headers::HttpProductInfoHeaderValue(L"Tidal-Unofficial.Windows10", Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily));
 	auto response = co_await concurrency::create_task(client->GetAsync(ref new Windows::Foundation::Uri(url.get())), cancelToken);
 	if (response->StatusCode == Windows::Web::Http::HttpStatusCode::NotFound) {
 		return (Windows::Storage::Streams::IBuffer^)nullptr;

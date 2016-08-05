@@ -4,6 +4,7 @@
 //
 
 #include "pch.h"
+#include "XboxOneHub.h"
 #include "MainPage.xaml.h"
 #include "Shell.xaml.h"
 #include "AudioService.h"
@@ -11,6 +12,7 @@
 #include <localdata/db.h>
 #include "FavoritesService.h"
 #include "AuthenticationVisualStateTrigger.h"
+#include "XboxUI/XboxShell.xaml.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -36,6 +38,8 @@ App::App()
 	InitializeComponent();
 	Suspending += ref new SuspendingEventHandler(this, &App::OnSuspending);
 	Resuming += ref new Windows::Foundation::EventHandler<Platform::Object ^>(this, &Tidal::App::OnResuming);
+	EnteredBackground += ref new Windows::UI::Xaml::EnteredBackgroundEventHandler(this, &Tidal::App::OnEnteredBackground);
+	LeavingBackground += ref new Windows::UI::Xaml::LeavingBackgroundEventHandler(this, &Tidal::App::OnLeavingBackground);
 }
 
 /// <summary>
@@ -72,6 +76,12 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 	localdata::initializeDbAsync().then([this,e]() {
 		_smtcService = std::make_unique<SmtcService>(Windows::UI::Core::CoreWindow::GetForCurrentThread()->Dispatcher);
 		getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
+
+		//auto xbshell = ref new XboxShell();
+		//Window::Current->Content = xbshell;
+		//Window::Current->Activate();
+		//return;
+
 		auto rootFrame = dynamic_cast<Shell^>(Window::Current->Content);
 
 		// Do not repeat app initialization when the Window already has content,
@@ -80,7 +90,7 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 		{
 			// Create a Frame to act as the navigation context and associate it with
 			// a SuspensionManager key
-			rootFrame = ref new Shell();
+			rootFrame = ref new Shell(nullptr, _persistedState);
 
 
 			if (e->PreviousExecutionState == ApplicationExecutionState::Terminated)
@@ -162,4 +172,22 @@ void Tidal::App::OnResuming(Platform::Object ^sender, Platform::Object ^args)
 	});
 	getAudioService().onResuming();
 	getAppResumingMediator().raise(true);
+}
+
+
+void Tidal::App::OnEnteredBackground(Platform::Object^ sender, Windows::ApplicationModel::EnteredBackgroundEventArgs^ e)
+{
+	auto shell = dynamic_cast<Shell^>(Window::Current->Content);
+	if (shell) {
+		_persistedState = shell->SavePageStateForBackground();
+		_navState = shell->Frame->GetNavigationState();
+	}
+	Window::Current->Content = nullptr;
+}
+
+
+void Tidal::App::OnLeavingBackground(Platform::Object^ sender, Windows::ApplicationModel::LeavingBackgroundEventArgs^ e)
+{
+	auto shell = ref new Shell(_navState, _persistedState);
+	Window::Current->Content = shell;
 }
