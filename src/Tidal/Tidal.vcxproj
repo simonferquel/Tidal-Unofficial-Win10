@@ -7,8 +7,8 @@
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
-    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.10586.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.14393.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -116,7 +116,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <PackageCertificateKeyFile>Tidal_StoreKey.pfx</PackageCertificateKeyFile>
-    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
@@ -223,6 +223,10 @@
     </ClInclude>
     <ClInclude Include="AudioService.h" />
     <ClInclude Include="AuthenticationVisualStateTrigger.h" />
+    <ClInclude Include="Background\BackgroundDownloader.h" />
+    <ClInclude Include="Background\CachedStreamProvider.h" />
+    <ClInclude Include="Background\MusicPlayer.h" />
+    <ClInclude Include="Background\WebStream.h" />
     <ClInclude Include="CurrentPlaylistPage.xaml.h">
       <DependentUpon>CurrentPlaylistPage.xaml</DependentUpon>
     </ClInclude>
@@ -244,6 +248,7 @@
       <DependentUpon>MiniPlayerView.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="PauseCommand.h" />
+    <ClInclude Include="Background\PlaybackReportStateMachine.h" />
     <ClInclude Include="PlayCommand.h" />
     <ClInclude Include="PlayerSeekBar.xaml.h">
       <DependentUpon>PlayerSeekBar.xaml</DependentUpon>
@@ -328,6 +333,19 @@
     </ClInclude>
     <ClInclude Include="WrapPanel.h" />
     <ClInclude Include="XamlHelpers.h" />
+    <ClInclude Include="XboxOneHub.h" />
+    <ClInclude Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml.h">
+      <DependentUpon>XboxUI\XboxHomeCurrentPlaylistWidget.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="XboxUI\XboxHomeMyMusicWidget.xaml.h">
+      <DependentUpon>XboxUI\XboxHomeMyMusicWidget.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="XboxUI\XboxHomePage.xaml.h">
+      <DependentUpon>XboxUI\XboxHomePage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="XboxUI\XboxShell.xaml.h">
+      <DependentUpon>XboxUI\XboxShell.xaml</DependentUpon>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -415,6 +433,18 @@
     <Page Include="Videos.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxHomeMyMusicWidget.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxHomePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxShell.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -477,6 +507,7 @@
     <Image Include="Assets\Wide310x150Logo.scale-400.png">
       <DeploymentContent>true</DeploymentContent>
     </Image>
+    <Image Include="londone-eye-panoramic.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AccountPage.xaml.cpp">
@@ -497,6 +528,10 @@
     </ClCompile>
     <ClCompile Include="AudioService.cpp" />
     <ClCompile Include="AuthenticationVisualStateTrigger.cpp" />
+    <ClCompile Include="Background\BackgroundDownloader.cpp" />
+    <ClCompile Include="Background\CachedStreamProvider.cpp" />
+    <ClCompile Include="Background\MusicPlayer.cpp" />
+    <ClCompile Include="Background\WebStream.cpp" />
     <ClCompile Include="CurrentPlaylistPage.xaml.cpp">
       <DependentUpon>CurrentPlaylistPage.xaml</DependentUpon>
     </ClCompile>
@@ -516,6 +551,7 @@
       <DependentUpon>MiniPlayerView.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="PauseCommand.cpp" />
+    <ClCompile Include="Background\PlaybackReportStateMachine.cpp" />
     <ClCompile Include="PlayCommand.cpp" />
     <ClCompile Include="PlayerSeekBar.xaml.cpp">
       <DependentUpon>PlayerSeekBar.xaml</DependentUpon>
@@ -603,6 +639,19 @@
       <DependentUpon>Videos.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="WrapPanel.cpp" />
+    <ClCompile Include="XboxOneHub.cpp" />
+    <ClCompile Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml.cpp">
+      <DependentUpon>XboxUI\XboxHomeCurrentPlaylistWidget.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="XboxUI\XboxHomeMyMusicWidget.xaml.cpp">
+      <DependentUpon>XboxUI\XboxHomeMyMusicWidget.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="XboxUI\XboxHomePage.xaml.cpp">
+      <DependentUpon>XboxUI\XboxHomePage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="XboxUI\XboxShell.xaml.cpp">
+      <DependentUpon>XboxUI\XboxShell.xaml</DependentUpon>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="SQLite.UWP.2015, Version=3.12.0" />
@@ -614,9 +663,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\dependancies\UWP-LocalDB-CPP\Build\LocalDB\LocalDB.vcxproj">
       <Project>{47b2b80f-6b2f-42e1-802e-8fd509c3bdcd}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\BackgroundAudio\BackgroundAudio.vcxproj">
-      <Project>{1404bfb3-f806-4ea7-a8b6-e994295ba93d}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Common\Common.vcxproj">
       <Project>{0b3b05b6-8216-491a-b3e7-e03bc38230f7}</Project>

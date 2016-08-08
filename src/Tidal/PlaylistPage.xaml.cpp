@@ -51,7 +51,7 @@ void Tidal::PlaylistPage::OnTrackRemovedFromPlaylist(const ItemRemovedFromPlayli
 	}
 }
 
-concurrency::task<void> Tidal::PlaylistPage::LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ args)
+concurrency::task<void> Tidal::PlaylistPage::LoadAsync(Hat<Windows::UI::Xaml::Navigation::NavigationEventArgs> args)
 {
 	try {
 		auto idPlat = dynamic_cast<String^>(args->Parameter);
@@ -70,7 +70,7 @@ concurrency::task<void> Tidal::PlaylistPage::LoadAsync(Windows::UI::Xaml::Naviga
 		headerDescription->Text = tools::strings::toWindowsString(playlistInfo->description);
 		auto coverId = tools::strings::toWindowsString(playlistInfo->image);
 		auto urlTask = api::GetPlaylistCoverUriAndFallbackToWebAsync(playlistInfo->uuid, coverId, 1080, 720, concurrency::cancellation_token::none());
-		co_await urlTask.then([this, playlistInfo, id](Platform::String^ url) {;
+		co_await urlTask.then([this, playlistInfo, id](Platform::String^ url) {
 		headerImage->Source = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(ref new Uri(url));
 		std::wstring tracksAndDurations = std::to_wstring(playlistInfo->numberOfTracks);
 		tracksAndDurations.append(L" tracks (");

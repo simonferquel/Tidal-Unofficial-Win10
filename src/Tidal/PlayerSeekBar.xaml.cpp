@@ -33,7 +33,7 @@ PlayerSeekBar::PlayerSeekBar()
 
 void Tidal::PlayerSeekBar::OnSliderPressed(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
-	auto player = Windows::Media::Playback::BackgroundMediaPlayer::Current;
+	auto player = getAudioService().player();
 	sliderBG->CapturePointer(e->Pointer);
 	player->Pause();
 	auto pos = e->GetCurrentPoint(sliderBG);
@@ -50,7 +50,7 @@ void Tidal::PlayerSeekBar::OnSliderPressed(Platform::Object^ sender, Windows::UI
 
 void Tidal::PlayerSeekBar::OnSliderReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
-	auto player = Windows::Media::Playback::BackgroundMediaPlayer::Current;
+	auto player = getAudioService().player();
 	sliderBG->ReleasePointerCapture(e->Pointer);
 	auto pos = e->GetCurrentPoint(sliderBG);
 	auto progress = pos->Position.X / sliderBG->ActualWidth;
@@ -105,7 +105,7 @@ void Tidal::PlayerSeekBar::OnUnloaded(Platform::Object^ sender, Windows::UI::Xam
 
 void Tidal::PlayerSeekBar::OnTick(Platform::Object ^sender, Platform::Object ^args)
 {
-	auto player = Windows::Media::Playback::BackgroundMediaPlayer::Current;
+	auto player = getAudioService().player();
 	auto duration = std::chrono::duration_cast<seconds>(tools::time::WindowsToChrono(player->NaturalDuration));
 	auto position = std::chrono::duration_cast<seconds>(tools::time::WindowsToChrono(player->Position));
 	

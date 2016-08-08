@@ -1,0 +1,122 @@
+﻿<UserControl
+    x:Class="Tidal.XboxHomeCurrentPlaylistWidget"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="494"
+    d:DesignWidth="792"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded">
+    <UserControl.Resources>
+        <Style x:Key="TrackListViewItemStyle" TargetType="ListViewItem">
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="TabNavigation" Value="Local"/>
+            <Setter Property="IsHoldingEnabled" Value="True"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+            <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
+            <Setter Property="FocusVisualMargin" Value="0,-8,0,8" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter Margin="8,0,8,16" CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" ContentMargin="{TemplateBinding Padding}" CheckMode="Inline" ContentTransitions="{TemplateBinding ContentTransitions}" CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}" FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}" PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}" ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}" SelectionCheckMarkVisualEnabled="True" SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}" SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}" SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <local:LoadingView x:Name="loadingView">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="playlistStates">
+                <VisualState x:Name="PlaylistEmpty">
+                    <VisualState.Setters>
+                        <Setter Target="nothingToPlayRoot.Visibility" Value="Visible"/>
+                        <Setter Target="playlistNotEmptyRoot.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="PlaylistNotEmpty"></VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid>
+            <Grid x:Name="nothingToPlayRoot" Visibility="Collapsed" >
+                <TextBlock TextAlignment="Center" VerticalAlignment="Center"
+                       HorizontalAlignment="Center" Style="{StaticResource SectionHeaderStyle}">
+                    <TextBlock.Inlines>
+                        <Run>Nothing to play</Run>
+                        <LineBreak/>
+                        <Run>Browse Tidal catalog to start playing music</Run>
+                    </TextBlock.Inlines>
+                </TextBlock>
+            </Grid>
+            <Grid x:Name="playlistNotEmptyRoot" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid VerticalAlignment="Top" Margin="12,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Image x:Name="currentArtworkImg"  Grid.RowSpan="2"  />
+                    <Border Grid.Row="1" Background="#99000000" >
+                        <TextBlock Margin="8" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis">
+                            <Run  x:Name="currentTrackTitle" FontSize="24" FontFamily="Segoe UI Semilight" />
+                            <LineBreak/>
+                            <Run  x:Name="currentTrackArtist" FontSize="18" FontFamily="Segoe UI Semibold" FontWeight="Bold" />
+                        </TextBlock>
+                    </Border>
+                    <local:MiniPlayerView Grid.Row="2" />
+                </Grid>
+                <ListView Margin="0,0,12,0" x:Name="lv" Grid.Column="1" ItemContainerStyle="{StaticResource TrackListViewItemStyle}"
+                          IsFocusEngagementEnabled="True"
+                          SelectionMode="None"
+                          IsItemClickEnabled="True"
+                          ItemClick="OnTrackClick">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="local:TrackItemVM">
+                            
+                                <Grid x:Name="tracksHeaderGrid" Opacity="{x:Bind Opacity}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="48" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="48" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Image Grid.RowSpan="2" Grid.Column="0"   Source="{x:Bind ImageUrl}" />
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Bottom"  Margin="12,0,0,0" TextTrimming="CharacterEllipsis"  FontWeight="{x:Bind TitleFontWeight, Mode=OneWay}"
+                               FontSize="13.333">
+        				<Run Text="{x:Bind Title}"/>
+                                    </TextBlock>
+                                    <TextBlock FontSize="12" Foreground="#FF999999" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"  Margin="12,0,0,0" TextTrimming="CharacterEllipsis">
+                        
+        				<Run Text="{x:Bind ArtistName}"/>
+                                    </TextBlock>
+
+                                    <FontIcon  Grid.Column="2" Grid.RowSpan="2"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="#" />
+                                </Grid>
+
+                        
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.Footer>
+                        <Rectangle Height="27" />
+                    </ListView.Footer>
+                </ListView>
+            </Grid>
+        </Grid>
+    </local:LoadingView>
+
+</UserControl>

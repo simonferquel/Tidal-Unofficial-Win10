@@ -34,7 +34,7 @@ void TracksPlaybackStateManager::reevaluateTracksPlayingStates()
 	}
 	auto trackId = getAudioService().getCurrentPlaybackTrackId();
 	try {
-		auto state = Windows::Media::Playback::BackgroundMediaPlayer::Current->CurrentState;
+		auto state = getAudioService().player()->CurrentState;
 		for (auto&& track : tracks) {
 			track->RefreshPlayingState(trackId, state);
 		}
@@ -42,7 +42,6 @@ void TracksPlaybackStateManager::reevaluateTracksPlayingStates()
 	catch (Platform::COMException^ comEx) {
 		if (comEx->HResult == 0x800706BA) {
 			_eventRegistrations.clear();
-			getAudioService().onBackgroundAudioFailureDetected();
 			registerPlayerEvents();
 			return;
 		}
@@ -52,7 +51,7 @@ void TracksPlaybackStateManager::reevaluateTracksPlayingStates()
 void TracksPlaybackStateManager::registerPlayerEvents()
 {
 	try {
-		auto player = Windows::Media::Playback::BackgroundMediaPlayer::Current;
+		auto player = getAudioService().player();
 		std::weak_ptr<TracksPlaybackStateManager> weakThis(shared_from_this());
 		auto token = player->CurrentStateChanged += ref new Windows::Foundation::TypedEventHandler<Windows::Media::Playback::MediaPlayer ^, Platform::Object ^>([weakThis](Windows::Media::Playback::MediaPlayer ^ sender, Platform::Object ^ args) {
 			auto that = weakThis.lock();
@@ -69,7 +68,6 @@ void TracksPlaybackStateManager::registerPlayerEvents()
 	}
 	catch (Platform::COMException^ comEx) {
 		if (comEx->HResult == 0x800706BA) {
-			getAudioService().onBackgroundAudioFailureDetected();
 			registerPlayerEvents();
 			return;
 		}

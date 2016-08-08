@@ -10,7 +10,7 @@
 #include <ppl.h>
 #include <experimental/coroutine>
 using namespace Platform;
-#include <pplawait.h>
+#include <pplawait2.h>
 
 #undef min
 #undef max

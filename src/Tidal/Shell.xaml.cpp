@@ -28,7 +28,9 @@ using namespace Windows::ApplicationModel::Core;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-Shell::Shell()
+
+
+Shell::Shell(Platform::String^  navState, const std::stack<PageState>& persistedState) : _persistedPageStates(persistedState)
 {
 	InitializeComponent();
 	_mediatorTokens.push_back(getTrackImportComplete().registerCallbackNoArg<Shell>(this, &Shell::OnTrackImportComplete));
@@ -37,15 +39,24 @@ Shell::Shell()
 	auto coreAppView = CoreApplication::GetCurrentView();
 	Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->SetPreferredMinSize(Size(360, 100));
 	auto appView = Windows::UI::ViewManagement::ApplicationView::GetForCurrentView();
-	appView->VisibleBoundsChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::ViewManagement::ApplicationView ^, Platform::Object ^>(this, &Tidal::Shell::OnVisibleBoundsChanged);
+	_eventRegistrations.push_back(tools::makeScopedEventRegistration(appView->VisibleBoundsChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::ViewManagement::ApplicationView ^, Platform::Object ^>(this, &Tidal::Shell::OnVisibleBoundsChanged),
+		[appView](EventRegistrationToken token) {
+		appView->VisibleBoundsChanged -= token;
+	}));
 	appView->SetDesiredBoundsMode(Windows::UI::ViewManagement::ApplicationViewBoundsMode::UseVisible);
 	OnVisibleBoundsChanged(appView, nullptr);
 	coreAppView->TitleBar->ExtendViewIntoTitleBar = true;
 	Window::Current->SetTitleBar(titleBar);
 	_systemNavManager = Windows::UI::Core::SystemNavigationManager::GetForCurrentView();
-	_systemNavManager->BackRequested += ref new EventHandler<Windows::UI::Core::BackRequestedEventArgs^>(this, &Shell::OnBackRequested);
+	_eventRegistrations.push_back(tools::makeScopedEventRegistration(_systemNavManager->BackRequested += ref new EventHandler<Windows::UI::Core::BackRequestedEventArgs^>(this, &Shell::OnBackRequested),
+		[navMgr = _systemNavManager](EventRegistrationToken token) {
+		navMgr->BackRequested -= token;
+	}));
 	if (Windows::Foundation::Metadata::ApiInformation::IsApiContractPresent(L"Windows.Phone.PhoneContract", 1)) {
-		Windows::Phone::UI::Input::HardwareButtons::BackPressed += ref new EventHandler<Windows::Phone::UI::Input::BackPressedEventArgs^>(this, &Shell::OnPhoneBackRequested);
+		_eventRegistrations.push_back(tools::makeScopedEventRegistration(Windows::Phone::UI::Input::HardwareButtons::BackPressed += ref new EventHandler<Windows::Phone::UI::Input::BackPressedEventArgs^>(this, &Shell::OnPhoneBackRequested),
+			[](EventRegistrationToken token) {
+			Windows::Phone::UI::Input::HardwareButtons::BackPressed -= token;
+		}));
 	}
 	else {
 		searchOverlay->Margin = Thickness(0, 49, 0, 0);
@@ -57,10 +68,41 @@ Shell::Shell()
 		statusBar->BackgroundColor = Windows::UI::ColorHelper::FromArgb(0xFF, 0x17, 0x17, 0x17);
 		statusBar->BackgroundOpacity = 1;
 	}
-	navFrame->Navigate(Home::typeid);
-	Window::Current->Activated += ref new Windows::UI::Xaml::WindowActivatedEventHandler(this, &Tidal::Shell::OnWindowActivated);
+	if (navState) {
+	
+		_eventRegistrations.push_back(tools::makeScopedEventRegistration(Loaded += ref new RoutedEventHandler([navState](Platform::Object^ s, RoutedEventArgs^) {
+			auto that = dynamic_cast<Shell^>(s);
+			that->navFrame->SetNavigationState(navState);
+			that->_currentPage = dynamic_cast<IPageWithPreservedState^>(that->navFrame->Content);
+			auto backVisibility = Windows::UI::Xaml::Visibility::Collapsed;
+			if (that->navFrame->CanGoBack) {
+				if (!Windows::Foundation::Metadata::ApiInformation::IsApiContractPresent(L"Windows.Phone.PhoneContract", 1)) {
+					backVisibility = Windows::UI::Xaml::Visibility::Visible;
+				}
+			}
+			that->backButton->Visibility = backVisibility;
+		}), [this](EventRegistrationToken token) {
+			Loaded -= token;
+		}));
+	}
+	else {
+		navFrame->Navigate(Home::typeid);
+	}
+	_eventRegistrations.push_back(tools::makeScopedEventRegistration( Window::Current->Activated += ref new Windows::UI::Xaml::WindowActivatedEventHandler(this, &Tidal::Shell::OnWindowActivated),
+		[](EventRegistrationToken token) {
+		Window::Current->Activated -= token;
+	}));
+	
 }
 
+
+std::stack<PageState> Tidal::Shell::SavePageStateForBackground()
+{
+	if (_currentPage) {
+		_persistedPageStates.top().state = _currentPage->GetStateToPreserve();
+	}
+	return _persistedPageStates;
+}
 
 void Tidal::Shell::OnToggleSplitView(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
@@ -83,7 +125,9 @@ void Tidal::Shell::OnSelectedMenuItemChanged(Platform::Object^ sender, Windows::
 void Tidal::Shell::OnNavigated(Platform::Object^ sender, Windows::UI::Xaml::Navigation::NavigationEventArgs^ e)
 {
 	if (e->NavigationMode == NavigationMode::Back) {
-		_persistedPageStates.pop();
+		if (!_persistedPageStates.empty()) {
+			_persistedPageStates.pop();
+		}
 	}
 	else if (e->NavigationMode == NavigationMode::New || e->NavigationMode == NavigationMode::Forward) {
 		if (_currentPage) {
@@ -103,7 +147,7 @@ void Tidal::Shell::OnNavigated(Platform::Object^ sender, Windows::UI::Xaml::Navi
 	else {
 		menuEntriesLV->SelectedItem = *itemIt;
 	}
-	_systemNavManager->AppViewBackButtonVisibility = navFrame->CanGoBack ? Windows::UI::Core::AppViewBackButtonVisibility::Visible : Windows::UI::Core::AppViewBackButtonVisibility::Collapsed;
+	_systemNavManager->AppViewBackButtonVisibility = Windows::UI::Core::AppViewBackButtonVisibility::Collapsed; //navFrame->CanGoBack ? Windows::UI::Core::AppViewBackButtonVisibility::Visible : Windows::UI::Core::AppViewBackButtonVisibility::Collapsed;
 	auto backVisibility = Windows::UI::Xaml::Visibility::Collapsed;
 	if (navFrame->CanGoBack) {
 		if (!Windows::Foundation::Metadata::ApiInformation::IsApiContractPresent(L"Windows.Phone.PhoneContract", 1)) {
@@ -181,4 +225,11 @@ void Tidal::Shell::OnVisibleBoundsChanged(Windows::UI::ViewManagement::Applicati
 	rootGrid->Margin = margin;
 	rootGrid->Width = sender->VisibleBounds.Width;
 	rootGrid->Height = sender->VisibleBounds.Height;
+}
+
+
+void Tidal::Shell::OnUnloaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	this->_eventRegistrations.clear();
+	this->_mediatorTokens.clear();
 }

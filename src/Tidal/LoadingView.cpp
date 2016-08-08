@@ -25,6 +25,7 @@ LoadingView::LoadingView()
 {
 	DefaultStyleKey = "Tidal.LoadingView";
 	Loaded += ref new Windows::UI::Xaml::RoutedEventHandler(this, &Tidal::LoadingView::OnLoaded);
+	IsTabStop = false;
 }
 
 DependencyProperty^ LoadingView::_contentProperty = DependencyProperty::Register(

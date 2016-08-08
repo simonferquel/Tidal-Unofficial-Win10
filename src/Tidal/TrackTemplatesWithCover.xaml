@@ -43,7 +43,7 @@
         				<Run Text="{x:Bind DurationText}"/>
                 </TextBlock>
                 <StackPanel Grid.Column="6"  Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center" >
-                    <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind AddFavoriteVisibility, Mode=OneWay}" Click="{x:Bind AddFavorite}" >
+                    <AppBarButton Padding="0" Margin="0"  Width="32" Visibility="{x:Bind AddFavoriteVisibility, Mode=OneWay}" Click="{x:Bind AddFavorite}"  >
                         <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
                     </AppBarButton>
                     <AppBarButton Padding="0" Margin="0"  Width="36" Visibility="{x:Bind RemoveFavoriteVisibility, Mode=OneWay}" Click="{x:Bind RemoveFavorite}" >

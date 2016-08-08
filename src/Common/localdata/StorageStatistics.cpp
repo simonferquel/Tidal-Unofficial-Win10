@@ -7,7 +7,7 @@
 #include <date.h>
 #include "../LocalFileManager.h"
 #include <experimental/coroutine>
-#include <pplawait.h>
+#include <pplawait2.h>
 using namespace localdata;
 
 class GetTotalCacheSizeQuery : public LocalDB::IntegerScalarDBQuery {

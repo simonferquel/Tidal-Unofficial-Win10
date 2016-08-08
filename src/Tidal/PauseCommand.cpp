@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "PauseCommand.h"
-
+#include "AudioService.h"
 
 
 bool Tidal::PauseCommand::CanExecute(Platform::Object ^parameter)
@@ -11,7 +11,7 @@ bool Tidal::PauseCommand::CanExecute(Platform::Object ^parameter)
 void Tidal::PauseCommand::Execute(Platform::Object ^parameter)
 {
 	try {
-		Windows::Media::Playback::BackgroundMediaPlayer::Current->Pause();
+		getAudioService().player()->Pause();
 	}
 	catch (...) {}
 }

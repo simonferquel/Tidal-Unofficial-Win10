@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include <ppltasks.h>
+#include <Hat.h>
 
 namespace Tidal {
 	ref class IncrementalLoadingCollection  sealed:
@@ -8,6 +9,7 @@ namespace Tidal {
 		Windows::UI::Xaml::Data::ISupportIncrementalLoading {
 	public:
 		using LoadMoreCallback = std::function<concurrency::task<bool>(Platform::Collections::Vector<Platform::Object^>^, unsigned int, concurrency::cancellation_token)>;
+		using LoadMoreCallbackWithHat = std::function<concurrency::task<bool>(Hat<Platform::Collections::Vector<Platform::Object^>>, unsigned int, concurrency::cancellation_token)>;
 	private:
 		std::vector<concurrency::task_completion_event<void>> _nextLoadTces;
 		Platform::Collections::Vector<Platform::Object^>^ _innerVector;
@@ -23,6 +25,8 @@ namespace Tidal {
 		concurrency::task<Windows::UI::Xaml::Data::LoadMoreItemsResult> LoadMoreItemsAsync(unsigned int count, concurrency::cancellation_token cancelToken);
 	internal:
 		IncrementalLoadingCollection(const LoadMoreCallback& callback);
+
+		//IncrementalLoadingCollection(const LoadMoreCallbackWithHat& callback);
 		concurrency::task<void> waitForNextLoadAsync() {
 			concurrency::task_completion_event<void> tce;
 			_nextLoadTces.push_back(tce);

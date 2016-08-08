@@ -9,7 +9,7 @@
 #include <ppltasks.h>
 using namespace Platform;
 #include <experimental/coroutine>
-#include <pplawait.h>
+#include <pplawait2.h>
 
 #undef min
 #undef max

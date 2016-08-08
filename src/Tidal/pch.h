@@ -8,7 +8,7 @@
 #include <collection.h>
 #include <ppltasks.h>
 #include <experimental/coroutine>
-#include <pplawait.h>
+#include <pplawait2.h>
 #include "App.xaml.h"
 #undef min
 #undef max

@@ -48,10 +48,10 @@ Tidal::AlbumPage::~AlbumPage()
 
 
 
-concurrency::task<void> Tidal::AlbumPage::loadImageAsync(Platform::String^ url,concurrency::cancellation_token cancelToken)
+concurrency::task<void> Tidal::AlbumPage::loadImageAsync(Hat<Platform::String> url,concurrency::cancellation_token cancelToken)
 {
 	win2DCtl->CustomDevice = Microsoft::Graphics::Canvas::CanvasDevice::GetSharedDevice();
-	auto bmp = co_await concurrency::create_task( Microsoft::Graphics::Canvas::CanvasBitmap::LoadAsync(Microsoft::Graphics::Canvas::CanvasDevice::GetSharedDevice(), ref new Uri(url)), cancelToken);
+	auto bmp = co_await concurrency::create_task( Microsoft::Graphics::Canvas::CanvasBitmap::LoadAsync(Microsoft::Graphics::Canvas::CanvasDevice::GetSharedDevice(), ref new Uri(url.get())), cancelToken);
 
 	_albumBmp = bmp;
 	co_await Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {

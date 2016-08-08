@@ -5,6 +5,7 @@
 #include "ImageUriResolver.h"
 #include "../tools/TimeUtils.h"
 #include "../tools/StringUtils.h"
+#include <Hat.h>
 std::mutex g_CoverFolderMutex;
 std::once_flag g_CoverFolderOnceFlag;
 concurrency::task<Windows::Storage::StorageFolder^> g_CoverFolderOnceTask;
@@ -16,9 +17,13 @@ concurrency::task<Windows::Storage::StorageFolder^> ensureCoverFolderAsync() {
 	});
 	return g_CoverFolderOnceTask;
 }
-Concurrency::task<Windows::Storage::Streams::IBuffer^> DownloadAsync(Platform::String^ url, concurrency::cancellation_token cancelToken) {
-	auto client = ref new Windows::Web::Http::HttpClient();
-	auto response = co_await concurrency::create_task(client->GetAsync(ref new Windows::Foundation::Uri(url)), cancelToken);
+Concurrency::task<Windows::Storage::Streams::IBuffer^> DownloadAsync(Hat<Platform::String> url, concurrency::cancellation_token cancelToken) {
+	auto filter = ref new Windows::Web::Http::Filters::HttpBaseProtocolFilter();
+	filter->AllowUI = false;
+	auto client = ref new Windows::Web::Http::HttpClient(filter);
+	client->DefaultRequestHeaders->UserAgent->Clear();
+	client->DefaultRequestHeaders->UserAgent->Append(ref new Windows::Web::Http::Headers::HttpProductInfoHeaderValue(L"Tidal-Unofficial.Windows10", Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily));
+	auto response = co_await concurrency::create_task(client->GetAsync(ref new Windows::Foundation::Uri(url.get())), cancelToken);
 	if (response->StatusCode == Windows::Web::Http::HttpStatusCode::NotFound) {
 		return (Windows::Storage::Streams::IBuffer^)nullptr;
 	}
@@ -26,7 +31,7 @@ Concurrency::task<Windows::Storage::Streams::IBuffer^> DownloadAsync(Platform::S
 	return co_await concurrency::create_task(response->Content->ReadAsBufferAsync(), cancelToken);
 }
 
-concurrency::task<Platform::String^> api::EnsureCoverInCacheAsync(std::int64_t id, Platform::String ^ imageId, concurrency::cancellation_token cancelToken)
+concurrency::task<Platform::String^> api::EnsureCoverInCacheAsync(std::int64_t id, Hat<Platform::String> imageId, concurrency::cancellation_token cancelToken)
 {
 	auto coversFolder = co_await ensureCoverFolderAsync();
 	auto existing = co_await concurrency::create_task(coversFolder->TryGetItemAsync(id.ToString() + L".jpg"));
@@ -35,7 +40,7 @@ concurrency::task<Platform::String^> api::EnsureCoverInCacheAsync(std::int64_t i
 	}
 	while(!cancelToken.is_canceled()){
 		try {
-			if (imageId == nullptr || imageId->Length() == 0) {
+			if (imageId.get() == nullptr || imageId->Length() == 0) {
 				return co_await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", cancelToken);
 			}
 			auto buffer = co_await DownloadAsync(resolveImageUri(imageId->Data(), 320, 320), cancelToken);
@@ -56,7 +61,7 @@ concurrency::task<Platform::String^> api::EnsureCoverInCacheAsync(std::int64_t i
 	concurrency::cancel_current_task();
 }
 
-concurrency::task<Platform::String^> api::EnsureCoverInCacheAsync(std::int64_t id, Platform::String ^ imageId, int width, int height, concurrency::cancellation_token cancelToken)
+concurrency::task<Platform::String^> api::EnsureCoverInCacheAsync(std::int64_t id, Hat<Platform::String>  imageId, int width, int height, concurrency::cancellation_token cancelToken)
 {
 	auto fileName = id.ToString() + L"." + width.ToString() + L"x" + height.ToString() + L".jpg";
 	auto coversFolder = co_await ensureCoverFolderAsync();
@@ -66,7 +71,7 @@ concurrency::task<Platform::String^> api::EnsureCoverInCacheAsync(std::int64_t i
 	}
 	while (!cancelToken.is_canceled()) {
 		try {
-			if (imageId == nullptr || imageId->Length() == 0) {
+			if (imageId.get()== nullptr || imageId->Length() == 0) {
 				return co_await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", width, height, cancelToken);
 			}
 			auto buffer = co_await DownloadAsync(resolveImageUri(imageId->Data(), width, height), cancelToken);
@@ -87,7 +92,7 @@ concurrency::task<Platform::String^> api::EnsureCoverInCacheAsync(std::int64_t i
 	concurrency::cancel_current_task();
 }
 
-concurrency::task<Platform::String^> api::GetCoverUriAndFallbackToWebAsync(std::int64_t id, Platform::String ^ imageId, int width, int height, concurrency::cancellation_token cancelToken)
+concurrency::task<Platform::String^> api::GetCoverUriAndFallbackToWebAsync(std::int64_t id, Hat<Platform::String> imageId, int width, int height, concurrency::cancellation_token cancelToken)
 {
 	auto fileName = id.ToString() + L"." + width.ToString() + L"x" + height.ToString() + L".jpg";
 	auto coversFolder = co_await ensureCoverFolderAsync();
@@ -109,7 +114,7 @@ Platform::String ^ api::getOfflineCoverUrl(std::int64_t id)
 	return ref new Platform::String(L"ms-appdata:///local/covers/") + id.ToString() + L".jpg";
 }
 
-concurrency::task<Platform::String^> api::EnsurePlaylistCoverInCacheAsync(const std::wstring & id, Platform::String ^ imageId, int width, int height, concurrency::cancellation_token cancelToken)
+concurrency::task<Platform::String^> api::EnsurePlaylistCoverInCacheAsync(const std::wstring & id, Hat<Platform::String> imageId, int width, int height, concurrency::cancellation_token cancelToken)
 {
 	auto fileName = tools::strings::toWindowsString(id) + L"." + width.ToString() + L"x" + height.ToString() + L".jpg";
 	auto coversFolder = co_await ensureCoverFolderAsync();
@@ -119,7 +124,7 @@ concurrency::task<Platform::String^> api::EnsurePlaylistCoverInCacheAsync(const 
 	}
 	while (!cancelToken.is_canceled()) {
 		try {
-			if (imageId == nullptr || imageId->Length() == 0) {
+			if (imageId.get() == nullptr || imageId->Length() == 0) {
 				return co_await EnsureCoverInCacheAsync(0, L"0dfd3368-3aa1-49a3-935f-10ffb39803c0", width, height, cancelToken);
 			}
 			auto buffer = co_await DownloadAsync(resolveImageUri(imageId->Data(), width, height), cancelToken);
@@ -140,7 +145,7 @@ concurrency::task<Platform::String^> api::EnsurePlaylistCoverInCacheAsync(const 
 	concurrency::cancel_current_task();
 }
 
-concurrency::task<Platform::String^> api::GetPlaylistCoverUriAndFallbackToWebAsync(const std::wstring & id, Platform::String ^ imageId, int width, int height, concurrency::cancellation_token cancelToken)
+concurrency::task<Platform::String^> api::GetPlaylistCoverUriAndFallbackToWebAsync(const std::wstring & id, Hat<Platform::String> imageId, int width, int height, concurrency::cancellation_token cancelToken)
 {
 	auto fileName = tools::strings::toWindowsString(id) + L"." + width.ToString() + L"x" + height.ToString() + L".jpg";
 	auto coversFolder = co_await ensureCoverFolderAsync();

@@ -8,6 +8,7 @@
 #include "SublistItemVM.h"
 #include "Playlists.g.h"
 #include "IPageWithPreservedState.h"
+#include <Hat.h>
 
 namespace Tidal
 {
@@ -31,7 +32,7 @@ namespace Tidal
 		virtual	Platform::Object^ GetStateToPreserve();
 	private:
 		concurrency::task<void> LoadAsync(bool loadPreservedState);
-		concurrency::task<void> LoadMoodAsync(SublistItemVM^ item);
+		concurrency::task<void> LoadMoodAsync(Hat<SublistItemVM> item);
 		void OnPageLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnAllPlaylistsFilterSelectionChanged(Platform::Object^ sender, Tidal::SublistItemVM^ e);
 		void OnSelectedMoodChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);

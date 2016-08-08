@@ -42,7 +42,7 @@ CurrentPlaylistPage::CurrentPlaylistPage()
 void Tidal::CurrentPlaylistPage::AttachToPlayerEvents()
 {
 	try {
-		auto player = Windows::Media::Playback::BackgroundMediaPlayer::Current;
+		auto player = getAudioService().player();
 		auto token = player->CurrentStateChanged += ref new Windows::Foundation::TypedEventHandler<Windows::Media::Playback::MediaPlayer ^, Platform::Object ^>(this, &Tidal::CurrentPlaylistPage::OnPlayerStateChanged);
 		_eventRegistrations.push_back(tools::makeScopedEventRegistration(token, [player](const Windows::Foundation::EventRegistrationToken& token) {
 			try {
@@ -53,7 +53,6 @@ void Tidal::CurrentPlaylistPage::AttachToPlayerEvents()
 	}
 	catch (Platform::COMException^ comEx) {
 		if (comEx->HResult == 0x800706BA) {
-			getAudioService().onBackgroundAudioFailureDetected();
 			AttachToPlayerEvents();
 			return;
 		}
@@ -79,7 +78,7 @@ void Tidal::CurrentPlaylistPage::ReevaluateTracksPlayingStates()
 		return;
 	}
 	auto trackId = getAudioService().getCurrentPlaybackTrackId();
-	auto state = Windows::Media::Playback::BackgroundMediaPlayer::Current->CurrentState;
+	auto state = getAudioService().player()->CurrentState;
 	for (auto&& track : tracks) {
 		track->RefreshPlayingState(trackId, state);
 		if (track->Id == trackId) {
@@ -183,14 +182,14 @@ void Tidal::CurrentPlaylistPage::OnTrackClick(Platform::Object^ sender, Windows:
 	if (trackItem) {
 
 		auto trackId = getAudioService().getCurrentPlaybackTrackId();
-		auto state = Windows::Media::Playback::BackgroundMediaPlayer::Current->CurrentState;
+		auto state = getAudioService().player()->CurrentState;
 		if (state == Windows::Media::Playback::MediaPlayerState::Paused && trackId == trackItem->Id) {
-			Windows::Media::Playback::BackgroundMediaPlayer::Current->Play();
+			getAudioService().player()->Play();
 			return;
 		}
 		else if (state == Windows::Media::Playback::MediaPlayerState::Playing && trackId == trackItem->Id) {
 
-			Windows::Media::Playback::BackgroundMediaPlayer::Current->Pause();
+			getAudioService().player()->Pause();
 			return;
 		}
 		if (_tracks) {

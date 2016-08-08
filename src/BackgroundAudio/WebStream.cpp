@@ -96,9 +96,9 @@ Windows::Storage::Streams::IRandomAccessStream ^ WebStream::CloneStream()
 	// TODO: insert return statement here
 }
 
-concurrency::task<WebStream^> WebStream::CreateWebStreamAsync(Platform::String ^ url, concurrency::cancellation_token cancelToken)
+concurrency::task<WebStream^> WebStream::CreateWebStreamAsync(Hat<Platform::String> url, concurrency::cancellation_token cancelToken)
 {
-	auto uri = ref new Uri(url);
+	auto uri = ref new Uri(url.get());
 	auto request = ref new HttpRequestMessage(HttpMethod::Head, uri);
 	auto client = ref new HttpClient();
 	auto response = co_await create_task(client->SendRequestAsync(request, HttpCompletionOption::ResponseHeadersRead), cancelToken);

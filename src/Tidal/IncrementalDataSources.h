@@ -3,6 +3,7 @@
 #include "TrackItemVM.h"
 #include <ppltasks.h>
 #include <Api/SublistInfo.h>
+#include <Hat.h>
 //Platform::String^ list, Platform::String^ group
 Tidal::IncrementalLoadingCollection^ getNewsPromotionsDataSource(Platform::String^ list = L"NEWS");
 Tidal::IncrementalLoadingCollection^ getNewsVideosDataSource(Platform::String^ list = L"featured", Platform::String^ group = L"new");
@@ -11,10 +12,10 @@ Tidal::IncrementalLoadingCollection^ getArtistAlbumsDataSource(std::int64_t arti
 Tidal::IncrementalLoadingCollection^ getArtistVideosDataSource(std::int64_t artistId);
 Tidal::IncrementalLoadingCollection^ getSimilarArtistsDataSource(std::int64_t artistId);
 Tidal::IncrementalLoadingCollection^ getNewsPlaylistsDataSource(Platform::String^ list = L"featured", Platform::String^ group = L"new");
-concurrency::task<Platform::Collections::Vector<Tidal::TrackItemVM^>^> getNewsTrackItemsAsync(concurrency::cancellation_token cancelToken, Platform::String^ list = L"featured", Platform::String^ group = L"new");
-concurrency::task<std::shared_ptr<std::vector<api::SublistInfo>>> getSublistsAsync(concurrency::cancellation_token cancelToken, Platform::String^ list = L"featured");
+concurrency::task<Platform::Collections::Vector<Tidal::TrackItemVM^>^> getNewsTrackItemsAsync(concurrency::cancellation_token cancelToken, Hat<Platform::String> list = L"featured", Hat<Platform::String> group = L"new");
+concurrency::task<std::shared_ptr<std::vector<api::SublistInfo>>> getSublistsAsync(concurrency::cancellation_token cancelToken, Hat<Platform::String> list = L"featured");
 
-concurrency::task<Windows::UI::Xaml::Data::ICollectionView^> searchAllAsync(Platform::String^ query, concurrency::cancellation_token cancelToken);
+concurrency::task<Windows::UI::Xaml::Data::ICollectionView^> searchAllAsync(Hat<Platform::String>, concurrency::cancellation_token cancelToken);
 Tidal::IncrementalLoadingCollection^ getFilteredSearchSource(Platform::String^ query, Platform::String^ filter);
 
 Tidal::IncrementalLoadingCollection^ getLocalAlbumsDataSource();

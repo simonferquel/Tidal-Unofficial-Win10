@@ -60,7 +60,8 @@ concurrency::task<Platform::String^> api::QueryBase::getAsync(concurrency::cance
 	auto filter = ref new Windows::Web::Http::Filters::HttpBaseProtocolFilter();
 	filter->AllowUI = false;
 	auto client = ref new HttpClient(filter);
-
+	client->DefaultRequestHeaders->UserAgent->Clear();
+	client->DefaultRequestHeaders->UserAgent->Append(ref new Windows::Web::Http::Headers::HttpProductInfoHeaderValue(L"Tidal-Unofficial.Windows10", Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily));
 	std::wstring urlBuilder(config::apiLocationPrefix()->Data());
 	urlBuilder.append(url());
 	if (_queryString && _queryString->Size > 0) {
@@ -118,7 +119,9 @@ concurrency::task<Platform::String^> api::QueryBase::deleteAsync(concurrency::ca
 {
 	auto filter = ref new Windows::Web::Http::Filters::HttpBaseProtocolFilter();
 	filter->AllowUI = false;
-	auto client = ref new HttpClient(filter);
+	auto client = ref new Windows::Web::Http::HttpClient(filter);
+	client->DefaultRequestHeaders->UserAgent->Clear();
+	client->DefaultRequestHeaders->UserAgent->Append(ref new Windows::Web::Http::Headers::HttpProductInfoHeaderValue(L"Tidal-Unofficial.Windows10", Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily));
 
 	std::wstring urlBuilder(config::apiLocationPrefix()->Data());
 	urlBuilder.append(url());
@@ -175,7 +178,11 @@ concurrency::task<Platform::String^> api::QueryBase::deleteAsync(concurrency::ca
 
 concurrency::task<Platform::String^> api::QueryBase::postAsync(concurrency::cancellation_token cancelToken, std::shared_ptr<ResponseHolder> responseHolder)
 {
-	auto client = ref new HttpClient();
+	auto filter = ref new Windows::Web::Http::Filters::HttpBaseProtocolFilter();
+	filter->AllowUI = false;
+	auto client = ref new Windows::Web::Http::HttpClient(filter);
+	client->DefaultRequestHeaders->UserAgent->Clear();
+	client->DefaultRequestHeaders->UserAgent->Append(ref new Windows::Web::Http::Headers::HttpProductInfoHeaderValue(L"Tidal-Unofficial.Windows10", Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily));
 	std::wstring urlBuilder(config::apiLocationPrefix()->Data());
 	urlBuilder.append(url());
 	if (_queryString && _queryString->Size > 0) {

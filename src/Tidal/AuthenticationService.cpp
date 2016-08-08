@@ -27,9 +27,9 @@ AuthenticationService::AuthenticationService()
 	
 }
 
-concurrency::task<void> AuthenticationService::authenticateWithFacebookAsync(Platform::String^ accessToken, concurrency::cancellation_token cancelToken)
+concurrency::task<void> AuthenticationService::authenticateWithFacebookAsync(Hat<Platform::String> accessToken, concurrency::cancellation_token cancelToken)
 {
-	api::LoginWithFacebookQuery q(accessToken);
+	api::LoginWithFacebookQuery q(accessToken.get());
 	auto result = co_await q.executeAsync(cancelToken);
 	api::GetUserInfoQuery userInfoQuery(result->userId, 
 		tools::strings::toWindowsString(result->sessionId),
@@ -52,9 +52,9 @@ concurrency::task<void> AuthenticationService::authenticateWithFacebookAsync(Pla
 	getAuthenticationStateMediator().raise(_authState);
 }
 
-concurrency::task<void> AuthenticationService::authenticateWithPasswordAsync(Platform::String ^ userName, Platform::String ^ password, concurrency::cancellation_token cancelToken)
+concurrency::task<void> AuthenticationService::authenticateWithPasswordAsync(Hat<Platform::String> userName, Hat<Platform::String> password, concurrency::cancellation_token cancelToken)
 {
-	api::LoginWithPasswordQuery q(userName, password);
+	api::LoginWithPasswordQuery q(userName.get(), password.get());
 	auto result = co_await q.executeAsync(cancelToken);
 	api::GetUserInfoQuery userInfoQuery(result->userId,
 		tools::strings::toWindowsString(result->sessionId),

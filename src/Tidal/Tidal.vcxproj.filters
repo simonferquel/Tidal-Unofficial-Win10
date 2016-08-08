@@ -74,6 +74,16 @@
     <ClCompile Include="TracksPlaybackStateManager.cpp" />
     <ClCompile Include="AddToPlaylistDialog.xaml.cpp" />
     <ClCompile Include="IPageWithPreservedState.cpp" />
+    <ClCompile Include="Background\BackgroundDownloader.cpp" />
+    <ClCompile Include="Background\CachedStreamProvider.cpp" />
+    <ClCompile Include="Background\MusicPlayer.cpp" />
+    <ClCompile Include="Background\WebStream.cpp" />
+    <ClCompile Include="XboxUI\XboxHomePage.xaml.cpp" />
+    <ClCompile Include="XboxUI\XboxShell.xaml.cpp" />
+    <ClCompile Include="XboxOneHub.cpp" />
+    <ClCompile Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml.cpp" />
+    <ClCompile Include="XboxUI\XboxHomeMyMusicWidget.xaml.cpp" />
+    <ClCompile Include="Background\PlaybackReportStateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -144,6 +154,16 @@
     <ClInclude Include="TracksPlaybackStateManager.h" />
     <ClInclude Include="AddToPlaylistDialog.xaml.h" />
     <ClInclude Include="IPageWithPreservedState.h" />
+    <ClInclude Include="Background\BackgroundDownloader.h" />
+    <ClInclude Include="Background\CachedStreamProvider.h" />
+    <ClInclude Include="Background\MusicPlayer.h" />
+    <ClInclude Include="Background\WebStream.h" />
+    <ClInclude Include="XboxUI\XboxHomePage.xaml.h" />
+    <ClInclude Include="XboxUI\XboxShell.xaml.h" />
+    <ClInclude Include="XboxOneHub.h" />
+    <ClInclude Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml.h" />
+    <ClInclude Include="XboxUI\XboxHomeMyMusicWidget.xaml.h" />
+    <ClInclude Include="Background\PlaybackReportStateMachine.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\tidal-logo-large.png">
@@ -200,6 +220,9 @@
     <Image Include="Assets\Wide310x150Logo.scale-100.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="londone-eye-panoramic.jpg">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -239,6 +262,10 @@
     <Page Include="Themes\Generic.xaml" />
     <Page Include="AccountPage.xaml" />
     <Page Include="AddToPlaylistDialog.xaml" />
+    <Page Include="XboxUI\XboxShell.xaml" />
+    <Page Include="XboxUI\XboxHomePage.xaml" />
+    <Page Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml" />
+    <Page Include="XboxUI\XboxHomeMyMusicWidget.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\WiMP-Icons.ttf" />

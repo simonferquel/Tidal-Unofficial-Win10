@@ -358,13 +358,13 @@ Tidal::IncrementalLoadingCollection ^ getNewsPlaylistsDataSource(Platform::Strin
 	}
 }
 
-concurrency::task<Platform::Collections::Vector<Tidal::TrackItemVM^>^> getNewsTrackItemsAsync(concurrency::cancellation_token cancelToken, Platform::String^ list, Platform::String^ group)
+concurrency::task<Platform::Collections::Vector<Tidal::TrackItemVM^>^> getNewsTrackItemsAsync(concurrency::cancellation_token cancelToken, Hat<Platform::String> list, Hat<Platform::String> group)
 {
 	auto& authSvc = getAuthenticationService();
 	auto retval = ref new Platform::Collections::Vector<Tidal::TrackItemVM^>();
 	if (authSvc.authenticationState().isAuthenticated()) {
 		auto query = std::make_shared<api::GetNewTracksQuery>(25, 0, authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode());
-		query->withCustomListGroup(list, group);
+		query->withCustomListGroup(list.get(), group.get());
 		auto result = co_await query->executeAsync(cancelToken);
 		for (auto& article : result->items) {
 			auto item = ref new Tidal::TrackItemVM(article);
@@ -375,7 +375,7 @@ concurrency::task<Platform::Collections::Vector<Tidal::TrackItemVM^>^> getNewsTr
 	}
 	else {
 		auto query = std::make_shared<api::GetNewTracksQuery>(25, 0, ref new String(L"US"));
-		query->withCustomListGroup(list, group);
+		query->withCustomListGroup(list.get(), group.get());
 		auto result = co_await query->executeAsync(cancelToken);
 		for (auto& article : result->items) {
 			auto item = ref new Tidal::TrackItemVM(article);
@@ -386,32 +386,32 @@ concurrency::task<Platform::Collections::Vector<Tidal::TrackItemVM^>^> getNewsTr
 	}
 }
 
-concurrency::task<std::shared_ptr<std::vector<api::SublistInfo>>> getSublistsAsync(concurrency::cancellation_token cancelToken, Platform::String ^ list)
+concurrency::task<std::shared_ptr<std::vector<api::SublistInfo>>> getSublistsAsync(concurrency::cancellation_token cancelToken, Hat<Platform::String> list)
 {
 	auto& authSvc = getAuthenticationService();
 	auto retval = ref new Platform::Collections::Vector<Tidal::TrackItemVM^>();
 	if (authSvc.authenticationState().isAuthenticated()) {
-		api::GetListSublistsQuery query(list, authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode());
+		api::GetListSublistsQuery query(list.get(), authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode());
 
 		return co_await query.executeAsync(cancelToken);
 	}
 	else {
-		api::GetListSublistsQuery query(list, L"US");
+		api::GetListSublistsQuery query(list.get(), L"US");
 
 		return co_await query.executeAsync(cancelToken);
 	}
 }
 
-concurrency::task<Windows::UI::Xaml::Data::ICollectionView^> searchAllAsync(Platform::String ^ query, concurrency::cancellation_token cancelToken)
+concurrency::task<Windows::UI::Xaml::Data::ICollectionView^> searchAllAsync(Hat<Platform::String> query, concurrency::cancellation_token cancelToken)
 {
 	auto& authSvc = getAuthenticationService();
 	std::shared_ptr<api::SearchResults> results;
 	if (authSvc.authenticationState().isAuthenticated()) {
-		api::SearchQuery query(query, L"ARTISTS,ALBUMS,TRACKS,VIDEOS,PLAYLISTS", 3, 0, authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode());
+		api::SearchQuery query(query.get(), L"ARTISTS,ALBUMS,TRACKS,VIDEOS,PLAYLISTS", 3, 0, authSvc.authenticationState().sessionId(), authSvc.authenticationState().countryCode());
 		results = co_await query.executeAsync(cancelToken);
 	}
 	else {
-		api::SearchQuery query(query, L"ARTISTS,ALBUMS,TRACKS,VIDEOS,PLAYLISTS", 3, 0, L"US");
+		api::SearchQuery query(query.get(), L"ARTISTS,ALBUMS,TRACKS,VIDEOS,PLAYLISTS", 3, 0, L"US");
 		results = co_await query.executeAsync(cancelToken);
 	}
 
@@ -421,7 +421,7 @@ concurrency::task<Windows::UI::Xaml::Data::ICollectionView^> searchAllAsync(Plat
 		gp->Name = L"Artists";
 		gp->Icon = L"J";
 		gp->Filter = L"ARTISTS";
-		gp->Query = query;
+		gp->Query = query.get();
 		gp->Items = ref new Platform::Collections::Vector<Object^>();
 		groups->Append(gp);
 
@@ -435,7 +435,7 @@ concurrency::task<Windows::UI::Xaml::Data::ICollectionView^> searchAllAsync(Plat
 		gp->Name = L"Tracks";
 		gp->Icon = L"G";
 		gp->Filter = L"TRACKS";
-		gp->Query = query;
+		gp->Query = query.get();
 		gp->Items = ref new Platform::Collections::Vector<Object^>();
 		groups->Append(gp);
 
@@ -447,7 +447,7 @@ concurrency::task<Windows::UI::Xaml::Data::ICollectionView^> searchAllAsync(Plat
 		auto gp = ref new Tidal::SearchResultGroup();
 		gp->Name = L"Albums";
 		gp->Filter = L"ALBUMS";
-		gp->Query = query;
+		gp->Query = query.get();
 		gp->Icon = L"A";
 		gp->Items = ref new Platform::Collections::Vector<Object^>();
 		groups->Append(gp);
@@ -460,7 +460,7 @@ concurrency::task<Windows::UI::Xaml::Data::ICollectionView^> searchAllAsync(Plat
 		auto gp = ref new Tidal::SearchResultGroup();
 		gp->Name = L"Playlists";
 		gp->Filter = L"PLAYLISTS";
-		gp->Query = query;
+		gp->Query = query.get();
 		gp->Icon = L"M";
 		gp->Items = ref new Platform::Collections::Vector<Object^>();
 		groups->Append(gp);
@@ -473,7 +473,7 @@ concurrency::task<Windows::UI::Xaml::Data::ICollectionView^> searchAllAsync(Plat
 		auto gp = ref new Tidal::SearchResultGroup();
 		gp->Name = L"Videos";
 		gp->Filter = L"VIDEOS";
-		gp->Query = query;
+		gp->Query = query.get();
 		gp->Icon = L"9";
 		gp->Items = ref new Platform::Collections::Vector<Object^>();
 		groups->Append(gp);
@@ -550,7 +550,7 @@ Tidal::IncrementalLoadingCollection ^ getFilteredSearchSource(Platform::String ^
 
 Tidal::IncrementalLoadingCollection ^ getLocalAlbumsDataSource()
 {
-	return ref new Tidal::IncrementalLoadingCollection([](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
+	return ref new Tidal::IncrementalLoadingCollection([](Hat<Vector<Object^>> toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
 		try {
 			auto data = co_await localdata::getImportedAlbumsAsync(toFill->Size, desiredCount, cancelToken);
 
@@ -573,7 +573,7 @@ Tidal::IncrementalLoadingCollection ^ getLocalAlbumsDataSource()
 
 Tidal::IncrementalLoadingCollection ^ getLocalPlaylistsDataSource()
 {
-	return ref new Tidal::IncrementalLoadingCollection([](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
+	return ref new Tidal::IncrementalLoadingCollection([](Hat<Vector<Object^>> toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
 		try {
 			auto data = co_await localdata::getImportedPlaylistsAsync(toFill->Size, desiredCount, cancelToken);
 
@@ -596,7 +596,7 @@ Tidal::IncrementalLoadingCollection ^ getLocalPlaylistsDataSource()
 
 Tidal::IncrementalLoadingCollection ^ getLocalTracksDataSource()
 {
-	return ref new Tidal::IncrementalLoadingCollection([](Vector<Object^>^ toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
+	return ref new Tidal::IncrementalLoadingCollection([](Hat<Vector<Object^>> toFill, unsigned int desiredCount, cancellation_token cancelToken) ->task<bool> {
 		try {
 			auto data = co_await localdata::getImportedTracksAsync(toFill->Size, desiredCount, cancelToken);
 

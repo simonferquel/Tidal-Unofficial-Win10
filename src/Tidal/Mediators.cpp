@@ -31,6 +31,12 @@ Mediator<std::int64_t>& getTrackImportComplete()
 	return *m;
 }
 
+Mediator<std::vector<api::TrackInfo>>& getCurrentPlaylistMediator()
+{
+	static std::shared_ptr<Mediator<std::vector<api::TrackInfo>>> m = std::make_shared<Mediator<std::vector<api::TrackInfo>>>();
+	return *m;
+}
+
 Mediator<ImportProgress>& getTrackImportProgress()
 {
 	static std::shared_ptr<Mediator<ImportProgress>> m = std::make_shared<Mediator<ImportProgress>>();

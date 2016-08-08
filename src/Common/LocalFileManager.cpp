@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "LocalFileManager.h"
 #include <experimental/coroutine>
-#include <pplawait.h>
+#include <pplawait2.h>
 using namespace Platform;
 using namespace Windows::Storage;
 concurrency::task<DeleteFileStatus> LocalFileManager::TryDeleteTrackFile(std::int64_t id)

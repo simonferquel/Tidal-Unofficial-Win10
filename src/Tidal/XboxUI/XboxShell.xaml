@@ -1,0 +1,47 @@
+﻿<UserControl
+    x:Class="Tidal.XboxShell"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="540"
+    d:DesignWidth="960">
+    <Grid Margin="-48,-27" Background="#FF101010">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Border Background="#FF252525" x:Name="titleBar" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+            <Grid Margin="48,27,48,0" Height="64" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="64" />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Background="Transparent"
+                        Width="64"
+                        Height="64"
+                        Padding="0"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center">
+
+                    <Grid>
+                        <SymbolIcon Width="48"  Symbol="Contact" />
+                        <Ellipse Width="40" Height="40" Grid.RowSpan="2" Stroke="White"   />
+                    </Grid>
+                </Button>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Left" >
+
+                    <FontIcon FontFamily="ms-appx:///Assets/TIDAL-Logo-Icons.ttf#tidal_logo" Glyph="b"
+                          HorizontalAlignment="Left" FontSize="136"/>
+                    <TextBlock Text="unofficial" VerticalAlignment="Center" FontStyle="Italic" FontFamily="Consolas"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Frame x:Name="frame" Grid.Row="1" SourcePageType="local:XboxHomePage"/>
+    </Grid>
+</UserControl>

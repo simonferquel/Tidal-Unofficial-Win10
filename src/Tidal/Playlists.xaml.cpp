@@ -96,7 +96,7 @@ concurrency::task<void> Tidal::Playlists::LoadAsync(bool loadPreservedState)
 
 
 
-concurrency::task<void> Tidal::Playlists::LoadMoodAsync(SublistItemVM ^ item)
+concurrency::task<void> Tidal::Playlists::LoadMoodAsync(Hat<SublistItemVM> item)
 {
 	try {
 		auto src = getNewsPlaylistsDataSource(L"moods", item->Path);

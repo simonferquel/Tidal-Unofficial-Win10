@@ -35,8 +35,8 @@
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
-    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.10586.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.14393.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -209,6 +209,7 @@
     <ClInclude Include="Api\ArtistInfo.h" />
     <ClInclude Include="Api\Config.h" />
     <ClInclude Include="Api\CoverCache.h" />
+    <ClInclude Include="Api\PlaybackReport.h" />
     <ClInclude Include="Api\PlaylistsQueries.h" />
     <ClInclude Include="Api\GetAlbumResumeQuery.h" />
     <ClInclude Include="Api\GetAlbumTracksQuery.h" />
@@ -251,6 +252,7 @@
     <ClInclude Include="Api\UserInfo.h" />
     <ClInclude Include="Api\VideoInfo.h" />
     <ClInclude Include="CachedTrackManager.h" />
+    <ClInclude Include="Hat.h" />
     <ClInclude Include="localdata\db.h" />
     <ClInclude Include="localdata\Entities.h" />
     <ClInclude Include="localdata\GetCachedTrackInfoQuery.h" />
@@ -259,11 +261,13 @@
     <ClInclude Include="localdata\GetLocalAlbumsQuery.h" />
     <ClInclude Include="localdata\GetNextTrackImportJobQuery.h" />
     <ClInclude Include="localdata\GetTrackImportQueueQuery.h" />
+    <ClInclude Include="localdata\InsertPlaybackReportQuery.h" />
     <ClInclude Include="localdata\StorageStatistics.h" />
     <ClInclude Include="localdata\TidalSchema.h" />
     <ClInclude Include="LocalFileManager.h" />
     <ClInclude Include="ObfuscateStream.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="pplawait2.h" />
     <ClInclude Include="SoundQuality.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="tools\AsyncHelpers.h" />
@@ -300,6 +304,7 @@
     <ClCompile Include="Api\LoginResult.cpp" />
     <ClCompile Include="Api\LoginWithFacebookQuery.cpp" />
     <ClCompile Include="Api\LoginWithPasswordQuery.cpp" />
+    <ClCompile Include="Api\PlaybackReport.cpp" />
     <ClCompile Include="Api\PlaylistResume.cpp" />
     <ClCompile Include="Api\PlaylistsQueries.cpp" />
     <ClCompile Include="Api\PromotionArticle.cpp" />
@@ -321,6 +326,7 @@
     <ClCompile Include="localdata\GetLocalAlbumsQuery.cpp" />
     <ClCompile Include="localdata\GetNextTrackImportJobQuery.cpp" />
     <ClCompile Include="localdata\GetTrackImportQueueQuery.cpp" />
+    <ClCompile Include="localdata\InsertPlaybackReportQuery.cpp" />
     <ClCompile Include="localdata\StorageStatistics.cpp" />
     <ClCompile Include="localdata\TidalSchema.cpp" />
     <ClCompile Include="LocalFileManager.cpp" />

@@ -7,6 +7,7 @@
 
 #include "MainPage.g.h"
 #include <ppltasks.h>
+#include <Hat.h>
 namespace Tidal
 {
 	/// <summary>
@@ -18,7 +19,7 @@ namespace Tidal
 		MainPage();
 
 	private:
-		concurrency::task<void> loginWithFacebookAsync(Platform::String^ accessToken, concurrency::cancellation_token cancelToken);
+		concurrency::task<void> loginWithFacebookAsync(Hat<Platform::String> accessToken, concurrency::cancellation_token cancelToken);
 		void OnNavStarting(Windows::UI::Xaml::Controls::WebView^ sender, Windows::UI::Xaml::Controls::WebViewNavigationStartingEventArgs^ args);
 		void OnWvLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
