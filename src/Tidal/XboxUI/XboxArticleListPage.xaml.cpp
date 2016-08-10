@@ -11,6 +11,7 @@
 #include "../IGo.h"
 #include "../XboxOneHub.h"
 #include <AudioService.h>
+#include "XboxShell.xaml.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -85,6 +86,14 @@ void Tidal::XboxArticleListPage::OnLoaded(Platform::Object^ sender, Windows::UI:
 	if (found) {
 		found->Focus(Windows::UI::Xaml::FocusState::Keyboard);
 	}
+
+	auto shell = dynamic_cast<XboxShell^>(Window::Current->Content);
+	if (shell)
+	{
+		auto anim = hub->CompositionPropertySet->Compositor->CreateExpressionAnimation(L"hub.NormalizedOffsetX");
+		anim->SetReferenceParameter(L"hub", hub->CompositionPropertySet);
+		shell->AnimatedBackground->SetParallaxAmountBinding(anim);
+	}
 }
 
 
@@ -100,4 +109,22 @@ void Tidal::XboxArticleListPage::OnSelectionItemClick(Platform::Object^ sender, 
 void Tidal::XboxArticleListPage::OnPause(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	getAudioService().pauseAsync();
+}
+
+
+void Tidal::XboxArticleListPage::OnTogglePlayPause(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	auto fe = dynamic_cast<FrameworkElement^>(sender);
+	if (!fe)return;
+	auto trackItem = dynamic_cast<TrackItemVM^>(fe->DataContext);
+	if (!trackItem) {
+		return;
+	}
+	if (trackItem->PlayButtonVisibility == Windows::UI::Xaml::Visibility::Visible) {
+		trackItem->PlayCommand->Execute(nullptr);
+	}
+	else {
+		getAudioService().pauseAsync();
+
+	}
 }

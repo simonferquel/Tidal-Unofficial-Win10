@@ -60,7 +60,7 @@
         </Style>
 
     </Page.Resources>
-    <Grid Background="Black" >
+    <Grid >
         <Grid.Resources>
 
         </Grid.Resources>
@@ -298,6 +298,9 @@
                           Padding="0"
                           HorizontalContentAlignment="Stretch"
                           VerticalContentAlignment="Stretch" ItemContainerStyle="{StaticResource TracksItemStyle}">
+                    <ListView.Footer>
+                        <Border Height="27" />
+                    </ListView.Footer>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:TrackItemVM">
                             <Border Background="#EE171717" BorderThickness="0,0,0,1" BorderBrush="Transparent" >
@@ -312,25 +315,20 @@
                                    Width="48"
                                    Height="48"/>
                                     <Button Style="{StaticResource XboxNoBorderButtonStyle}"
-                                            Command="{x:Bind PlayCommand}"
-                                            Visibility="{x:Bind PlayButtonVisibility, Mode=OneWay}"
+                                            Click="OnTogglePlayPause"
                                     Width="48"
                                     Height="48"
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
                                     Background="Transparent">
-                                        <SymbolIcon Symbol="Play" />
+                                        <Grid>
+                                            <SymbolIcon Symbol="Play" Visibility="{x:Bind PlayButtonVisibility, Mode=OneWay}"/>
+                                            <SymbolIcon Symbol="Pause" 
+                                            Visibility="{x:Bind PauseButtonVisibility, Mode=OneWay}" />
+
+                                        </Grid>
                                     </Button>
-                                    <Button Style="{StaticResource XboxNoBorderButtonStyle}"
-                                            Click="OnPause"
-                                            Visibility="{x:Bind PauseButtonVisibility, Mode=OneWay}"
-                                    Width="48"
-                                    Height="48"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
-                                    Background="Transparent">
-                                        <SymbolIcon Symbol="Pause" />
-                                    </Button>
+                                    
                                     <TextBlock Grid.Column="1" Margin="12,0,0,0"
                                        VerticalAlignment="Center" Text="{x:Bind Title}" FontWeight="{x:Bind TitleFontWeight, Mode=OneWay}"></TextBlock>
                                     <HyperlinkButton Grid.Column="2" Margin="12,0,0,0" Foreground="White"

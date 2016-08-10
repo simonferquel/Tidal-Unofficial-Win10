@@ -197,4 +197,18 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="local:XboxBackground" >
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:XboxBackground">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

@@ -119,6 +119,12 @@ void Tidal::LoginView::OnKeyDown(Platform::Object ^ sender, Windows::UI::Xaml::I
 	auto k = e->Key;
 	if (k == Windows::System::VirtualKey::GamepadA || k == Windows::System::VirtualKey::Space || k == Windows::System::VirtualKey::Enter) {
 		e->Handled = true;
+
+		if (!getAuthenticationService().authenticationState().isAuthenticated()) {
 		OnViewTapped(sender, nullptr);
+		}
+		else {
+			loginAsync();
+		}
 	}
 }

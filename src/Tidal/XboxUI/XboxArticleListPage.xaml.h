@@ -25,5 +25,6 @@ namespace Tidal
 		void OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnSelectionItemClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
 		void OnPause(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void OnTogglePlayPause(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

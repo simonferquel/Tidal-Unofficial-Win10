@@ -7,6 +7,7 @@
 #include "XboxHomePage.xaml.h"
 #include <WindowsNumerics.h>
 #include "FocusHelper.h"
+#include "XboxShell.xaml.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -58,6 +59,7 @@ XboxHomePage::XboxHomePage()
 	//offsetAnim->SetReferenceParameter(L"home", _homePagePropertySet);
 	//bgVisual->StartAnimation(L"Offset", offsetAnim);
 	//bgAnim->Begin();
+	
 }
 
 
@@ -73,4 +75,17 @@ void Tidal::XboxHomePage::OnSizeChanged(Platform::Object^ sender, Windows::UI::X
 void Tidal::XboxHomePage::OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	FindFirstTabStopDescendant(this)->Focus(Windows::UI::Xaml::FocusState::Keyboard);
+	auto shell = dynamic_cast<XboxShell^>(Window::Current->Content);
+	if (shell)
+	{
+		auto anim = hub->CompositionPropertySet->Compositor->CreateExpressionAnimation(L"hub.NormalizedOffsetX");
+		anim->SetReferenceParameter(L"hub", hub->CompositionPropertySet);
+		shell->AnimatedBackground->SetParallaxAmountBinding(anim);
+	}
+}
+
+
+void Tidal::XboxHomePage::OnBgLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	
 }

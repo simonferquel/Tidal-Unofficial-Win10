@@ -30,7 +30,7 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <ContentControl x:Name="outerBorder" Tapped="OnViewTapped" KeyDown="OnKeyDown"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" >
+        <ContentControl x:Name="outerBorder" Tapped="OnViewTapped" KeyDown="OnKeyDown"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" IsTabStop="False">
             <Grid x:Name="grid" Height="80" Background="Transparent">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />

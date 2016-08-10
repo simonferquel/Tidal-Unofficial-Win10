@@ -12,34 +12,11 @@
     
     <Page.Resources>
         <local:FactorConverter Factor="0.4" x:Key="parallaxFactor"/>
-        <Storyboard x:Name="bgAnim" x:Key="bgAnim" >
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="bg" AutoReverse="True" RepeatBehavior="Forever"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)">
-                <EasingDoubleKeyFrame KeyTime="00:00:05" Value="-100" >
-                    <EasingDoubleKeyFrame.EasingFunction>
-                        <CubicEase EasingMode="EaseInOut"/>
-                    </EasingDoubleKeyFrame.EasingFunction>
-                </EasingDoubleKeyFrame>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
+        
     </Page.Resources>
 
     <Grid >
-        <Rectangle x:Name="bg" 
-                   HorizontalAlignment="Left"
-                   Margin="0,0,0,-100"
-                   Width="{x:Bind hub.TotalExtent, Converter={StaticResource parallaxFactor}, Mode=OneWay}">
-            <Rectangle.Fill>
-                <ImageBrush Stretch="UniformToFill"
-                            ImageSource="/londone-eye-panoramic.jpg" >
-                    
-                </ImageBrush>
-            </Rectangle.Fill>
-            <Rectangle.RenderTransform>
-                <TranslateTransform />
-            </Rectangle.RenderTransform>
-        </Rectangle>
-        <Rectangle x:Name="bgBlur" />
+        
         <local:XboxOneHub x:Name="hub">
 
             <local:XboxOneHubSection Header="current playlist" >

@@ -87,6 +87,7 @@
     <ClCompile Include="XboxUI\XboxHomeCatalogWidget.xaml.cpp" />
     <ClCompile Include="XboxUI\XboxArticleListPage.xaml.cpp" />
     <ClCompile Include="XboxUI\XboxArticleListPageParameter.cpp" />
+    <ClCompile Include="XboxUI\XboxBackground.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -171,6 +172,7 @@
     <ClInclude Include="XboxUI\XboxArticleListPage.xaml.h" />
     <ClInclude Include="XboxUI\XboxArticleListPageParameter.h" />
     <ClInclude Include="XboxUI\FocusHelper.h" />
+    <ClInclude Include="XboxUI\XboxBackground.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\tidal-logo-large.png">
@@ -236,9 +238,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Tidal_TemporaryKey.pfx" />
-    <None Include="packages.config" />
     <None Include="Package.StoreAssociation.xml" />
     <None Include="Tidal_StoreKey.pfx" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />

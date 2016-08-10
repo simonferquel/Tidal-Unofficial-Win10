@@ -10,6 +10,7 @@
 #include <memory>
 #include "LoadingView.h"
 #include "Shell.xaml.h"
+#include "XboxUI\XboxBackground.h"
 
 namespace Tidal
 {

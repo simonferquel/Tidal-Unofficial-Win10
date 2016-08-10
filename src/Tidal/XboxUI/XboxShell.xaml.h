@@ -6,6 +6,7 @@
 #pragma once
 
 #include "XboxUI\XboxShell.g.h"
+#include "XboxBackground.h"
 
 namespace Tidal
 {
@@ -17,6 +18,7 @@ namespace Tidal
 		property Windows::UI::Xaml::Controls::Frame^ Frame {
 			Windows::UI::Xaml::Controls::Frame^ get() { return frame; }
 		}
+		property XboxBackground^ AnimatedBackground {XboxBackground^get() { return bg; }}
 	private:
 		void OnKeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^e);
 		void OnNavigated(Platform::Object^ sender, Windows::UI::Xaml::Navigation::NavigationEventArgs^ e);

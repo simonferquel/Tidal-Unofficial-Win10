@@ -55,7 +55,7 @@ Control^ FindFirstTabStopChild(DependencyObject^ root) {
 	for (auto ix = 0; ix < childCount; ++ix) {
 		auto child = VisualTreeHelper::GetChild(root, ix);
 		auto childCtl = dynamic_cast<Control^>(child);
-		if (childCtl && childCtl->IsTabStop) {
+		if (childCtl && childCtl->IsTabStop && childCtl->IsEnabled && childCtl->Visibility == Visibility::Visible) {
 			return childCtl;
 		}
 	}
@@ -110,6 +110,9 @@ XboxOneHub::XboxOneHub()
 	CompositionPropertySet->InsertScalar(L"Height", 0.0f);
 	CompositionPropertySet->InsertScalar(L"CurrentOffsetX", 0.0f);
 	CompositionPropertySet->InsertScalar(L"ViewportWidth", 0.0f);
+	CompositionPropertySet->InsertScalar(L"NormalizedOffsetX", 0.0f);
+	auto normalizedAnim = _compositor->CreateExpressionAnimation(L"This.Target.CurrentOffsetX / (This.Target.TotalExtent - This.Target.ViewPortWidth)");
+	CompositionPropertySet->StartAnimation(L"NormalizedOffsetX", normalizedAnim);
 	SizeChanged += ref new Windows::UI::Xaml::SizeChangedEventHandler(this, &Tidal::XboxOneHub::OnSizeChanged);
 }
 
@@ -151,6 +154,7 @@ void Tidal::XboxOneHub::ComputeTotalExtentAndMaterializeBodyPresenters()
 			SetBodyPresenter(container, presenter);
 			presenter->Width = sectionWidth;
 			presenter->Height = _body->ActualHeight;
+			FocusHelper::SetIsBindableFocusEnabled(presenter, true);
 			_header->RegisterPropertyChangedCallback(FocusHelper::IsFocusWithinProperty,
 				ref new DependencyPropertyChangedCallback([container](Windows::UI::Xaml::DependencyObject^ sender, Windows::UI::Xaml::DependencyProperty^ dp) {
 				container->HasHeaderFocus = FocusHelper::GetIsFocusWithin(sender);
@@ -218,12 +222,21 @@ bool ShouldGoRight(Windows::System::VirtualKey key, DependencyObject^ rootElem) 
 	return false;
 }
 
+bool isFocusWithin(DependencyObject ^elem) {
+	auto focused = dynamic_cast<DependencyObject^>(FocusManager::GetFocusedElement());
+	if (elem == focused) {
+		return true;
+	}
+	return IsWithin(elem, focused);
+}
+
 void Tidal::XboxOneHub::OnKeyDown(_::KeyRoutedEventArgs ^ e)
 {
 	
 	auto selectedContainer = SelectedIndex > -1 ? ContainerFromIndex(SelectedIndex) : nullptr;
 	auto selectedRoot = selectedContainer != nullptr ? GetBodyPresenter(selectedContainer) : nullptr;
-	if ((e->Key == Windows::System::VirtualKey::GamepadLeftThumbstickDown || e->Key == Windows::System::VirtualKey::GamepadDPadDown || e->Key == Windows::System::VirtualKey::Down) && FocusHelper::GetIsFocusWithin(_header)) {
+	auto k = e->Key;
+	if ((e->Key == Windows::System::VirtualKey::GamepadLeftThumbstickDown || e->Key == Windows::System::VirtualKey::GamepadDPadDown || e->Key == Windows::System::VirtualKey::Down) && isFocusWithin(_header)) {
 		e->Handled = true;
 		auto container = ContainerFromIndex(SelectedIndex);
 		auto presenter = GetBodyPresenter(container);
@@ -235,7 +248,20 @@ void Tidal::XboxOneHub::OnKeyDown(_::KeyRoutedEventArgs ^ e)
 			focusable->Focus(_::FocusState::Keyboard);
 		}
 	}
-	if (ShouldGoLeft(e->OriginalKey, selectedRoot)) {
+	else if (selectedRoot && (e->Key == Windows::System::VirtualKey::GamepadLeftThumbstickDown || e->Key == Windows::System::VirtualKey::GamepadDPadDown || e->Key == Windows::System::VirtualKey::Down) && isFocusWithin(selectedRoot)) {
+		auto candidate = FocusManager::FindNextFocusableElement(FocusNavigationDirection::Down);
+		if (candidate && !IsWithin(selectedRoot, candidate) && IsWithin(this, candidate)) {
+			e->Handled = true; // avoid cross section focus change 
+		}
+	}
+	else if (selectedRoot && (e->Key == Windows::System::VirtualKey::GamepadLeftThumbstickUp || e->Key == Windows::System::VirtualKey::GamepadDPadUp || e->Key == Windows::System::VirtualKey::Up) && isFocusWithin(selectedRoot)) {
+		auto candidate = FocusManager::FindNextFocusableElement(FocusNavigationDirection::Up);
+		if (candidate && !IsWithin(selectedRoot, candidate)) {
+			e->Handled = true; // avoid cross section focus change 
+			_header->Focus(Windows::UI::Xaml::FocusState::Keyboard);
+		}
+	}
+	else if (ShouldGoLeft(e->OriginalKey, selectedRoot)) {
 		if (SelectedIndex > 0) {
 			e->Handled = true;
 			SelectedIndex--;

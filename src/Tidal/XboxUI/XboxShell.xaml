@@ -31,7 +31,7 @@
                 <local:LoginView Height="64"  Grid.Column="2"/>
             </Grid>
         </Border>
-
+        <local:XboxBackground x:Name="bg" Grid.Row="1"/>
         <Frame x:Name="frame" Grid.Row="1" SourcePageType="local:XboxHomePage" Navigated="OnNavigated"/>
     </Grid>
 </UserControl>
