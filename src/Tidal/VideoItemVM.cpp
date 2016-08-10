@@ -9,6 +9,7 @@
 #include "ArtistPage.xaml.h"
 #include "AuthenticationService.h"
 #include "UnauthenticatedDialog.h"
+#include "XboxUI/XboxShell.xaml.h"
 void Tidal::VideoItemVM::Go()
 {
 	if (!getAuthenticationService().authenticationState().isAuthenticated()) {
@@ -18,6 +19,12 @@ void Tidal::VideoItemVM::Go()
 	auto shell = dynamic_cast<Shell^>(Windows::UI::Xaml::Window::Current->Content);
 	if (shell) {
 		shell->Frame->Navigate(VideoPlayer::typeid, Id.ToString());
+	}
+	else {
+		auto xbShell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
+		if (xbShell) {
+			xbShell->Frame->Navigate(VideoPlayer::typeid, Id.ToString());
+		}
 	}
 }
 void Tidal::VideoItemVM::GoToArtist()

@@ -1,0 +1,252 @@
+﻿<UserControl
+    x:Class="Tidal.XboxHomeCatalogWidget"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="494"
+    Loaded="OnLoaded"
+    Margin="0,0,0,27"
+    d:DesignWidth="792">
+
+    <local:LoadingView x:Name="loadingView">
+        <Grid Margin="12,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="2*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.ColumnSpan="4" Content="SELECTION..." Style="{StaticResource XboxNoBorderButtonStyle}"
+                    Click="{x:Bind GoToNews}"/>
+            <Button HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    UseSystemFocusVisuals="True"
+                    Style="{StaticResource XboxNoBorderButtonStyle}"
+                    FontSize="14"
+                    Grid.Column="0"
+                    Grid.Row="1" Margin="0,4,4,4" Background="#FF232323"
+                    Click="{x:Bind Selection[0].Go, Mode=OneWay}">
+                <Grid>
+                    <Image Source="{x:Bind Selection[0].ImageUrl, Mode=OneWay}" Stretch="UniformToFill">
+                    </Image>
+                    <Border VerticalAlignment="Bottom"  Background="#EE171717" >
+                        <TextBlock Margin="4">
+                                        <Run Foreground="White" Text="{x:Bind Selection[0].ShortHeader, Mode=OneWay}" FontSize="13.333" />
+                                        <LineBreak/>
+                                        <Run Foreground="#FF999999" FontSize="12" 
+                                             Text="{x:Bind Selection[0].ShortSubHeader, Mode=OneWay}"/>
+                        </TextBlock>
+                    </Border>
+                    <Border VerticalAlignment="Top"
+                                        HorizontalAlignment="Right"
+                                        Background="White">
+                        <FontIcon Foreground="Black" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014"
+                                              Glyph="{x:Bind Selection[0].TypeGlyph, Mode=OneWay}" 
+                                              />
+                    </Border>
+                </Grid>
+            </Button>
+            <Button HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    UseSystemFocusVisuals="True"
+                    Style="{StaticResource XboxNoBorderButtonStyle}"
+                    FontSize="14"
+                    Grid.Column="1"
+                    Grid.Row="1" Margin="0,4,4,4" Background="#FF232323"
+                    Click="{x:Bind Selection[1].Go, Mode=OneWay}">
+                <Grid>
+                    <Image Source="{x:Bind Selection[1].ImageUrl, Mode=OneWay}" Stretch="UniformToFill">
+                    </Image>
+                    <Border VerticalAlignment="Bottom"  Background="#EE171717" >
+                        <TextBlock Margin="4">
+                                        <Run Foreground="White" Text="{x:Bind Selection[1].ShortHeader, Mode=OneWay}" FontSize="13.333" />
+                                        <LineBreak/>
+                                        <Run Foreground="#FF999999" FontSize="12" 
+                                             Text="{x:Bind Selection[1].ShortSubHeader, Mode=OneWay}"/>
+                        </TextBlock>
+                    </Border>
+                    <Border VerticalAlignment="Top"
+                                        HorizontalAlignment="Right"
+                                        Background="White">
+                        <FontIcon Foreground="Black" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014"
+                                              Glyph="{x:Bind Selection[1].TypeGlyph, Mode=OneWay}" 
+                                              />
+                    </Border>
+                </Grid>
+            </Button>
+            <Button HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    UseSystemFocusVisuals="True"
+                    Style="{StaticResource XboxNoBorderButtonStyle}"
+                    FontSize="14"
+                    Grid.Column="2"
+                    Grid.Row="1" Margin="0,4,4,4" Background="#FF232323"
+                    Click="{x:Bind Selection[2].Go, Mode=OneWay}">
+                <Grid>
+                    <Image Source="{x:Bind Selection[2].ImageUrl, Mode=OneWay}" Stretch="UniformToFill">
+                    </Image>
+                    <Border VerticalAlignment="Bottom"  Background="#EE171717" >
+                        <TextBlock Margin="4">
+                                        <Run Foreground="White" Text="{x:Bind Selection[2].ShortHeader, Mode=OneWay}" FontSize="13.333" />
+                                        <LineBreak/>
+                                        <Run Foreground="#FF999999" FontSize="12" 
+                                             Text="{x:Bind Selection[2].ShortSubHeader, Mode=OneWay}"/>
+                        </TextBlock>
+                    </Border>
+                    <Border VerticalAlignment="Top"
+                                        HorizontalAlignment="Right"
+                                        Background="White">
+                        <FontIcon Foreground="Black" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014"
+                                              Glyph="{x:Bind Selection[2].TypeGlyph, Mode=OneWay}" 
+                                              />
+                    </Border>
+                </Grid>
+            </Button>
+            <Button HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    UseSystemFocusVisuals="True"
+                    Style="{StaticResource XboxNoBorderButtonStyle}"
+                    FontSize="14"
+                    Grid.Column="3"
+                    Grid.Row="1" Margin="0,4,4,4" Background="#FF232323"
+                    Click="{x:Bind Selection[3].Go, Mode=OneWay}">
+                <Grid>
+                    <Image Source="{x:Bind Selection[3].ImageUrl, Mode=OneWay}" Stretch="UniformToFill">
+                    </Image>
+                    <Border VerticalAlignment="Bottom"  Background="#EE171717" >
+                        <TextBlock Margin="4">
+                                        <Run Foreground="White" Text="{x:Bind Selection[3].ShortHeader, Mode=OneWay}" FontSize="13.333" />
+                                        <LineBreak/>
+                                        <Run Foreground="#FF999999" FontSize="12" 
+                                             Text="{x:Bind Selection[3].ShortSubHeader, Mode=OneWay}"/>
+                        </TextBlock>
+                    </Border>
+                    <Border VerticalAlignment="Top"
+                                        HorizontalAlignment="Right"
+                                        Background="White">
+                        <FontIcon Foreground="Black" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014"
+                                              Glyph="{x:Bind Selection[3].TypeGlyph, Mode=OneWay}" 
+                                              />
+                    </Border>
+                </Grid>
+            </Button>
+
+            <Grid Grid.Row="3" Grid.ColumnSpan="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Button HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                    Click="{x:Bind GoToNews}">
+                    <StackPanel>
+                        <FontIcon HorizontalAlignment="Center" FontSize="40" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="B" />
+                        <TextBlock Text="What's new" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                    Click="{x:Bind GoToRising}">
+                    <StackPanel>
+                        <FontIcon HorizontalAlignment="Center" FontSize="40" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="N" />
+                        <TextBlock Text="TIDAL Rising" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                    Click="{x:Bind GoToDiscovery}">
+                    <StackPanel>
+                        <FontIcon HorizontalAlignment="Center" FontSize="40" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="0" />
+                        <TextBlock Text="TIDAL Discovery" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                    Click="{x:Bind GoToPlaylists}">
+                    <StackPanel>
+                        <FontIcon HorizontalAlignment="Center" FontSize="40" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="M" />
+                        <TextBlock Text="Playlists" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                    Click="{x:Bind GoToGenres}">
+                    <StackPanel>
+                        <FontIcon HorizontalAlignment="Center" FontSize="40" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="K" />
+                        <TextBlock Text="Genres" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                    Click="{x:Bind GoToVideos}">
+
+                    <StackPanel>
+                        <FontIcon HorizontalAlignment="Center" FontSize="40" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="9" />
+                        <TextBlock Text="Videos" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+
+                <Button HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Grid.Row="0"
+                        Grid.Column="3"
+                        Grid.ColumnSpan="2"
+                        Grid.RowSpan="2"
+                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                    Click="{x:Bind GoToSearch}">
+                    <StackPanel>
+                        <FontIcon HorizontalAlignment="Center" FontSize="80" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="E" />
+                        <TextBlock Text="Search" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+        </Grid>
+    </local:LoadingView>
+</UserControl>

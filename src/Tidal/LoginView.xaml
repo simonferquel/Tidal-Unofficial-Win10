@@ -24,25 +24,28 @@
                         <Setter Target="grid.(UIElement.Visibility)" Value="Visible"/>
                         <Setter Target="userName.(UIElement.Visibility)" Value="Visible"/>
                         <Setter Target="subscribtionName.(UIElement.Visibility)" Value="Visible"/>
+                        <Setter Target="outerBorder.IsTabStop" Value="True"/>
+                        <Setter Target="outerBorder.UseSystemFocusVisuals " Value="True"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        
-        <Grid x:Name="grid" Height="80" Tapped="OnViewTapped" Background="Transparent">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <SymbolIcon Width="48" Grid.RowSpan="2" Symbol="Contact" />
-            <Ellipse Width="40" Height="40" Grid.RowSpan="2" Stroke="White" x:Name="userPic"  />
-            <TextBlock x:Name="userName" Grid.Column="1" VerticalAlignment="Bottom" Margin="4,0" />
-            <TextBlock x:Name="subscribtionName" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="4,0" Foreground="{StaticResource TidalAccentBrush}" />
-            <Button x:Name="loginButton" Margin="4" HorizontalAlignment="Stretch" Click="OnLoginClick" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">Login</Button>
-        </Grid>
+        <ContentControl x:Name="outerBorder" Tapped="OnViewTapped" KeyDown="OnKeyDown"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" >
+            <Grid x:Name="grid" Height="80" Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <SymbolIcon Width="48" Grid.RowSpan="2" Symbol="Contact" />
+                <Ellipse Width="40" Height="40" Grid.RowSpan="2" Stroke="White" x:Name="userPic"  />
+                <TextBlock x:Name="userName" Grid.Column="1" VerticalAlignment="Bottom" Margin="4,0" />
+                <TextBlock x:Name="subscribtionName" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="4,0" Foreground="{StaticResource TidalAccentBrush}" />
+                <Button x:Name="loginButton" Margin="4" HorizontalAlignment="Stretch" Click="OnLoginClick" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center">Login</Button>
+            </Grid>
+        </ContentControl>
     </Grid>
 </UserControl>

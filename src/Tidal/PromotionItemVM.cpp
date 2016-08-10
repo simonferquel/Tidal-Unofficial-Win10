@@ -8,6 +8,7 @@
 #include "PlaylistPage.xaml.h"
 #include "AuthenticationService.h"
 #include "UnauthenticatedDialog.h"
+#include "XboxUI\XboxShell.xaml.h"
 using namespace tools::strings;
 void Tidal::PromotionItemVM::Go()
 {
@@ -24,17 +25,35 @@ void Tidal::PromotionItemVM::Go()
 		if (shell) {
 			shell->Frame->Navigate(VideoPlayer::typeid, ArtifactId);
 		}
+		else {
+			auto xbShell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
+			if (xbShell) {
+				xbShell->Frame->Navigate(VideoPlayer::typeid, ArtifactId);
+			}
+		}
 	}
 	else if (Type == L"ALBUM") {
 		auto shell = dynamic_cast<Shell^>(Windows::UI::Xaml::Window::Current->Content);
 		if (shell) {
 			shell->Frame->Navigate(AlbumPage::typeid, ArtifactId);
 		}
+		else {
+			auto xbShell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
+			if (xbShell) {
+				xbShell->Frame->Navigate(AlbumPage::typeid, ArtifactId);
+			}
+		}
 	}
 	else if (Type == L"PLAYLIST") {
 		auto shell = dynamic_cast<Shell^>(Windows::UI::Xaml::Window::Current->Content);
 		if (shell) {
 			shell->Frame->Navigate(PlaylistPage::typeid, ArtifactId);
+		}
+		else {
+			auto xbShell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
+			if (xbShell) {
+				xbShell->Frame->Navigate(PlaylistPage::typeid, ArtifactId);
+			}
 		}
 	}
 }

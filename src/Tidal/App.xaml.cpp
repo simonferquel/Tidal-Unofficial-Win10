@@ -13,6 +13,7 @@
 #include "FavoritesService.h"
 #include "AuthenticationVisualStateTrigger.h"
 #include "XboxUI/XboxShell.xaml.h"
+#include <Environment.h>
 using namespace Tidal;
 
 using namespace Platform;
@@ -36,6 +37,9 @@ using namespace Windows::UI::Xaml::Navigation;
 App::App()
 {
 	InitializeComponent();
+	if (env::isRunningOnXbox()) {
+		RequiresPointerMode = Windows::UI::Xaml::ApplicationRequiresPointerMode::WhenRequested;
+	}
 	Suspending += ref new SuspendingEventHandler(this, &App::OnSuspending);
 	Resuming += ref new Windows::Foundation::EventHandler<Platform::Object ^>(this, &Tidal::App::OnResuming);
 	EnteredBackground += ref new Windows::UI::Xaml::EnteredBackgroundEventHandler(this, &Tidal::App::OnEnteredBackground);
@@ -77,10 +81,12 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 		_smtcService = std::make_unique<SmtcService>(Windows::UI::Core::CoreWindow::GetForCurrentThread()->Dispatcher);
 		getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
 
-		//auto xbshell = ref new XboxShell();
-		//Window::Current->Content = xbshell;
-		//Window::Current->Activate();
-		//return;
+		if (env::isRunningOnXbox()) {
+			auto xbshell = ref new XboxShell();
+			Window::Current->Content = xbshell;
+			Window::Current->Activate();
+			return;
+		}
 
 		auto rootFrame = dynamic_cast<Shell^>(Window::Current->Content);
 
@@ -188,6 +194,12 @@ void Tidal::App::OnEnteredBackground(Platform::Object^ sender, Windows::Applicat
 
 void Tidal::App::OnLeavingBackground(Platform::Object^ sender, Windows::ApplicationModel::LeavingBackgroundEventArgs^ e)
 {
-	auto shell = ref new Shell(_navState, _persistedState);
-	Window::Current->Content = shell;
+	if (env::isRunningOnXbox()) {
+		auto xbshell = ref new XboxShell();
+		Window::Current->Content = xbshell;
+	}
+	else {
+		auto shell = ref new Shell(_navState, _persistedState);
+		Window::Current->Content = shell;
+	}
 }

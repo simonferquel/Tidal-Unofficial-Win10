@@ -84,6 +84,9 @@
     <ClCompile Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml.cpp" />
     <ClCompile Include="XboxUI\XboxHomeMyMusicWidget.xaml.cpp" />
     <ClCompile Include="Background\PlaybackReportStateMachine.cpp" />
+    <ClCompile Include="XboxUI\XboxHomeCatalogWidget.xaml.cpp" />
+    <ClCompile Include="XboxUI\XboxArticleListPage.xaml.cpp" />
+    <ClCompile Include="XboxUI\XboxArticleListPageParameter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -164,6 +167,10 @@
     <ClInclude Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml.h" />
     <ClInclude Include="XboxUI\XboxHomeMyMusicWidget.xaml.h" />
     <ClInclude Include="Background\PlaybackReportStateMachine.h" />
+    <ClInclude Include="XboxUI\XboxHomeCatalogWidget.xaml.h" />
+    <ClInclude Include="XboxUI\XboxArticleListPage.xaml.h" />
+    <ClInclude Include="XboxUI\XboxArticleListPageParameter.h" />
+    <ClInclude Include="XboxUI\FocusHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\tidal-logo-large.png">
@@ -266,6 +273,8 @@
     <Page Include="XboxUI\XboxHomePage.xaml" />
     <Page Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml" />
     <Page Include="XboxUI\XboxHomeMyMusicWidget.xaml" />
+    <Page Include="XboxUI\XboxHomeCatalogWidget.xaml" />
+    <Page Include="XboxUI\XboxArticleListPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\WiMP-Icons.ttf" />

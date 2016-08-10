@@ -9,6 +9,7 @@
 #include <tools/TimeUtils.h>
 #include <WindowsNumerics.h>
 
+#include "XboxUI/FocusHelper.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -99,6 +100,7 @@ Control^ FindFirstTabStopDescendant(DependencyObject^ root) {
 XboxOneHub::XboxOneHub()
 {
 	DefaultStyleKey = "Tidal.XboxOneHub";
+	IsTabStop = false;
 	SelectionChanged += ref new Windows::UI::Xaml::Controls::SelectionChangedEventHandler(this, &Tidal::XboxOneHub::OnSelectionChanged);
 	Loaded += ref new Windows::UI::Xaml::RoutedEventHandler(this, &Tidal::XboxOneHub::OnLoaded);
 	auto visual = ElementCompositionPreview::GetElementVisual(this);
@@ -221,6 +223,18 @@ void Tidal::XboxOneHub::OnKeyDown(_::KeyRoutedEventArgs ^ e)
 	
 	auto selectedContainer = SelectedIndex > -1 ? ContainerFromIndex(SelectedIndex) : nullptr;
 	auto selectedRoot = selectedContainer != nullptr ? GetBodyPresenter(selectedContainer) : nullptr;
+	if ((e->Key == Windows::System::VirtualKey::GamepadLeftThumbstickDown || e->Key == Windows::System::VirtualKey::GamepadDPadDown || e->Key == Windows::System::VirtualKey::Down) && FocusHelper::GetIsFocusWithin(_header)) {
+		e->Handled = true;
+		auto container = ContainerFromIndex(SelectedIndex);
+		auto presenter = GetBodyPresenter(container);
+		if (!presenter) {
+			return;
+		}
+		auto focusable = FindFirstTabStopDescendant(presenter);
+		if (focusable) {
+			focusable->Focus(_::FocusState::Keyboard);
+		}
+	}
 	if (ShouldGoLeft(e->OriginalKey, selectedRoot)) {
 		if (SelectedIndex > 0) {
 			e->Handled = true;

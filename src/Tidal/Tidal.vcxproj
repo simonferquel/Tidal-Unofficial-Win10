@@ -333,7 +333,15 @@
     </ClInclude>
     <ClInclude Include="WrapPanel.h" />
     <ClInclude Include="XamlHelpers.h" />
+    <ClInclude Include="XboxUI\FocusHelper.h" />
+    <ClInclude Include="XboxUI\XboxArticleListPageParameter.h" />
     <ClInclude Include="XboxOneHub.h" />
+    <ClInclude Include="XboxUI\XboxArticleListPage.xaml.h">
+      <DependentUpon>XboxUI\XboxArticleListPage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="XboxUI\XboxHomeCatalogWidget.xaml.h">
+      <DependentUpon>XboxUI\XboxHomeCatalogWidget.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml.h">
       <DependentUpon>XboxUI\XboxHomeCurrentPlaylistWidget.xaml</DependentUpon>
     </ClInclude>
@@ -431,6 +439,12 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Videos.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxArticleListPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxHomeCatalogWidget.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml">
@@ -639,7 +653,14 @@
       <DependentUpon>Videos.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="WrapPanel.cpp" />
+    <ClCompile Include="XboxUI\XboxArticleListPageParameter.cpp" />
     <ClCompile Include="XboxOneHub.cpp" />
+    <ClCompile Include="XboxUI\XboxArticleListPage.xaml.cpp">
+      <DependentUpon>XboxUI\XboxArticleListPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="XboxUI\XboxHomeCatalogWidget.xaml.cpp">
+      <DependentUpon>XboxUI\XboxHomeCatalogWidget.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="XboxUI\XboxHomeCurrentPlaylistWidget.xaml.cpp">
       <DependentUpon>XboxUI\XboxHomeCurrentPlaylistWidget.xaml</DependentUpon>
     </ClCompile>

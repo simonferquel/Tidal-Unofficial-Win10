@@ -14,6 +14,11 @@ namespace Tidal
 	{
 	public:
 		XboxShell();
+		property Windows::UI::Xaml::Controls::Frame^ Frame {
+			Windows::UI::Xaml::Controls::Frame^ get() { return frame; }
+		}
 	private:
+		void OnKeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^e);
+		void OnNavigated(Platform::Object^ sender, Windows::UI::Xaml::Navigation::NavigationEventArgs^ e);
 	};
 }

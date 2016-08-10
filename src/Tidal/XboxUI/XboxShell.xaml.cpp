@@ -5,6 +5,7 @@
 
 #include "pch.h"
 #include "XboxShell.xaml.h"
+#include "FocusHelper.h"
 
 using namespace Tidal;
 
@@ -26,4 +27,21 @@ XboxShell::XboxShell()
 	InitializeComponent();
 }
 
+void Tidal::XboxShell::OnKeyDown(Platform::Object ^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs ^ e)
+{
+	auto k = e->Key;
+	if (k == Windows::System::VirtualKey::Escape && !e->Handled) {
+		if (Frame->CanGoBack) {
+			e->Handled = true;
+			Frame->GoBack();
+		}
+	}
+}
 
+
+
+
+void Tidal::XboxShell::OnNavigated(Platform::Object^ sender, Windows::UI::Xaml::Navigation::NavigationEventArgs^ e)
+{
+
+}

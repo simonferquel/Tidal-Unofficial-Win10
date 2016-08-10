@@ -23,5 +23,6 @@ namespace Tidal
 	private:
 		void OnLoginClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnViewTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
+		void OnKeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
 	};
 }

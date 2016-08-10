@@ -12,6 +12,7 @@
 #include <Api/CoverCache.h>
 #include "Shell.xaml.h"
 #include "CurrentPlaylistPage.xaml.h"
+#include <Environment.h>
 
 using namespace Tidal;
 
@@ -48,7 +49,7 @@ MiniPlayerView::MiniPlayerView()
 
 void Tidal::MiniPlayerView::UpdateAdaptiveState()
 {
-	if (false) { // if xbox
+	if (env::isRunningOnXbox()) { // if xbox
 		narrowTimelineStateTrigger->IsActive = false;
 		largeStateTrigger->IsActive = false;
 		largeTimelineStateTrigger->IsActive = false;

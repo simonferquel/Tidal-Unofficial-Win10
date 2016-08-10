@@ -96,7 +96,7 @@
                                 <VisualState x:Name="Selected">
                                     <VisualState.Setters>
                                         <Setter Target="ContentPresenter.Foreground"
-                                                Value="{ThemeResource ButtonForeground}" />
+                                                Value="{StaticResource TidalAccentBrush}" />
                                     </VisualState.Setters>
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="focusIndicator"
@@ -108,7 +108,7 @@
                                 <VisualState x:Name="SelectedUnfocused">
                                     <VisualState.Setters>
                                         <Setter Target="ContentPresenter.Foreground"
-                                                Value="{ThemeResource ButtonForeground}" />
+                                                Value="{StaticResource TidalAccentBrush}" />
                                     </VisualState.Setters>
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="focusIndicator"
@@ -120,7 +120,7 @@
                                 <VisualState x:Name="SelectedPointerOver">
                                     <VisualState.Setters>
                                         <Setter Target="ContentPresenter.Foreground"
-                                                Value="{ThemeResource ButtonForeground}" />
+                                                Value="{StaticResource TidalAccentBrush}" />
                                     </VisualState.Setters>
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="focusIndicator"
@@ -132,7 +132,7 @@
                                 <VisualState x:Name="SelectedPressed">
                                     <VisualState.Setters>
                                         <Setter Target="ContentPresenter.Foreground"
-                                                Value="{ThemeResource ButtonForeground}" />
+                                                Value="{StaticResource TidalAccentBrush}" />
                                     </VisualState.Setters>
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="focusIndicator"
@@ -153,7 +153,7 @@
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             Margin="{TemplateBinding Padding}" />
 
-                        <Rectangle x:Name="focusIndicator" Margin="12,0,22,4" Height="3" Fill="{ThemeResource ButtonForeground}" Opacity="0"
+                        <Rectangle x:Name="focusIndicator" Margin="12,0,22,4" Height="3" Fill="{StaticResource TidalAccentBrush}" Opacity="0"
                                    Visibility="{Binding HasHeaderFocus, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource btvc}}"  VerticalAlignment="Bottom"/>
                     </Grid>
                 </ControlTemplate>

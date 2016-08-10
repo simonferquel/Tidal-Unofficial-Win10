@@ -7,12 +7,19 @@
 #include "ArtistPage.xaml.h"
 #include "Shell.xaml.h"
 #include <Api/CoverCache.h>
+#include <XboxUI/XboxShell.xaml.h>
 
 void Tidal::PlaylistResumeItemVM::Go()
 {
 	auto shell = dynamic_cast<Shell^>(Windows::UI::Xaml::Window::Current->Content);
 	if (shell) {
 		shell->Frame->Navigate(PlaylistPage::typeid, Uuid);
+	}
+	else {
+		auto xbShell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
+		if (xbShell) {
+			xbShell->Frame->Navigate(PlaylistPage::typeid, Uuid);
+		}
 	}
 }
 

@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     SizeChanged="OnSizeChanged"
+    Loaded="OnLoaded"
+    NavigationCacheMode="Enabled"
     mc:Ignorable="d">
     
     <Page.Resources>
@@ -43,7 +45,9 @@
             <local:XboxOneHubSection Header="current playlist" >
                 <local:XboxHomeCurrentPlaylistWidget />
             </local:XboxOneHubSection>
-
+            <local:XboxOneHubSection Header="catalog">
+                <local:XboxHomeCatalogWidget />
+            </local:XboxOneHubSection>
             <local:XboxOneHubSection Header="my music" >
                 <local:XboxHomeMyMusicWidget />
             </local:XboxOneHubSection>

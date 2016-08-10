@@ -13,6 +13,7 @@
 #include "UnauthenticatedDialog.h"
 #include "AddToPlaylistDialog.xaml.h"
 #include "MenuFlyouts.h"
+#include "XboxUI/XboxShell.xaml.h"
 using namespace api;
 Windows::UI::Xaml::Input::ICommand^ Tidal::TrackItemVM::PlayCommand::get() {
 	auto lst = _trackListRef.Resolve<Windows::Foundation::Collections::IIterable<TrackItemVM^>>();
@@ -29,12 +30,24 @@ void Tidal::TrackItemVM::GoToArtist()
 	if (shell) {
 		shell->Frame->Navigate(ArtistPage::typeid, _trackInfo.artist.id);
 	}
+	else {
+		auto xbshell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
+		if (xbshell) {
+			xbshell->Frame->Navigate(ArtistPage::typeid, _trackInfo.artist.id);
+		}
+	}
 }
 void Tidal::TrackItemVM::GoToAlbum()
 {
 	auto shell = dynamic_cast<Shell^>(Windows::UI::Xaml::Window::Current->Content);
 	if (shell) {
 		shell->Frame->Navigate(AlbumPage::typeid, _trackInfo.album.id.ToString());
+	}
+	else {
+		auto xbshell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
+		if (xbshell) {
+			xbshell->Frame->Navigate(AlbumPage::typeid, _trackInfo.album.id.ToString());
+		}
 	}
 }
 void Tidal::TrackItemVM::AddFavorite()

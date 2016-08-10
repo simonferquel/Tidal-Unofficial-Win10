@@ -64,6 +64,7 @@
     <ClCompile Include="LocalFileManager.cpp" />
     <ClCompile Include="Api\PlaybackReport.cpp" />
     <ClCompile Include="localdata\InsertPlaybackReportQuery.cpp" />
+    <ClCompile Include="Environment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -137,5 +138,6 @@
     <ClInclude Include="Hat.h" />
     <ClInclude Include="Api\PlaybackReport.h" />
     <ClInclude Include="localdata\InsertPlaybackReportQuery.h" />
+    <ClInclude Include="Environment.h" />
   </ItemGroup>
 </Project>

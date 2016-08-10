@@ -33,5 +33,6 @@ namespace Tidal
 		VideoPlayer();
 	private:
 		void OnMediaFailed(Platform::Object^ sender, Windows::UI::Xaml::ExceptionRoutedEventArgs^ e);
+		void OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }
