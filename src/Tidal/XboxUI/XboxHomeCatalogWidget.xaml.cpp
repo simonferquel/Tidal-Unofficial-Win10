@@ -9,6 +9,8 @@
 #include "XboxArticleListPage.xaml.h"
 #include "XboxArticleListPageParameter.h"
 #include "XboxShell.xaml.h"
+#include "XboxMoodsPage.xaml.h"
+#include "XboxGenresPage.xaml.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -39,7 +41,7 @@ XboxHomeCatalogWidget::XboxHomeCatalogWidget()
 void Tidal::XboxHomeCatalogWidget::GoToNews()
 {
 	auto param = ref new XboxArticleListPageParameter();
-	param->Title = L"WHAT'S NEW";
+	param->Title = L"What's new";
 	param->PromotionListName = L"NEWS";
 	param->ListName = L"featured";
 	auto shell = dynamic_cast<XboxShell^>(Window::Current->Content);
@@ -51,7 +53,7 @@ void Tidal::XboxHomeCatalogWidget::GoToNews()
 void Tidal::XboxHomeCatalogWidget::GoToRising()
 {
 	auto param = ref new XboxArticleListPageParameter();
-	param->Title = L"RISING";
+	param->Title = L"Rising";
 	param->PromotionListName = L"RISING";
 	param->ListName = L"rising";
 	auto shell = dynamic_cast<XboxShell^>(Window::Current->Content);
@@ -63,7 +65,7 @@ void Tidal::XboxHomeCatalogWidget::GoToRising()
 void Tidal::XboxHomeCatalogWidget::GoToDiscovery()
 {
 	auto param = ref new XboxArticleListPageParameter();
-	param->Title = L"DISCOVERY";
+	param->Title = L"Discovery";
 	param->PromotionListName = L"DISCOVERY";
 	param->ListName = L"discovery";
 	auto shell = dynamic_cast<XboxShell^>(Window::Current->Content);
@@ -74,10 +76,18 @@ void Tidal::XboxHomeCatalogWidget::GoToDiscovery()
 
 void Tidal::XboxHomeCatalogWidget::GoToPlaylists()
 {
+	auto shell = dynamic_cast<XboxShell^>(Window::Current->Content);
+	if (shell) {
+		shell->Frame->Navigate(XboxMoodsPage::typeid);
+	}
 }
 
 void Tidal::XboxHomeCatalogWidget::GoToGenres()
 {
+	auto shell = dynamic_cast<XboxShell^>(Window::Current->Content);
+	if (shell) {
+		shell->Frame->Navigate(XboxGenresPage::typeid);
+	}
 }
 
 void Tidal::XboxHomeCatalogWidget::GoToVideos()

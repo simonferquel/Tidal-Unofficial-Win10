@@ -154,6 +154,7 @@ void Tidal::XboxOneHub::ComputeTotalExtentAndMaterializeBodyPresenters()
 			SetBodyPresenter(container, presenter);
 			presenter->Width = sectionWidth;
 			presenter->Height = _body->ActualHeight;
+			presenter->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 			FocusHelper::SetIsBindableFocusEnabled(presenter, true);
 			_header->RegisterPropertyChangedCallback(FocusHelper::IsFocusWithinProperty,
 				ref new DependencyPropertyChangedCallback([container](Windows::UI::Xaml::DependencyObject^ sender, Windows::UI::Xaml::DependencyProperty^ dp) {
@@ -325,6 +326,16 @@ void Tidal::XboxOneHub::OnSelectionChanged(Platform::Object ^sender, Windows::UI
 		batch->End();
 		
 	}
+
+	auto minIndex = SelectedIndex - 1;
+	auto maxIndex = SelectedIndex + 1;
+
+	for (auto ix = 0; ix < Items->Size; ++ix) {
+		auto presenter = GetBodyPresenter(ContainerFromIndex(ix));
+		if (presenter) {
+			presenter->Visibility = (ix<minIndex || ix>maxIndex) ? Windows::UI::Xaml::Visibility::Collapsed : Windows::UI::Xaml::Visibility::Visible;
+		}
+	}
 }
 
 
@@ -341,6 +352,15 @@ void Tidal::XboxOneHub::OnLoaded(Platform::Object ^sender, Windows::UI::Xaml::Ro
 		SelectedIndex = 0;
 	}
 	ComputeTotalExtentAndMaterializeBodyPresenters();
+	auto minIndex = SelectedIndex - 1;
+	auto maxIndex = SelectedIndex + 1;
+
+	for (auto ix = 0; ix < Items->Size; ++ix) {
+		auto presenter = GetBodyPresenter(ContainerFromIndex(ix));
+		if (presenter) {
+			presenter->Visibility = (ix<minIndex || ix>maxIndex) ? Windows::UI::Xaml::Visibility::Collapsed : Windows::UI::Xaml::Visibility::Visible;
+		}
+	}
 }
 
 

@@ -1,0 +1,89 @@
+﻿<Page
+    x:Class="Tidal.XboxOnePlaylistsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+        <Grid Margin="0,-64,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="64" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="title"  Text="Playlists" Margin="300,0,0,0" 
+                   HorizontalAlignment="Left" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource PageTitleStyle}" FontSize="40" FontWeight="Thin" Foreground="{ThemeResource ButtonForegroundDisabled}" >
+                <TextBlock.Transitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition/>
+                    </TransitionCollection>
+                </TextBlock.Transitions>
+            </TextBlock>
+        <GridView x:Name="playlistsGV" Margin="48,0" Padding="0,0,0,27" Grid.Row="1"
+                  SelectionMode="None"
+                  IsItemClickEnabled="True" local:BindableSizeHelper.Enabled="True">
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem" >
+                    <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+                    <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                    <Setter Property="TabNavigation" Value="Local"/>
+                    <Setter Property="IsHoldingEnabled" Value="True"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Margin" Value="12"/>
+                    <Setter Property="MinWidth" Value="{ThemeResource GridViewItemMinWidth}"/>
+                    <Setter Property="MinHeight" Value="{ThemeResource GridViewItemMinHeight}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="GridViewItem">
+                                <ListViewItemPresenter CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" ContentMargin="{TemplateBinding Padding}" CheckMode="Overlay" ContentTransitions="{TemplateBinding ContentTransitions}" CheckBoxBrush="{ThemeResource SystemControlBackgroundChromeMediumBrush}" DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}" FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" PointerOverForeground="{ThemeResource SystemControlForegroundBaseHighBrush}" PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}" ReorderHintOffset="{ThemeResource GridViewItemReorderHintThemeOffset}" SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}" SelectionCheckMarkVisualEnabled="True" SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}" SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}" SelectedBackground="{ThemeResource SystemControlHighlightAccentBrush}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </GridView.ItemContainerStyle>
+            <GridView.Resources>
+
+                <local:MetricsHelper x:Key="MetricsMedium" DesiredItemSize="156" ItemMargin="12" ViewportSize="{Binding (local:BindableSizeHelper.BindableWidth), Mode=OneWay,ElementName=playlistsGV}"/>
+                    <local:FactorConverter x:Key="FactorMedium" Factor="0.66875" />
+               
+            </GridView.Resources>
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="local:PlaylistResumeItemVM">
+                    <StackPanel  Width="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}}"
+                                  Background="#EE171717">
+
+                        <Image Height="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}, Converter={StaticResource FactorMedium}}">
+                            <Image.Source>
+                                <BitmapImage DecodePixelType="Logical" DecodePixelWidth="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}}" 
+                                                         DecodePixelHeight="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}, Converter={StaticResource FactorMedium}}"
+                                         UriSource="{x:Bind ImageUrl}" />
+                            </Image.Source>
+                        </Image>
+                        <Grid Padding="4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock  TextTrimming="CharacterEllipsis" Margin="0" FontSize="13.333">
+                				<Run Text="{x:Bind Title}"/>
+                            </TextBlock>
+                            <TextBlock Grid.Row="1"  TextTrimming="CharacterEllipsis" Margin="0,0,8,0" Foreground="#FF999999" FontSize="12">
+                				
+                                    <Run>Created by </Run>
+                                        <Run Text="{x:Bind ArtistName}" />
+
+                            </TextBlock>
+                        </Grid>
+                    </StackPanel>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+        </Grid>
+</Page>

@@ -277,6 +277,9 @@
     <Page Include="XboxUI\XboxHomeMyMusicWidget.xaml" />
     <Page Include="XboxUI\XboxHomeCatalogWidget.xaml" />
     <Page Include="XboxUI\XboxArticleListPage.xaml" />
+    <Page Include="XboxUI\XboxMoodsPage.xaml" />
+    <Page Include="XboxUI\XboxOnePlaylistsPage.xaml" />
+    <Page Include="XboxUI\XboxGenresPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\WiMP-Icons.ttf" />

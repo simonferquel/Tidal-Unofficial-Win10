@@ -54,7 +54,7 @@ VideoPlayer::VideoPlayer()
 {
 	InitializeComponent();
 	if (env::isRunningOnXbox()) {
-		Margin = Thickness(48, 27, 48, 27);
+		Margin = Thickness(48, 0, 48, 27);
 	}
 }
 
@@ -68,8 +68,4 @@ void Tidal::VideoPlayer::OnMediaFailed(Platform::Object^ sender, Windows::UI::Xa
 
 void Tidal::VideoPlayer::OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	auto focusable = FindFirstTabStopDescendant(this);
-	if (focusable) {
-		focusable->Focus(Windows::UI::Xaml::FocusState::Keyboard);
-	}
 }

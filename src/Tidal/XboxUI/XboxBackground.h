@@ -21,5 +21,12 @@ namespace Tidal
 		void OnLoaded(Platform::Object ^sender, Windows::UI::Xaml::RoutedEventArgs ^e);
 		void OnUnloaded(Platform::Object ^sender, Windows::UI::Xaml::RoutedEventArgs ^e);
 		void SetParallaxAmountBinding(Windows::UI::Composition::ExpressionAnimation^ anim);
+
+		property double Saturation {double get(); void set(double value); }
+		property double BlurAmount {double get(); void set(double value); }
+		property double BlendAlpha {double get(); void set(double value); }
+		property double BlendRed {double get(); void set(double value); }
+		property double BlendGreen {double get(); void set(double value); }
+		property double BlendBlue {double get(); void set(double value); }
 	};
 }

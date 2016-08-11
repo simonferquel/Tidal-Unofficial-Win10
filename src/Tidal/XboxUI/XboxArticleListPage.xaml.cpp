@@ -12,6 +12,9 @@
 #include "../XboxOneHub.h"
 #include <AudioService.h>
 #include "XboxShell.xaml.h"
+#include "SublistItemVM.h"
+#include <tools/AsyncHelpers.h>
+#include <tools/TimeUtils.h>
 using namespace Tidal;
 
 using namespace Platform;
@@ -36,48 +39,79 @@ XboxArticleListPage::XboxArticleListPage()
 void Tidal::XboxArticleListPage::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ args)
 {
 	auto p = dynamic_cast<XboxArticleListPageParameter^>(args->Parameter);
-	if (!p) {
+	if (p) {
+		title->Text = p->Title;
+		selectionGV->ItemsSource = getNewsPromotionsDataSource(p->PromotionListName);
+		LoadAsync(p->ListName, L"new");
 		return;
 	}
-	title->Text = p->Title;
-	selectionGV->ItemsSource = getNewsPromotionsDataSource(p->PromotionListName);
-	LoadAsync(p->ListName);
+	auto genre = dynamic_cast<SublistItemVM^>(args->Parameter);
+	if (genre) {
+		secSelection->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+		title->Text = genre->Name;
+		LoadAsync(L"genres", genre->Path);
+	}
 }
 
 
-concurrency::task<void> Tidal::XboxArticleListPage::LoadAsync(Platform::String ^ listName)
+concurrency::task<void> Tidal::XboxArticleListPage::LoadAsync(Hat<Platform::String> listName, Hat<Platform::String> group)
 {
-	videosGV->ItemsSource = getNewsVideosDataSource(listName);
-	playlistsGV->ItemsSource = getNewsPlaylistsDataSource(listName);
-	albumsGV->ItemsSource = getNewsAlbumsDataSource(listName);
+	
+	
 
-	auto tracks = co_await getNewsTrackItemsAsync(concurrency::cancellation_token::none(),
-		listName);
-	tracksLV->ItemsSource = tracks;
-	_tpsm = std::make_shared<TracksPlaybackStateManager>();
-	_tpsm->initialize(tracks, Dispatcher);
 
-	auto subLists = co_await getSublistsAsync(concurrency::cancellation_token::none(), listName);
-	if (!subLists->at(0).hasAlbums) {
+	auto subLists = co_await getSublistsAsync(concurrency::cancellation_token::none(), listName.get());
+	while (!subLists->empty() && subLists->at(0).path != group.get()->Data()) {
+		subLists->erase(subLists->begin());
+	}
+	
+	if (subLists->empty() || !subLists->at(0).hasAlbums) {
 		unsigned int idx;
 		hub->Items->IndexOf(secAlbums, &idx);
 		hub->Items->RemoveAt(idx);
 	}
-	if (!subLists->at(0).hasPlaylists) {
+	else {
+		albumsGV->ItemsSource = getNewsAlbumsDataSource(listName.get(), group.get());
+	}
+	if (subLists->empty() || !subLists->at(0).hasPlaylists) {
 		unsigned int idx;
 		hub->Items->IndexOf(secPlaylists, &idx);
 		hub->Items->RemoveAt(idx);
 	}
-	if (!subLists->at(0).hasTracks) {
-		unsigned int idx;
-		hub->Items->IndexOf(secTracks, &idx);
-		hub->Items->RemoveAt(idx);
+	else {
+		playlistsGV->ItemsSource = getNewsPlaylistsDataSource(listName.get(), group.get());
 	}
-	if (!subLists->at(0).hasVideos) {
+	if (subLists->empty() || !subLists->at(0).hasVideos) {
 		unsigned int idx;
 		hub->Items->IndexOf(secVideos, &idx);
 		hub->Items->RemoveAt(idx);
 	}
+
+	else {
+		videosGV->ItemsSource = getNewsVideosDataSource(listName.get(), group.get());
+	}
+	
+	if (subLists->empty() || !subLists->at(0).hasTracks) {
+		unsigned int idx;
+		hub->Items->IndexOf(secTracks, &idx);
+		hub->Items->RemoveAt(idx);
+	}
+	else {
+
+		auto tracks = co_await getNewsTrackItemsAsync(concurrency::cancellation_token::none(),
+			listName.get(), group.get());
+		tracksLV->ItemsSource = tracks;
+		_tpsm = std::make_shared<TracksPlaybackStateManager>();
+		_tpsm->initialize(tracks, Dispatcher);
+	}
+	co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(100)), concurrency::cancellation_token::none());
+	if (listName.get() == L"genres") {
+	//	hub->SelectedIndex = 2;
+		hub->Items->RemoveAt(0);
+		hub->SelectedIndex = 0;
+	}
+	
+
 }
 
 void Tidal::XboxArticleListPage::OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)

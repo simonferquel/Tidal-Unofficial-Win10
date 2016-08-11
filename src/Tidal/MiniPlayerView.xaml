@@ -188,7 +188,10 @@
                 <VisualState x:Name="Xbox">
                     <VisualState.Setters>
                         <Setter Target="trackInfo.Visibility" Value="Collapsed" />
-                        <Setter Target="actionButtons.(RelativePanel.AlignLeftWithPanel)" Value="True" />
+                        <Setter Target="actionButtons.(RelativePanel.AlignLeftWithPanel)" Value="False" />
+                        <Setter Target="actionButtons.(RelativePanel.AlignRightWithPanel)" Value="False" />
+                        <Setter Target="actionButtons.HorizontalAlignment" Value="Center" />
+                        <Setter Target="toggleView.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                     <VisualState.StateTriggers>
                         <StateTrigger x:Name="xboxStateTrigger"/>

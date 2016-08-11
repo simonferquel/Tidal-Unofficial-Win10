@@ -60,18 +60,24 @@
         </Style>
 
     </Page.Resources>
-    <Grid >
+    <Grid Margin="0,-64,0,0">
         <Grid.Resources>
 
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="32" />
+            <RowDefinition Height="64" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock x:Name="title"  Text="TITLE" Margin="60,0,0,0" 
+        <TextBlock x:Name="title"  Text="TITLE" Margin="300,0,0,0" 
                    HorizontalAlignment="Left" 
                    VerticalAlignment="Center" 
-                   Style="{StaticResource PageTitleStyle}" />
+                   Style="{StaticResource PageTitleStyle}" FontSize="40" FontWeight="Thin" Foreground="{ThemeResource ButtonForegroundDisabled}" >
+            <TextBlock.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition/>
+                </TransitionCollection>
+            </TextBlock.Transitions>
+        </TextBlock>
         <local:XboxOneHub Grid.Row="1" x:Name="hub">
             <local:XboxOneHubSection x:Name="secSelection" Header="SELECTION">
                 <Grid x:Name="selectionGrid" local:BindableSizeHelper.Enabled="True">
@@ -295,16 +301,16 @@
                     </StackPanel>
                 </local:XboxOneHubSection.Header>
                 <ListView x:Name="tracksLV" SelectionMode="None" IsItemClickEnabled="False"
-                          Padding="0"
+                          Padding="0,12,0,0"
                           HorizontalContentAlignment="Stretch"
                           VerticalContentAlignment="Stretch" ItemContainerStyle="{StaticResource TracksItemStyle}">
                     <ListView.Footer>
-                        <Border Height="27" />
+                        <Border Height="39" />
                     </ListView.Footer>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:TrackItemVM">
-                            <Border Background="#EE171717" BorderThickness="0,0,0,1" BorderBrush="Transparent" >
-                                <Grid Height="48">
+                            <Border Background="#33FFFFFF" BorderThickness="0,0,0,3" BorderBrush="Transparent" >
+                                <Grid Height="48" Opacity="{x:Bind Opacity, Mode=OneWay}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="48" />
                                         <ColumnDefinition Width="*"/>
@@ -315,11 +321,13 @@
                                    Width="48"
                                    Height="48"/>
                                     <Button Style="{StaticResource XboxNoBorderButtonStyle}"
-                                            Click="OnTogglePlayPause"
+                                            Click="{x:Bind TogglePlayPause}"
                                     Width="48"
                                     Height="48"
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
+                                            UseSystemFocusVisuals="True"
+                                            FocusVisualPrimaryBrush="{StaticResource TidalAccentBrush}"
                                     Background="Transparent">
                                         <Grid>
                                             <SymbolIcon Symbol="Play" Visibility="{x:Bind PlayButtonVisibility, Mode=OneWay}"/>
@@ -331,12 +339,12 @@
                                     
                                     <TextBlock Grid.Column="1" Margin="12,0,0,0"
                                        VerticalAlignment="Center" Text="{x:Bind Title}" FontWeight="{x:Bind TitleFontWeight, Mode=OneWay}"></TextBlock>
-                                    <HyperlinkButton Grid.Column="2" Margin="12,0,0,0" Foreground="White"
+                                    <Button Style="{StaticResource XboxNoBorderButtonStyle}" Grid.Column="2" Margin="12,0,0,0" FontWeight="SemiLight" FontSize="13" 
                                              HorizontalAlignment="Left"
-                                             VerticalAlignment="Center" Content="{x:Bind ArtistName}" Click="{x:Bind GoToArtist}"></HyperlinkButton>
-                                    <HyperlinkButton Grid.Column="3" Margin="12,0,0,0" Foreground="White"
+                                             VerticalAlignment="Center" Content="{x:Bind ArtistName}" Click="{x:Bind GoToArtist}"></Button>
+                                    <Button Style="{StaticResource XboxNoBorderButtonStyle}" Grid.Column="3" Margin="12,0,0,0"  FontWeight="SemiLight" FontSize="13" 
                                              HorizontalAlignment="Left"
-                                             VerticalAlignment="Center" Content="{x:Bind AlbumTitle}" Click="{x:Bind GoToAlbum}"></HyperlinkButton>
+                                             VerticalAlignment="Center" Content="{x:Bind AlbumTitle}" Click="{x:Bind GoToAlbum}"></Button>
                                 </Grid>
                             </Border>
                         </DataTemplate>

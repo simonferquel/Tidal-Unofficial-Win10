@@ -14,20 +14,27 @@
         <Style x:Key="TrackListViewItemStyle" TargetType="ListViewItem">
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
             <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource ListViewItemBackground}"/>
+            <Setter Property="Foreground" Value="{ThemeResource ListViewItemForeground}"/>
             <Setter Property="TabNavigation" Value="Local"/>
+            <Setter Property="IsTabStop" Value="False" />
             <Setter Property="IsHoldingEnabled" Value="True"/>
-            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Padding" Value="12,0,12,0"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="VerticalContentAlignment" Value="Stretch"/>
             <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
             <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
-            <Setter Property="FocusVisualMargin" Value="0,-8,0,8" />
+            <Setter Property="AllowDrop" Value="False"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="FocusVisualMargin" Value="0"/>
+            <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}"/>
+            <Setter Property="FocusVisualPrimaryThickness" Value="2"/>
+            <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}"/>
+            <Setter Property="FocusVisualSecondaryThickness" Value="1"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListViewItem">
-                        <ListViewItemPresenter Margin="8,0,8,16" CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" ContentMargin="{TemplateBinding Padding}" CheckMode="Inline" ContentTransitions="{TemplateBinding ContentTransitions}" CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}" FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}" PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}" ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}" SelectionCheckMarkVisualEnabled="True" SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}" SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}" SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        <ListViewItemPresenter CheckBrush="{ThemeResource ListViewItemCheckBrush}" ContentMargin="{TemplateBinding Padding}" CheckMode="{ThemeResource ListViewItemCheckMode}" ContentTransitions="{TemplateBinding ContentTransitions}" CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}" DragForeground="{ThemeResource ListViewItemDragForeground}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackground}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}" FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}" FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}" FocusVisualMargin="{TemplateBinding FocusVisualMargin}" FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}" FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}" FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Control.IsTemplateFocusTarget="True" PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}" PressedBackground="{ThemeResource ListViewItemBackgroundPressed}" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}" PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}" ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}" SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}" SelectedForeground="{ThemeResource ListViewItemForegroundSelected}" SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}" SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -45,7 +52,7 @@
                 <VisualState x:Name="PlaylistNotEmpty"></VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Grid>
+        <Grid Margin="0,0,0,12">
             <Grid x:Name="nothingToPlayRoot" Visibility="Collapsed" >
                 <TextBlock TextAlignment="Center" VerticalAlignment="Center"
                        HorizontalAlignment="Center" Style="{StaticResource SectionHeaderStyle}">
@@ -56,12 +63,12 @@
                     </TextBlock.Inlines>
                 </TextBlock>
             </Grid>
-            <Grid x:Name="playlistNotEmptyRoot" >
+            <Grid x:Name="playlistNotEmptyRoot" Margin="0,12,0,0" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Grid VerticalAlignment="Top" Margin="12,0">
+                <Grid VerticalAlignment="Top" Margin="12,0" Background="#FF171717">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
@@ -75,40 +82,52 @@
                             <Run  x:Name="currentTrackArtist" FontSize="18" FontFamily="Segoe UI Semibold" FontWeight="Bold" />
                         </TextBlock>
                     </Border>
-                    <local:MiniPlayerView Grid.Row="2" />
+                    <local:MiniPlayerView Grid.Row="2" HorizontalAlignment="Center" />
                 </Grid>
                 <ListView Margin="0,0,12,0" x:Name="lv" Grid.Column="1" ItemContainerStyle="{StaticResource TrackListViewItemStyle}"
-                          IsFocusEngagementEnabled="True"
+                          
                           SelectionMode="None"
-                          IsItemClickEnabled="True"
-                          ItemClick="OnTrackClick">
+                          IsItemClickEnabled="False">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:TrackItemVM">
-                            
-                                <Grid x:Name="tracksHeaderGrid" Opacity="{x:Bind Opacity}">
+                            <Border Background="#33FFFFFF" BorderThickness="0,0,0,3" BorderBrush="Transparent" >
+                                <Grid Height="48" Opacity="{x:Bind Opacity, Mode=OneWay}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="48" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="48" />
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
-                                    <Image Grid.RowSpan="2" Grid.Column="0"   Source="{x:Bind ImageUrl}" />
-                                    <TextBlock Grid.Column="1" VerticalAlignment="Bottom"  Margin="12,0,0,0" TextTrimming="CharacterEllipsis"  FontWeight="{x:Bind TitleFontWeight, Mode=OneWay}"
-                               FontSize="13.333">
-        				<Run Text="{x:Bind Title}"/>
-                                    </TextBlock>
-                                    <TextBlock FontSize="12" Foreground="#FF999999" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top"  Margin="12,0,0,0" TextTrimming="CharacterEllipsis">
-                        
-        				<Run Text="{x:Bind ArtistName}"/>
-                                    </TextBlock>
+                                    <Image Source="{x:Bind ImageUrl}"
+                                   Width="48"
+                                   Height="48"/>
+                                    <Button Style="{StaticResource XboxNoBorderButtonStyle}"
+                                            Click="{x:Bind TogglePlayPause}"
+                                    Width="48"
+                                    Height="48"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                            UseSystemFocusVisuals="True"
+                                            FocusVisualPrimaryBrush="{StaticResource TidalAccentBrush}"
+                                    Background="Transparent">
+                                        <Grid>
+                                            <SymbolIcon Symbol="Play" Visibility="{x:Bind PlayButtonVisibility, Mode=OneWay}"/>
+                                            <SymbolIcon Symbol="Pause" 
+                                            Visibility="{x:Bind PauseButtonVisibility, Mode=OneWay}" />
 
-                                    <FontIcon  Grid.Column="2" Grid.RowSpan="2"  VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="#" />
+                                        </Grid>
+                                    </Button>
+
+                                    <TextBlock Grid.Column="1" Margin="12,0,0,0"
+                                       VerticalAlignment="Center" Text="{x:Bind Title}" FontWeight="{x:Bind TitleFontWeight, Mode=OneWay}"></TextBlock>
+                                    <Button Style="{StaticResource XboxNoBorderButtonStyle}" Grid.Column="2" Margin="12,0,0,0" FontSize="13"  FontWeight="SemiLight"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Center" Content="{x:Bind ArtistName}" Click="{x:Bind GoToArtist}"></Button>
+                                    <Button Style="{StaticResource XboxNoBorderButtonStyle}" Grid.Column="3" Margin="12,0,0,0" FontSize="13"  FontWeight="SemiLight"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Center" Content="{x:Bind AlbumTitle}" Click="{x:Bind GoToAlbum}"></Button>
                                 </Grid>
-
-                        
+                            </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                     <ListView.Footer>

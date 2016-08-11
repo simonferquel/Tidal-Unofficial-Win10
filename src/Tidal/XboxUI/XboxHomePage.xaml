@@ -19,65 +19,17 @@
         
         <local:XboxOneHub x:Name="hub">
 
-            <local:XboxOneHubSection Header="current playlist" >
+            <local:XboxOneHubSection Header="CURRENT PLAYLIST" >
                 <local:XboxHomeCurrentPlaylistWidget />
             </local:XboxOneHubSection>
-            <local:XboxOneHubSection Header="catalog">
+            <local:XboxOneHubSection Header="CATALOG">
                 <local:XboxHomeCatalogWidget />
             </local:XboxOneHubSection>
-            <local:XboxOneHubSection Header="my music" >
+            <local:XboxOneHubSection Header="MY MUSIC" >
                 <local:XboxHomeMyMusicWidget />
             </local:XboxOneHubSection>
 
-            <local:XboxOneHubSection Header="Section 3" >
-                <Grid Margin="12,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Rectangle Fill="Yellow" />
-                    <Button Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 3</Button>
-                    <Button Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 3</Button>
-                    <Button Grid.Column="0" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 3</Button>
-                    <Button Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 3</Button>
-                    <Button Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 3</Button>
-                    <Button Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 3</Button>
-                    <Button Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 3</Button>
-                    <Button Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 3</Button>
-                    <Button Grid.Column="2" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 3</Button>
-                </Grid>
-            </local:XboxOneHubSection>
-
-            <local:XboxOneHubSection Header="Section 4" >
-                <Grid Margin="12,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Rectangle Fill="Green" />
-                    <Button Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 4</Button>
-                    <Button Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 4</Button>
-                    <Button Grid.Column="0" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 4</Button>
-                    <Button Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 4</Button>
-                    <Button Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 4</Button>
-                    <Button Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 4</Button>
-                    <Button Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 4</Button>
-                    <Button Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 4</Button>
-                    <Button Grid.Column="2" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">Button 4</Button>
-                </Grid>
-            </local:XboxOneHubSection>
+           
         </local:XboxOneHub>
     </Grid>
 </Page>

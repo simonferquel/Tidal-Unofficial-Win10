@@ -346,6 +346,9 @@
       <DependentUpon>XboxUI\XboxArticleListPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="XboxUI\XboxBackground.h" />
+    <ClInclude Include="XboxUI\XboxGenresPage.xaml.h">
+      <DependentUpon>XboxUI\XboxGenresPage.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="XboxUI\XboxHomeCatalogWidget.xaml.h">
       <DependentUpon>XboxUI\XboxHomeCatalogWidget.xaml</DependentUpon>
     </ClInclude>
@@ -357,6 +360,12 @@
     </ClInclude>
     <ClInclude Include="XboxUI\XboxHomePage.xaml.h">
       <DependentUpon>XboxUI\XboxHomePage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="XboxUI\XboxMoodsPage.xaml.h">
+      <DependentUpon>XboxUI\XboxMoodsPage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="XboxUI\XboxOnePlaylistsPage.xaml.h">
+      <DependentUpon>XboxUI\XboxOnePlaylistsPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="XboxUI\XboxShell.xaml.h">
       <DependentUpon>XboxUI\XboxShell.xaml</DependentUpon>
@@ -451,6 +460,9 @@
     <Page Include="XboxUI\XboxArticleListPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="XboxUI\XboxGenresPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="XboxUI\XboxHomeCatalogWidget.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -461,6 +473,12 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="XboxUI\XboxHomePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxMoodsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxOnePlaylistsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="XboxUI\XboxShell.xaml">
@@ -666,6 +684,9 @@
       <DependentUpon>XboxUI\XboxArticleListPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="XboxUI\XboxBackground.cpp" />
+    <ClCompile Include="XboxUI\XboxGenresPage.xaml.cpp">
+      <DependentUpon>XboxUI\XboxGenresPage.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="XboxUI\XboxHomeCatalogWidget.xaml.cpp">
       <DependentUpon>XboxUI\XboxHomeCatalogWidget.xaml</DependentUpon>
     </ClCompile>
@@ -677,6 +698,12 @@
     </ClCompile>
     <ClCompile Include="XboxUI\XboxHomePage.xaml.cpp">
       <DependentUpon>XboxUI\XboxHomePage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="XboxUI\XboxMoodsPage.xaml.cpp">
+      <DependentUpon>XboxUI\XboxMoodsPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="XboxUI\XboxOnePlaylistsPage.xaml.cpp">
+      <DependentUpon>XboxUI\XboxOnePlaylistsPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="XboxUI\XboxShell.xaml.cpp">
       <DependentUpon>XboxUI\XboxShell.xaml</DependentUpon>

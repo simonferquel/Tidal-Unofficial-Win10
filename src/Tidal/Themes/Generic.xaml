@@ -63,7 +63,7 @@
     <local:BoolToVisibilityConverter x:Key="btvc" />
     <Style TargetType="local:XboxOneHubSection" >
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Padding" Value="12,11,22,13" />
+        <Setter Property="Padding" Value="12,11,22,9" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="Template">
@@ -153,7 +153,7 @@
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             Margin="{TemplateBinding Padding}" />
 
-                        <Rectangle x:Name="focusIndicator" Margin="12,0,22,4" Height="3" Fill="{StaticResource TidalAccentBrush}" Opacity="0"
+                        <Rectangle x:Name="focusIndicator" Margin="12,0,22,4" Height="2" Fill="{StaticResource TidalAccentBrush}" Opacity="0"
                                    Visibility="{Binding HasHeaderFocus, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource btvc}}"  VerticalAlignment="Bottom"/>
                     </Grid>
                 </ControlTemplate>
@@ -170,7 +170,8 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <ContentControl HorizontalContentAlignment="Stretch"  x:Name="PART_Header" UseSystemFocusVisuals="False">
+                        <ContentControl HorizontalContentAlignment="Stretch"  x:Name="PART_Header" UseSystemFocusVisuals="False"
+                                        Margin="0,6,0,2">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -192,10 +193,17 @@
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
+                    <StackPanel Orientation="Horizontal" >
+                        <StackPanel.ChildrenTransitions>
+                            <TransitionCollection>
+                                <EntranceThemeTransition FromVerticalOffset="0" FromHorizontalOffset="50" />
+                            </TransitionCollection>
+                        </StackPanel.ChildrenTransitions>
+                    </StackPanel>
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
+        
     </Style>
 
     <Style TargetType="local:XboxBackground" >

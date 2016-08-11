@@ -89,7 +89,7 @@
                 <ScrollViewer VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
                         <Rectangle Height="1" Fill="Black"/>
-                        <local:LoginView />
+                        <local:LoginView Height="80"/>
                         <ListView x:Name="menuEntriesLV" ItemContainerStyle="{StaticResource ListViewItemStyle1}"
                                   SelectionMode="Single"
                                   SelectionChanged="OnSelectedMenuItemChanged">

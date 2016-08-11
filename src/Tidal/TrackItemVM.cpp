@@ -14,6 +14,7 @@
 #include "AddToPlaylistDialog.xaml.h"
 #include "MenuFlyouts.h"
 #include "XboxUI/XboxShell.xaml.h"
+#include "AudioService.h"
 using namespace api;
 Windows::UI::Xaml::Input::ICommand^ Tidal::TrackItemVM::PlayCommand::get() {
 	auto lst = _trackListRef.Resolve<Windows::Foundation::Collections::IIterable<TrackItemVM^>>();
@@ -22,6 +23,15 @@ Windows::UI::Xaml::Input::ICommand^ Tidal::TrackItemVM::PlayCommand::get() {
 	}
 	else {
 		return ref new Tidal::PlayCommand(this);
+	}
+}
+void Tidal::TrackItemVM::TogglePlayPause()
+{
+	if (_playButtonVisibility == Windows::UI::Xaml::Visibility::Visible) {
+		PlayCommand->Execute(nullptr);
+	}
+	else {
+		getAudioService().pauseAsync();
 	}
 }
 void Tidal::TrackItemVM::GoToArtist()

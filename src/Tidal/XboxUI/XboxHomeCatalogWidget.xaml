@@ -12,12 +12,12 @@
     d:DesignWidth="792">
 
     <local:LoadingView x:Name="loadingView">
-        <Grid Margin="12,0">
+        <Grid Margin="12,9,12,12">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="24"/>
-                <RowDefinition Height="2*" />
+                <RowDefinition Height="1.5*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -25,8 +25,6 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.ColumnSpan="4" Content="SELECTION..." Style="{StaticResource XboxNoBorderButtonStyle}"
-                    Click="{x:Bind GoToNews}"/>
             <Button HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
@@ -35,7 +33,7 @@
                     Style="{StaticResource XboxNoBorderButtonStyle}"
                     FontSize="14"
                     Grid.Column="0"
-                    Grid.Row="1" Margin="0,4,4,4" Background="#FF232323"
+                    Grid.Row="1" Margin="0,3,3,3" Background="#FF232323"
                     Click="{x:Bind Selection[0].Go, Mode=OneWay}">
                 <Grid>
                     <Image Source="{x:Bind Selection[0].ImageUrl, Mode=OneWay}" Stretch="UniformToFill">
@@ -65,7 +63,7 @@
                     Style="{StaticResource XboxNoBorderButtonStyle}"
                     FontSize="14"
                     Grid.Column="1"
-                    Grid.Row="1" Margin="0,4,4,4" Background="#FF232323"
+                    Grid.Row="1" Margin="0,3,3,3" Background="#FF232323"
                     Click="{x:Bind Selection[1].Go, Mode=OneWay}">
                 <Grid>
                     <Image Source="{x:Bind Selection[1].ImageUrl, Mode=OneWay}" Stretch="UniformToFill">
@@ -95,7 +93,7 @@
                     Style="{StaticResource XboxNoBorderButtonStyle}"
                     FontSize="14"
                     Grid.Column="2"
-                    Grid.Row="1" Margin="0,4,4,4" Background="#FF232323"
+                    Grid.Row="1" Margin="0,3,3,3" Background="#FF232323"
                     Click="{x:Bind Selection[2].Go, Mode=OneWay}">
                 <Grid>
                     <Image Source="{x:Bind Selection[2].ImageUrl, Mode=OneWay}" Stretch="UniformToFill">
@@ -125,7 +123,7 @@
                     Style="{StaticResource XboxNoBorderButtonStyle}"
                     FontSize="14"
                     Grid.Column="3"
-                    Grid.Row="1" Margin="0,4,4,4" Background="#FF232323"
+                    Grid.Row="1" Margin="0,3,3,3" Background="#FF232323"
                     Click="{x:Bind Selection[3].Go, Mode=OneWay}">
                 <Grid>
                     <Image Source="{x:Bind Selection[3].ImageUrl, Mode=OneWay}" Stretch="UniformToFill">
@@ -165,7 +163,7 @@
                         VerticalAlignment="Stretch"
                         Grid.Row="0"
                         Grid.Column="0"
-                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                        Margin="0,0,3,3" Style="{StaticResource DefaultXboxButton}"
                     Click="{x:Bind GoToNews}">
                     <StackPanel>
                         <FontIcon HorizontalAlignment="Center" FontSize="40" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="B" />
@@ -176,7 +174,7 @@
                         VerticalAlignment="Stretch"
                         Grid.Row="0"
                         Grid.Column="1"
-                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                        Margin="0,0,3,3" Style="{StaticResource DefaultXboxButton}"
                     Click="{x:Bind GoToRising}">
                     <StackPanel>
                         <FontIcon HorizontalAlignment="Center" FontSize="40" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="N" />
@@ -187,7 +185,7 @@
                         VerticalAlignment="Stretch"
                         Grid.Row="0"
                         Grid.Column="2"
-                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                        Margin="0,0,3,3" Style="{StaticResource DefaultXboxButton}"
                     Click="{x:Bind GoToDiscovery}">
                     <StackPanel>
                         <FontIcon HorizontalAlignment="Center" FontSize="40" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="0" />
@@ -199,7 +197,7 @@
                         VerticalAlignment="Stretch"
                         Grid.Row="1"
                         Grid.Column="0"
-                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                        Margin="0,0,3,3" Style="{StaticResource DefaultXboxButton}"
                     Click="{x:Bind GoToPlaylists}">
                     <StackPanel>
                         <FontIcon HorizontalAlignment="Center" FontSize="40" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="M" />
@@ -210,7 +208,7 @@
                         VerticalAlignment="Stretch"
                         Grid.Row="1"
                         Grid.Column="1"
-                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                        Margin="0,0,3,3" Style="{StaticResource DefaultXboxButton}"
                     Click="{x:Bind GoToGenres}">
                     <StackPanel>
                         <FontIcon HorizontalAlignment="Center" FontSize="40" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="K" />
@@ -222,7 +220,7 @@
                         VerticalAlignment="Stretch"
                         Grid.Row="1"
                         Grid.Column="2"
-                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                        Margin="0,0,3,3" Style="{StaticResource DefaultXboxButton}"
                     Click="{x:Bind GoToVideos}">
 
                     <StackPanel>
@@ -238,7 +236,7 @@
                         Grid.Column="3"
                         Grid.ColumnSpan="2"
                         Grid.RowSpan="2"
-                        Margin="0,0,4,4" Style="{StaticResource DefaultXboxButton}"
+                        Margin="0,0,3,3" Style="{StaticResource DefaultXboxButton}"
                     Click="{x:Bind GoToSearch}">
                     <StackPanel>
                         <FontIcon HorizontalAlignment="Center" FontSize="80" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="E" />

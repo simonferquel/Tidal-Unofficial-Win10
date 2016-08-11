@@ -54,8 +54,9 @@ namespace Tidal {
 			}
 		}
 		property Windows::UI::Xaml::Input::ICommand^ PlayCommand {Windows::UI::Xaml::Input::ICommand^ get();  }
+		
 		virtual event Windows::UI::Xaml::Data::PropertyChangedEventHandler ^ PropertyChanged;
-
+		void TogglePlayPause();
 		void GoToArtist();
 
 		void GoToAlbum();

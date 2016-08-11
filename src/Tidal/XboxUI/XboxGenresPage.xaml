@@ -1,0 +1,47 @@
+﻿<Page
+    x:Class="Tidal.XboxGenresPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Grid Margin="0,-64,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="title"  Text="Genres" Margin="300,0,0,0" 
+                   HorizontalAlignment="Left" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource PageTitleStyle}" FontSize="40" FontWeight="Thin" Foreground="{ThemeResource ButtonForegroundDisabled}" >
+            <TextBlock.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition/>
+                </TransitionCollection>
+            </TextBlock.Transitions>
+        </TextBlock>
+        <local:LoadingView x:Name="loader" Grid.Row="1">
+            <GridView Margin="48,0" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="moodsGV"
+                      Padding="0,12,0,39"
+                  SelectionMode="None"
+                  IsItemClickEnabled="True"
+                  ItemClick="OnItemClick">
+               
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="local:SublistItemVM">
+                        <Grid Width="150" Height="100">
+                            <Image Source="{x:Bind GenreImageUrl}" Stretch="UniformToFill" />
+                            <Rectangle Fill="Black" Opacity="0.6" />
+                            <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Text="{x:Bind Name}" FontSize="14.667" />
+
+                        </Grid>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+        </local:LoadingView>
+    </Grid>
+
+</Page>

@@ -13,7 +13,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Border Background="#FF252525" x:Name="titleBar" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+        <local:XboxBackground x:Name="bg" Grid.RowSpan="2"/>
+        <Border Background="#CC252525" x:Name="titleBar" VerticalAlignment="Top" HorizontalAlignment="Stretch">
             <Grid Margin="48,27,48,0" Height="64" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -28,10 +29,23 @@
                     <TextBlock Text="unofficial" VerticalAlignment="Center" FontStyle="Italic" FontFamily="Consolas"/>
                 </StackPanel>
 
-                <local:LoginView Height="64"  Grid.Column="2"/>
+                <local:LoginView Height="64"  Grid.Column="2" Margin="0,0,12,0"/>
             </Grid>
         </Border>
-        <local:XboxBackground x:Name="bg" Grid.Row="1"/>
+        <StackPanel Grid.Row="1" Width="200" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="48,27" Visibility="Collapsed">
+            <TextBlock>Sat</TextBlock>
+            <Slider Minimum="0" Maximum="2" Value="{x:Bind AnimatedBackground.Saturation, Mode=TwoWay}"  SmallChange="0.01" LargeChange="0.01" StepFrequency="0.01" />
+            <TextBlock>Blur</TextBlock>
+            <Slider Minimum="0" Maximum="20" Value="{x:Bind AnimatedBackground.BlurAmount, Mode=TwoWay}" />
+            <TextBlock>Blend Alpha</TextBlock>
+            <Slider Minimum="0" Maximum="255" Value="{x:Bind AnimatedBackground.BlendAlpha, Mode=TwoWay}" />
+            <TextBlock>Blend Red</TextBlock>
+            <Slider Minimum="0" Maximum="255" Value="{x:Bind AnimatedBackground.BlendRed, Mode=TwoWay}" />
+            <TextBlock>Blend Green</TextBlock>
+            <Slider Minimum="0" Maximum="255" Value="{x:Bind AnimatedBackground.BlendGreen, Mode=TwoWay}" />
+            <TextBlock>Blend Blue</TextBlock>
+            <Slider Minimum="0" Maximum="255" Value="{x:Bind AnimatedBackground.BlendBlue, Mode=TwoWay}" />
+        </StackPanel>
         <Frame x:Name="frame" Grid.Row="1" SourcePageType="local:XboxHomePage" Navigated="OnNavigated"/>
     </Grid>
 </UserControl>

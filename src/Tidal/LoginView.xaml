@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="80"
+    d:DesignHeight="64"
     d:DesignWidth="400">
 
     <Grid>
@@ -31,7 +31,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <ContentControl x:Name="outerBorder" Tapped="OnViewTapped" KeyDown="OnKeyDown"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" IsTabStop="False">
-            <Grid x:Name="grid" Height="80" Background="Transparent">
+            <Grid x:Name="grid" Background="Transparent">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />

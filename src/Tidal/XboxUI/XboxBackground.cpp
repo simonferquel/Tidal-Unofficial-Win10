@@ -91,6 +91,8 @@ private:
 	ExpressionAnimation^ cellSizeBinding;
 	std::vector<std::unique_ptr<TileSlot>> _emptySlots;
 	std::vector<std::unique_ptr<TileSlot>> _activeSlots;
+	CompositionEffectBrush^ _blurBrush;
+	bool _isOnController0 = true;
 public:
 	bool hasEmptySlots() const {
 		return !_emptySlots.empty();
@@ -110,6 +112,7 @@ public:
 		}
 	}
 	Compositor^ compositor() const { return _compositor; }
+	CompositionEffectBrush^ blurBrush() const { return _blurBrush; }
 	ContainerVisual^ composedVisual() const {
 		return _globalContainer;
 	}
@@ -120,14 +123,13 @@ public:
 		_metrics->InsertVector2(L"imgSize", float2(0));
 		_metrics->InsertScalar(L"parallaxScale", 0);
 		_metrics->InsertScalar(L"parallaxAmount", 0);
+		_metrics->InsertScalar(L"parallaxAmountControler0", 0);
+		_metrics->InsertScalar(L"parallaxAmountControler1", 0);
+		_metrics->InsertScalar(L"parallaxAmountControlerCrossFade", 0);
 		{
-			auto implicitAnims = _compositor->CreateImplicitAnimationCollection();
-			auto parallaxImplicitAnim = _compositor->CreateScalarKeyFrameAnimation();
-			parallaxImplicitAnim->Duration = tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(200));
-			parallaxImplicitAnim->InsertExpressionKeyFrame(0, L"This.StartingValue");
-			parallaxImplicitAnim->InsertExpressionKeyFrame(1, L"This.FinalValue");
-			implicitAnims->Insert(L"parallaxAmount", parallaxImplicitAnim);
-			_metrics->ImplicitAnimations = implicitAnims;
+
+			auto parallaxAmountAnim = _compositor->CreateExpressionAnimation(L"Lerp(This.Target.parallaxAmountControler0, This.Target.parallaxAmountControler1, This.Target.parallaxAmountControlerCrossFade)");
+			_metrics->StartAnimation(L"parallaxAmount", parallaxAmountAnim);
 		}
 
 		{
@@ -191,28 +193,38 @@ public:
 			}
 		}
 		auto backdropBrush = _compositor->CreateBackdropBrush();
-		auto blurEffect = ref new GaussianBlurEffect();
-		blurEffect->Name = L"Blur";
-		blurEffect->BlurAmount = 5.0f;
-		blurEffect->BorderMode = EffectBorderMode::Hard;
-		blurEffect->Optimization = EffectOptimization::Balanced;
-		blurEffect->Source = ref new CompositionEffectSourceParameter("source");
+
+		auto desat = ref new SaturationEffect();
+		desat->Name = L"Desat";
+		desat->Source = ref new CompositionEffectSourceParameter("source");
+		desat->Saturation = 0.3;
 
 		auto darken = ref new ColorSourceEffect();
-		darken->Color = Windows::UI::ColorHelper::FromArgb(128, 0, 0, 0);
+		darken->Name = L"BlendForeground";
+		darken->Color = Windows::UI::ColorHelper::FromArgb(164,12,54,60);
 		auto blendEffect = ref new BlendEffect();
-		blendEffect->Background = blurEffect;
+		blendEffect->Name = L"Blend";
+		blendEffect->Background = desat;
 		blendEffect->Foreground = darken;
 		blendEffect->Mode = BlendEffectMode::Multiply;
 
-		auto desat = ref new SaturationEffect();
-		desat->Source = blendEffect;
-		desat->Saturation = 0.5;
+		auto blurEffect = ref new GaussianBlurEffect();
+		blurEffect->Name = L"Blur";
+		blurEffect->BlurAmount = 10.0f;
+		blurEffect->BorderMode = EffectBorderMode::Hard;		
+		blurEffect->Optimization = EffectOptimization::Balanced;
+		blurEffect->Source = blendEffect;
+
+
 		
-
-		auto effectFactory = _compositor->CreateEffectFactory(desat);
-
+		auto params = ref new Platform::Collections::Vector<String^>();
+		params->Append(L"Desat.Saturation");
+		params->Append(L"BlendForeground.Color");
+		params->Append(L"Blur.BlurAmount");
+		auto effectFactory = _compositor->CreateEffectFactory(blurEffect, params);
+		
 		auto blurBrush = effectFactory->CreateBrush();
+		_blurBrush = blurBrush;
 		blurBrush->SetSourceParameter(L"source", backdropBrush);
 		auto blurVisual = _compositor->CreateSpriteVisual();
 		blurVisual->Brush = blurBrush;
@@ -221,13 +233,134 @@ public:
 	}
 
 	void setParallaxAmountBinding(ExpressionAnimation^ anim) {
-		_metrics->StartAnimation(L"parallaxAmount", anim);
+		if (_isOnController0) {
+			_metrics->StartAnimation(L"parallaxAmountControler1", anim);
+			auto crossfadeAnim = _compositor->CreateScalarKeyFrameAnimation();
+			crossfadeAnim->Duration = tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(250));
+			crossfadeAnim->InsertKeyFrame(1, 1);
+			_metrics->StartAnimation(L"parallaxAmountControlerCrossFade", crossfadeAnim);
+			_isOnController0 = false;
+		}
+		else {
+
+			_metrics->StartAnimation(L"parallaxAmountControler0", anim);
+			auto crossfadeAnim = _compositor->CreateScalarKeyFrameAnimation();
+			crossfadeAnim->Duration = tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(250));
+			crossfadeAnim->InsertKeyFrame(1, 0);
+			_metrics->StartAnimation(L"parallaxAmountControlerCrossFade", crossfadeAnim);
+			_isOnController0 = true;
+		}
 	}
 };
+
+double XboxBackground::Saturation::get() {
+	if (!_tiles) {
+		return 1;
+	}
+	float val = 1;
+	_tiles->blurBrush()->Properties->TryGetScalar(L"Desat.Saturation", &val);
+	return val;
+}
+void XboxBackground::Saturation::set(double value) {
+	if (!_tiles) {
+		return;
+	}
+	_tiles->blurBrush()->Properties->InsertScalar(L"Desat.Saturation", value);
+}
+double XboxBackground::BlurAmount::get() {
+	if (!_tiles) {
+		return 5;
+	}
+	float val = 5;
+	_tiles->blurBrush()->Properties->TryGetScalar(L"Blur.BlurAmount", &val);
+	return val;
+}
+void XboxBackground::BlurAmount::set(double value) {
+	if (!_tiles) {
+		return;
+	}
+	_tiles->blurBrush()->Properties->InsertScalar(L"Blur.BlurAmount", value);
+}
+double XboxBackground::BlendAlpha::get() {
+	if (!_tiles) {
+		return 0;
+	}
+	Windows::UI::Color val = Windows::UI::ColorHelper::FromArgb(0, 0, 0, 0);
+	_tiles->blurBrush()->Properties->TryGetColor(L"BlendForeground.Color", &val);
+	return val.A;
+}
+
+
+void XboxBackground::BlendAlpha::set(double value) {
+	if (!_tiles) {
+		return;
+	}
+	Windows::UI::Color val = Windows::UI::ColorHelper::FromArgb(0, 0, 0, 0);
+	_tiles->blurBrush()->Properties->TryGetColor(L"BlendForeground.Color", &val);
+	val.A = value;
+	_tiles->blurBrush()->Properties->InsertColor(L"BlendForeground.Color", val);
+}
+
+double XboxBackground::BlendRed::get() {
+	if (!_tiles) {
+		return 0;
+	}
+	Windows::UI::Color val = Windows::UI::ColorHelper::FromArgb(0, 0, 0, 0);
+	_tiles->blurBrush()->Properties->TryGetColor(L"BlendForeground.Color", &val);
+	return val.R;
+}
+
+void XboxBackground::BlendRed::set(double value) {
+	if (!_tiles) {
+		return;
+	}
+	Windows::UI::Color val = Windows::UI::ColorHelper::FromArgb(0, 0, 0, 0);
+	_tiles->blurBrush()->Properties->TryGetColor(L"BlendForeground.Color", &val);
+	val.R = value;
+	_tiles->blurBrush()->Properties->InsertColor(L"BlendForeground.Color", val);
+}
+
+double XboxBackground::BlendGreen::get() {
+	if (!_tiles) {
+		return 0;
+	}
+	Windows::UI::Color val = Windows::UI::ColorHelper::FromArgb(0, 0, 0, 0);
+	_tiles->blurBrush()->Properties->TryGetColor(L"BlendForeground.Color", &val);
+	return val.G;
+}
+void XboxBackground::BlendGreen::set(double value) {
+	if (!_tiles) {
+		return;
+	}
+	Windows::UI::Color val = Windows::UI::ColorHelper::FromArgb(0, 0, 0, 0);
+	_tiles->blurBrush()->Properties->TryGetColor(L"BlendForeground.Color", &val);
+	val.G = value;
+	_tiles->blurBrush()->Properties->InsertColor(L"BlendForeground.Color", val);
+}
+
+double XboxBackground::BlendBlue::get() {
+	if (!_tiles) {
+		return 0;
+	}
+	Windows::UI::Color val = Windows::UI::ColorHelper::FromArgb(0, 0, 0, 0);
+	_tiles->blurBrush()->Properties->TryGetColor(L"BlendForeground.Color", &val);
+	return val.B;
+}
+
+void XboxBackground::BlendBlue::set(double value) {
+	if (!_tiles) {
+		return;
+	}
+	Windows::UI::Color val = Windows::UI::ColorHelper::FromArgb(0, 0, 0, 0);
+	_tiles->blurBrush()->Properties->TryGetColor(L"BlendForeground.Color", &val);
+	val.B = value;
+	_tiles->blurBrush()->Properties->InsertColor(L"BlendForeground.Color", val);
+}
 
 XboxBackground::XboxBackground()
 {
 	DefaultStyleKey = "Tidal.XboxBackground";
+	IsTabStop = false;
 	Loaded += ref new Windows::UI::Xaml::RoutedEventHandler(this, &Tidal::XboxBackground::OnLoaded);
 	Unloaded += ref new Windows::UI::Xaml::RoutedEventHandler(this, &Tidal::XboxBackground::OnUnloaded);
 }
