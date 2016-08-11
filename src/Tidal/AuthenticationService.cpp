@@ -29,16 +29,16 @@ AuthenticationService::AuthenticationService()
 
 concurrency::task<void> AuthenticationService::authenticateWithFacebookAsync(Hat<Platform::String> accessToken, concurrency::cancellation_token cancelToken)
 {
-	api::LoginWithFacebookQuery q(accessToken.get());
-	auto result = co_await q.executeAsync(cancelToken);
-	api::GetUserInfoQuery userInfoQuery(result->userId, 
+	auto q = std::make_shared<api::LoginWithFacebookQuery>(accessToken.get());
+	auto result = co_await q->executeAsync(cancelToken);
+	auto userInfoQuery = std::make_shared<api::GetUserInfoQuery>(result->userId,
 		tools::strings::toWindowsString(result->sessionId),
 		tools::strings::toWindowsString(result->countryCode));
-	auto userInfoTask = userInfoQuery.executeAsync(cancelToken);
-	api::GetSubscribtionQuery subscribtionQuery(result->userId,
+	auto userInfoTask = userInfoQuery->executeAsync(cancelToken);
+	auto subscribtionQuery = std::make_shared<api::GetSubscribtionQuery>(result->userId,
 		tools::strings::toWindowsString(result->sessionId),
 		tools::strings::toWindowsString(result->countryCode));
-	auto subscribtion = co_await subscribtionQuery.executeAsync(cancelToken);
+	auto subscribtion = co_await subscribtionQuery->executeAsync(cancelToken);
 	auto userInfo = co_await userInfoTask;
 	_authState = AuthenticationState(*result, *subscribtion, *userInfo);
 	
@@ -54,16 +54,16 @@ concurrency::task<void> AuthenticationService::authenticateWithFacebookAsync(Hat
 
 concurrency::task<void> AuthenticationService::authenticateWithPasswordAsync(Hat<Platform::String> userName, Hat<Platform::String> password, concurrency::cancellation_token cancelToken)
 {
-	api::LoginWithPasswordQuery q(userName.get(), password.get());
-	auto result = co_await q.executeAsync(cancelToken);
-	api::GetUserInfoQuery userInfoQuery(result->userId,
+	auto  q= std::make_shared<api::LoginWithPasswordQuery>(userName.get(), password.get());
+	auto result = co_await q->executeAsync(cancelToken);
+	auto userInfoQuery = std::make_shared<api::GetUserInfoQuery>(result->userId,
 		tools::strings::toWindowsString(result->sessionId),
 		tools::strings::toWindowsString(result->countryCode));
-	auto userInfoTask = userInfoQuery.executeAsync(cancelToken);
-	api::GetSubscribtionQuery subscribtionQuery(result->userId,
+	auto userInfoTask = userInfoQuery->executeAsync(cancelToken);
+	auto subscribtionQuery = std::make_shared<api::GetSubscribtionQuery>(result->userId,
 		tools::strings::toWindowsString(result->sessionId),
 		tools::strings::toWindowsString(result->countryCode));
-	auto subscribtion = co_await subscribtionQuery.executeAsync(cancelToken);
+	auto subscribtion = co_await subscribtionQuery->executeAsync(cancelToken);
 	auto userInfo = co_await userInfoTask;
 	_authState = AuthenticationState(*result, *subscribtion, *userInfo);
 

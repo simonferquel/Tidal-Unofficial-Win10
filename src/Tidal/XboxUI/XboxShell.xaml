@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     d:DesignHeight="540"
     d:DesignWidth="960">
-    <Grid Margin="-48,-27" Background="#FF101010">
+    <Grid  Background="#FF101010">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

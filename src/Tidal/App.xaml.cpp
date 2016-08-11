@@ -82,6 +82,9 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 		getAudioService().wakeupDownloaderAsync(concurrency::cancellation_token::none());
 
 		if (env::isRunningOnXbox()) {
+			if (Window::Current->Content != nullptr) {
+				return;
+			}
 			auto xbshell = ref new XboxShell();
 			Window::Current->Content = xbshell;
 			Window::Current->Activate();
@@ -195,8 +198,12 @@ void Tidal::App::OnEnteredBackground(Platform::Object^ sender, Windows::Applicat
 void Tidal::App::OnLeavingBackground(Platform::Object^ sender, Windows::ApplicationModel::LeavingBackgroundEventArgs^ e)
 {
 	if (env::isRunningOnXbox()) {
+		if (Window::Current->Content != nullptr) {
+			return;
+		}
 		auto xbshell = ref new XboxShell();
 		Window::Current->Content = xbshell;
+		Window::Current->Activate();
 	}
 	else {
 		auto shell = ref new Shell(_navState, _persistedState);

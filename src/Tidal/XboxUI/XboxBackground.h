@@ -9,6 +9,7 @@
 #include <ppltasks.h>
 namespace Tidal
 {
+	class BackgroundTilesBase;
 	class BackgroundTiles;
 	public ref class XboxBackground sealed : public Windows::UI::Xaml::Controls::Control
 	{

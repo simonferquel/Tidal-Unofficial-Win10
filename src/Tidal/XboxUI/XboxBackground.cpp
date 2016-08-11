@@ -80,8 +80,11 @@ public:
 		_opacityAnim->InsertKeyFrame(1, 0, _compositor->CreateLinearEasingFunction());
 	}
 };
-
-class Tidal::BackgroundTiles {
+class Tidal::BackgroundTilesBase {
+public:
+	virtual ~BackgroundTilesBase(){}
+};
+class Tidal::BackgroundTiles:public BackgroundTilesBase {
 private:
 	std::random_device rd;
 	Compositor^ _compositor;
@@ -382,18 +385,20 @@ concurrency::task<CompositionSurfaceBrush^> LoadBitmapAsync(Hat<Compositor> comp
 	return compositor->CreateSurfaceBrush(surface);
 }
 
-concurrency::task<void> animateBackground(std::shared_ptr<BackgroundTiles> tiles, concurrency::cancellation_token cancelToken) {
+concurrency::task<void> animateBackground(std::shared_ptr<BackgroundTilesBase> tiles, concurrency::cancellation_token cancelToken) {
+	//co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
 	api::GetPromotionsQuery query(1000, 0, L"NEWS", L"US");
 	try {
 		auto news = co_await query.executeAsync(cancelToken);
 		std::random_device rd;
 		std::uniform_int_distribution<int> dist(0, news->items.size() - 1);
 		while (!cancelToken.is_canceled()) {
-			while (tiles->hasEmptySlots() && !cancelToken.is_canceled()) {
-				auto visual = tiles->compositor()->CreateSpriteVisual();
+			auto t = std::dynamic_pointer_cast<BackgroundTiles>(tiles);
+			while (t->hasEmptySlots() && !cancelToken.is_canceled()) {
+				auto visual = t->compositor()->CreateSpriteVisual();
 				auto url = tools::strings::toWindowsString(news->items.at(dist(rd)).imageURL);
-				visual->Brush = co_await LoadBitmapAsync(tiles->compositor(), url);
-				tiles->pushContent(visual);
+				visual->Brush = co_await LoadBitmapAsync(t->compositor(), url);
+				t->pushContent(visual);
 			}
 			if (cancelToken.is_canceled())
 			{
@@ -401,10 +406,10 @@ concurrency::task<void> animateBackground(std::shared_ptr<BackgroundTiles> tiles
 			}
 			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(3)), cancelToken);
 			{
-				auto visual = tiles->compositor()->CreateSpriteVisual();
+				auto visual = t->compositor()->CreateSpriteVisual();
 				auto url = tools::strings::toWindowsString(news->items.at(dist(rd)).imageURL);
-				visual->Brush = co_await LoadBitmapAsync(tiles->compositor(), url);
-				tiles->pushContent(visual);
+				visual->Brush = co_await LoadBitmapAsync(t->compositor(), url);
+				t->pushContent(visual);
 			}
 		}
 	}
