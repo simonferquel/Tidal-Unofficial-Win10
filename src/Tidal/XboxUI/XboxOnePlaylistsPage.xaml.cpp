@@ -7,6 +7,7 @@
 #include "XboxOnePlaylistsPage.xaml.h"
 #include "SublistItemVM.h"
 #include "IncrementalDataSources.h"
+#include "../IGo.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -33,5 +34,14 @@ void Tidal::XboxOnePlaylistsPage::OnNavigatedTo(Windows::UI::Xaml::Navigation::N
 	if (item) {
 		title->Text = item->Name;
 		playlistsGV->ItemsSource =  getNewsPlaylistsDataSource(L"moods", item->Path);
+	}
+}
+
+
+void Tidal::XboxOnePlaylistsPage::OnItemClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e)
+{
+	auto go = dynamic_cast<IGo^>(e->ClickedItem);
+	if (go) {
+		go->Go();
 	}
 }

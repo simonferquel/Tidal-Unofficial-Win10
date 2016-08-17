@@ -135,7 +135,6 @@
     <ClInclude Include="Api\PlaylistsQueries.h" />
     <ClInclude Include="LocalFileManager.h" />
     <ClInclude Include="pplawait2.h" />
-    <ClInclude Include="Hat.h" />
     <ClInclude Include="Api\PlaybackReport.h" />
     <ClInclude Include="localdata\InsertPlaybackReportQuery.h" />
     <ClInclude Include="Environment.h" />

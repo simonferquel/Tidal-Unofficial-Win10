@@ -8,6 +8,9 @@
         <local:PauseCommand x:Key="pauseCommand" />
         <Color x:Key="TidalAccentColor">#00FFFF</Color>
         <SolidColorBrush x:Key="TidalAccentBrush" Color="{StaticResource TidalAccentColor}" />
+        <Style TargetType="TextBlock">
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
         <Style x:Key="PageTitleStyle" TargetType="TextBlock">
             <Setter Property="Margin" Value="12"/>
             <Setter Property="FontFamily" Value="Segoe UI Light"/>
@@ -59,7 +62,7 @@
             <Setter Property="UseSystemFocusVisuals" Value="False"/>
             <Setter Property="FontFamily" Value="Segoe UI Semibold" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontSize" Value="18" />            
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -115,7 +118,7 @@
                                     <VisualState x:Name="Unfocused"/>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            <ContentPresenter x:Name="ContentPresenter"  AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                               />
                         </Grid>
                     </ControlTemplate>

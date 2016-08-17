@@ -1,0 +1,38 @@
+﻿<Page
+    x:Class="Tidal.XboxSearchPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    NavigationCacheMode="Enabled"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="OnLoaded"
+    mc:Ignorable="d">
+    <Grid Margin="0,-64,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="title"  Text="Search" Margin="300,0,0,0" 
+                   HorizontalAlignment="Left" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource PageTitleStyle}" FontSize="40" FontWeight="Thin" Width="400">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="#66FFFFFF" />
+            </TextBlock.Foreground>
+            <TextBlock.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition/>
+                </TransitionCollection>
+            </TextBlock.Transitions>
+        </TextBlock>
+        <TextBox x:Name="searchBox" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="300" PlaceholderText="Search artists, albums, playlists..." InputScope="Search"
+                 KeyDown="OnKeydown">
+            <TextBox.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition/>
+                </TransitionCollection>
+            </TextBox.Transitions>
+        </TextBox>
+    </Grid>
+</Page>

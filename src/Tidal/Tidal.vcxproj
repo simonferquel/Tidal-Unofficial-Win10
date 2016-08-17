@@ -367,8 +367,17 @@
     <ClInclude Include="XboxUI\XboxOnePlaylistsPage.xaml.h">
       <DependentUpon>XboxUI\XboxOnePlaylistsPage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="XboxUI\XboxSearchPage.xaml.h">
+      <DependentUpon>XboxUI\XboxSearchPage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="XboxUI\XboxSearchResults.xaml.h">
+      <DependentUpon>XboxUI\XboxSearchResults.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="XboxUI\XboxShell.xaml.h">
       <DependentUpon>XboxUI\XboxShell.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="XboxUI\XboxVideosPage.xaml.h">
+      <DependentUpon>XboxUI\XboxVideosPage.xaml</DependentUpon>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -481,7 +490,16 @@
     <Page Include="XboxUI\XboxOnePlaylistsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="XboxUI\XboxSearchPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxSearchResults.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="XboxUI\XboxShell.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxVideosPage.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
@@ -705,8 +723,17 @@
     <ClCompile Include="XboxUI\XboxOnePlaylistsPage.xaml.cpp">
       <DependentUpon>XboxUI\XboxOnePlaylistsPage.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="XboxUI\XboxSearchPage.xaml.cpp">
+      <DependentUpon>XboxUI\XboxSearchPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="XboxUI\XboxSearchResults.xaml.cpp">
+      <DependentUpon>XboxUI\XboxSearchResults.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="XboxUI\XboxShell.xaml.cpp">
       <DependentUpon>XboxUI\XboxShell.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="XboxUI\XboxVideosPage.xaml.cpp">
+      <DependentUpon>XboxUI\XboxVideosPage.xaml</DependentUpon>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

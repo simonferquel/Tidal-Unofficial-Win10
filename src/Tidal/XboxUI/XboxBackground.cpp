@@ -12,7 +12,6 @@
 #include <pplawait2.h>
 #include <tools/AsyncHelpers.h>
 #include <Api/GetPromotionsQuery.h>
-#include <Hat.h>
 #include <Api/PromotionArticle.h>
 
 using namespace Tidal;
@@ -372,10 +371,10 @@ Tidal::XboxBackground::~XboxBackground()
 {
 }
 
-concurrency::task<CompositionSurfaceBrush^> LoadBitmapAsync(Hat<Compositor> compositor, Hat<Platform::String> url) {
+concurrency::task<CompositionSurfaceBrush^> LoadBitmapAsync(Compositor^ compositor, Platform::String^ url) {
 	auto canvasDevice = ref new CanvasDevice();
-	auto canvasBmp = co_await CanvasBitmap::LoadAsync(canvasDevice, ref new Uri(url.get()));
-	auto compositionDevice = CanvasComposition::CreateCompositionGraphicsDevice(compositor.get(), canvasDevice);
+	auto canvasBmp = co_await CanvasBitmap::LoadAsync(canvasDevice, ref new Uri(url));
+	auto compositionDevice = CanvasComposition::CreateCompositionGraphicsDevice(compositor, canvasDevice);
 	auto surface = compositionDevice->CreateDrawingSurface(Windows::Foundation::Size(canvasBmp->SizeInPixels.Width, canvasBmp->SizeInPixels.Height), DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
 	{
 		auto ds = CanvasComposition::CreateDrawingSession(surface);
@@ -392,11 +391,13 @@ concurrency::task<void> animateBackground(std::shared_ptr<BackgroundTilesBase> t
 		auto news = co_await query.executeAsync(cancelToken);
 		std::random_device rd;
 		std::uniform_int_distribution<int> dist(0, news->items.size() - 1);
+		Platform::String^ url;
 		while (!cancelToken.is_canceled()) {
 			auto t = std::dynamic_pointer_cast<BackgroundTiles>(tiles);
+
 			while (t->hasEmptySlots() && !cancelToken.is_canceled()) {
 				auto visual = t->compositor()->CreateSpriteVisual();
-				auto url = tools::strings::toWindowsString(news->items.at(dist(rd)).imageURL);
+				url = tools::strings::toWindowsString(news->items.at(dist(rd)).imageURL);
 				visual->Brush = co_await LoadBitmapAsync(t->compositor(), url);
 				t->pushContent(visual);
 			}

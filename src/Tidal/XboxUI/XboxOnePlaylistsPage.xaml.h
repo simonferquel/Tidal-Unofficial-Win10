@@ -19,5 +19,7 @@ namespace Tidal
 		XboxOnePlaylistsPage();
 	protected:
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
+	private:
+		void OnItemClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
 	};
 }

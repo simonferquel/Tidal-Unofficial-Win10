@@ -72,7 +72,7 @@ namespace tools {
 
 
 		inline Platform::String^ toWindowsString(const std::wstring& src) {
-			return ref new Platform::String(src.c_str(), static_cast<std::uint32_t>(src.size()));
+			return ref new Platform::String(src.c_str());//, static_cast<std::uint32_t>(src.size()));
 		}
 
 		inline std::vector<Platform::String^> toWindowsStrings(const std::vector<std::wstring>& src) {

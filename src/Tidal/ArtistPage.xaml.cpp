@@ -115,7 +115,7 @@ Platform::Object ^ Tidal::ArtistPage::GetStateToPreserve()
 	return ref new ArtistPageState(pivot->SelectedIndex);
 }
 
-concurrency::task<void> Tidal::ArtistPage::LoadAsync(Hat<Windows::UI::Xaml::Navigation::NavigationEventArgs> args)
+concurrency::task<void> Tidal::ArtistPage::LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs^ args)
 {
 	auto preservedState = GetCurrentPagePreservedState<ArtistPageState>();
 	auto cancelToken = _cts.get_token();
@@ -236,10 +236,10 @@ concurrency::task<void> Tidal::ArtistPage::LoadAsync(Hat<Windows::UI::Xaml::Navi
 
 
 
-concurrency::task<void> Tidal::ArtistPage::loadImageAsync(Hat<Platform::String> url)
+concurrency::task<void> Tidal::ArtistPage::loadImageAsync(Platform::String^ url)
 {
 	headerImage->CustomDevice = Microsoft::Graphics::Canvas::CanvasDevice::GetSharedDevice();
-	auto bmp = co_await Microsoft::Graphics::Canvas::CanvasBitmap::LoadAsync(Microsoft::Graphics::Canvas::CanvasDevice::GetSharedDevice(), ref new Uri(url.get()));
+	auto bmp = co_await Microsoft::Graphics::Canvas::CanvasBitmap::LoadAsync(Microsoft::Graphics::Canvas::CanvasDevice::GetSharedDevice(), ref new Uri(url));
 
 	_albumBmp = bmp;
 	co_await Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {

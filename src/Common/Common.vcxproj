@@ -259,7 +259,6 @@
     <ClInclude Include="Api\VideoInfo.h" />
     <ClInclude Include="CachedTrackManager.h" />
     <ClInclude Include="Environment.h" />
-    <ClInclude Include="Hat.h" />
     <ClInclude Include="localdata\db.h" />
     <ClInclude Include="localdata\Entities.h" />
     <ClInclude Include="localdata\GetCachedTrackInfoQuery.h" />

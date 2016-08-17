@@ -14,7 +14,10 @@
         <TextBlock x:Name="title"  Text="Genres" Margin="300,0,0,0" 
                    HorizontalAlignment="Left" 
                    VerticalAlignment="Center" 
-                   Style="{StaticResource PageTitleStyle}" FontSize="40" FontWeight="Thin" Foreground="{ThemeResource ButtonForegroundDisabled}" >
+                   Style="{StaticResource PageTitleStyle}" FontSize="40" FontWeight="Thin" Width="400">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="#66FFFFFF" />
+            </TextBlock.Foreground>
             <TextBlock.Transitions>
                 <TransitionCollection>
                     <EntranceThemeTransition/>

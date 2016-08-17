@@ -27,9 +27,9 @@ AuthenticationService::AuthenticationService()
 	
 }
 
-concurrency::task<void> AuthenticationService::authenticateWithFacebookAsync(Hat<Platform::String> accessToken, concurrency::cancellation_token cancelToken)
+concurrency::task<void> AuthenticationService::authenticateWithFacebookAsync(Platform::String^ accessToken, concurrency::cancellation_token cancelToken)
 {
-	auto q = std::make_shared<api::LoginWithFacebookQuery>(accessToken.get());
+	auto q = std::make_shared<api::LoginWithFacebookQuery>(accessToken);
 	auto result = co_await q->executeAsync(cancelToken);
 	auto userInfoQuery = std::make_shared<api::GetUserInfoQuery>(result->userId,
 		tools::strings::toWindowsString(result->sessionId),
@@ -52,9 +52,9 @@ concurrency::task<void> AuthenticationService::authenticateWithFacebookAsync(Hat
 	getAuthenticationStateMediator().raise(_authState);
 }
 
-concurrency::task<void> AuthenticationService::authenticateWithPasswordAsync(Hat<Platform::String> userName, Hat<Platform::String> password, concurrency::cancellation_token cancelToken)
+concurrency::task<void> AuthenticationService::authenticateWithPasswordAsync(Platform::String^ userName, Platform::String^ password, concurrency::cancellation_token cancelToken)
 {
-	auto  q= std::make_shared<api::LoginWithPasswordQuery>(userName.get(), password.get());
+	auto  q= std::make_shared<api::LoginWithPasswordQuery>(userName, password);
 	auto result = co_await q->executeAsync(cancelToken);
 	auto userInfoQuery = std::make_shared<api::GetUserInfoQuery>(result->userId,
 		tools::strings::toWindowsString(result->sessionId),

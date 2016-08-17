@@ -12,7 +12,6 @@
 #include "AlbumResumeItemVM.h"
 #include "TracksPlaybackStateManager.h"
 #include "IPageWithPreservedState.h"
-#include <Hat.h>
 
 namespace Tidal
 {
@@ -43,7 +42,7 @@ namespace Tidal
 		concurrency::task<void> LoadAsync(std::int64_t id);
 		Platform::Collections::Vector<TrackItemVM^>^ _tracks = nullptr;
 		Microsoft::Graphics::Canvas::CanvasBitmap^ _albumBmp;
-		concurrency::task<void> loadImageAsync(Hat<Platform::String> url, concurrency::cancellation_token cancelToken);
+		concurrency::task<void> loadImageAsync(Platform::String^ url, concurrency::cancellation_token cancelToken);
 
 		void OnWin2DDrawing(Microsoft::Graphics::Canvas::UI::Xaml::ICanvasAnimatedControl^ sender, Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedDrawEventArgs^ args);
 		void OnWin2DCtlLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

@@ -15,7 +15,10 @@
             <TextBlock x:Name="title"  Text="Playlists" Margin="300,0,0,0" 
                    HorizontalAlignment="Left" 
                    VerticalAlignment="Center" 
-                   Style="{StaticResource PageTitleStyle}" FontSize="40" FontWeight="Thin" Foreground="{ThemeResource ButtonForegroundDisabled}" >
+                   Style="{StaticResource PageTitleStyle}" FontSize="40" FontWeight="Thin" Width="400">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="#66FFFFFF" />
+            </TextBlock.Foreground>
                 <TextBlock.Transitions>
                     <TransitionCollection>
                         <EntranceThemeTransition/>
@@ -24,7 +27,8 @@
             </TextBlock>
         <GridView x:Name="playlistsGV" Margin="48,0" Padding="0,0,0,27" Grid.Row="1"
                   SelectionMode="None"
-                  IsItemClickEnabled="True" local:BindableSizeHelper.Enabled="True">
+                  IsItemClickEnabled="True" local:BindableSizeHelper.Enabled="True"
+                  ItemClick="OnItemClick">
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem" >
                     <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>

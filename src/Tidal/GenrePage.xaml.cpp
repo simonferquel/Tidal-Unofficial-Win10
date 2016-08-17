@@ -24,7 +24,7 @@ using namespace Windows::UI::Xaml::Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-concurrency::task<void> Tidal::GenrePage::LoadAsync(Hat<Windows::UI::Xaml::Navigation::NavigationEventArgs> e)
+concurrency::task<void> Tidal::GenrePage::LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e)
 {
 	auto p = dynamic_cast<String^>(e->Parameter);
 	auto decoder = ref new WwwFormUrlDecoder(p);

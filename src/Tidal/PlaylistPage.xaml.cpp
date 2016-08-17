@@ -51,7 +51,7 @@ void Tidal::PlaylistPage::OnTrackRemovedFromPlaylist(const ItemRemovedFromPlayli
 	}
 }
 
-concurrency::task<void> Tidal::PlaylistPage::LoadAsync(Hat<Windows::UI::Xaml::Navigation::NavigationEventArgs> args)
+concurrency::task<void> Tidal::PlaylistPage::LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs^ args)
 {
 	try {
 		auto idPlat = dynamic_cast<String^>(args->Parameter);

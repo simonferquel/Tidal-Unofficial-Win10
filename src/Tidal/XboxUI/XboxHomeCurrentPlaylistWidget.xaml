@@ -119,13 +119,19 @@
                                     </Button>
 
                                     <TextBlock Grid.Column="1" Margin="12,0,0,0"
-                                       VerticalAlignment="Center" Text="{x:Bind Title}" FontWeight="{x:Bind TitleFontWeight, Mode=OneWay}"></TextBlock>
-                                    <Button Style="{StaticResource XboxNoBorderButtonStyle}" Grid.Column="2" Margin="12,0,0,0" FontSize="13"  FontWeight="SemiLight"
+                                       VerticalAlignment="Center" Text="{x:Bind Title}" FontWeight="{x:Bind TitleFontWeight, Mode=OneWay}" TextTrimming="CharacterEllipsis"></TextBlock>
+                                    <Button Style="{StaticResource XboxNoBorderButtonStyle}" Grid.Column="2" Margin="12,0,0,0" 
                                              HorizontalAlignment="Left"
-                                             VerticalAlignment="Center" Content="{x:Bind ArtistName}" Click="{x:Bind GoToArtist}"></Button>
+                                             VerticalAlignment="Center"  Click="{x:Bind GoToArtist}">
+                                        <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Bind ArtistName}" FontSize="13"  FontWeight="SemiLight"/>
+
+                                    </Button>
                                     <Button Style="{StaticResource XboxNoBorderButtonStyle}" Grid.Column="3" Margin="12,0,0,0" FontSize="13"  FontWeight="SemiLight"
                                              HorizontalAlignment="Left"
-                                             VerticalAlignment="Center" Content="{x:Bind AlbumTitle}" Click="{x:Bind GoToAlbum}"></Button>
+                                             VerticalAlignment="Center" Click="{x:Bind GoToAlbum}">
+                                        <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Bind AlbumTitle}" FontSize="13"  FontWeight="SemiLight"/>
+                                        
+                                    </Button>
                                 </Grid>
                             </Border>
                         </DataTemplate>

@@ -12,8 +12,6 @@
 #include "LoadingView.h"
 #include "PlaylistResumeItemVM.h"
 #include <Api/GetPlaylistTracksQuery.h>
-#include <Hat.h>
-
 using namespace Tidal;
 
 using namespace Platform;
@@ -51,7 +49,7 @@ concurrency::task<void> Tidal::AddToPlaylistDialog::loadPlaylistsAsync()
 	}
 }
 
-concurrency::task<void> Tidal::AddToPlaylistDialog::addToExistingPlaylistAsync(Hat<PlaylistResumeItemVM> playlist)
+concurrency::task<void> Tidal::AddToPlaylistDialog::addToExistingPlaylistAsync(PlaylistResumeItemVM^ playlist)
 {
 	loadingView->LoadingState = LoadingState::Loading;
 	try {

@@ -31,6 +31,7 @@ namespace Tidal {
 			if (dynamic_cast<PlaylistResumeItemVM^>(item)) {
 				return PlaylistTemplate;
 			}
+			return nullptr;
 		}
 	};
 }

@@ -11,7 +11,6 @@
 #include <tools/ScopedEventRegistration.h>
 #include "TracksPlaybackStateManager.h"
 #include "Mediators.h"
-#include <Hat.h>
 namespace Tidal
 {
 	/// <summary>
@@ -40,7 +39,7 @@ namespace Tidal
 		}
 	private:
 		void OnTrackRemovedFromPlaylist(const ItemRemovedFromPlaylist& ev);
-		concurrency::task<void> LoadAsync(Hat<Windows::UI::Xaml::Navigation::NavigationEventArgs> args);
+		concurrency::task<void> LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs^ args);
 		void OnPlayAll(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnContextMenuClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void AddFavoriteClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

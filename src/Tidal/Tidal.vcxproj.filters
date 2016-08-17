@@ -88,6 +88,9 @@
     <ClCompile Include="XboxUI\XboxArticleListPage.xaml.cpp" />
     <ClCompile Include="XboxUI\XboxArticleListPageParameter.cpp" />
     <ClCompile Include="XboxUI\XboxBackground.cpp" />
+    <ClCompile Include="XboxUI\XboxGenresPage.xaml.cpp" />
+    <ClCompile Include="XboxUI\XboxMoodsPage.xaml.cpp" />
+    <ClCompile Include="XboxUI\XboxOnePlaylistsPage.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -173,6 +176,9 @@
     <ClInclude Include="XboxUI\XboxArticleListPageParameter.h" />
     <ClInclude Include="XboxUI\FocusHelper.h" />
     <ClInclude Include="XboxUI\XboxBackground.h" />
+    <ClInclude Include="XboxUI\XboxGenresPage.xaml.h" />
+    <ClInclude Include="XboxUI\XboxMoodsPage.xaml.h" />
+    <ClInclude Include="XboxUI\XboxOnePlaylistsPage.xaml.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\tidal-logo-large.png">
@@ -280,6 +286,9 @@
     <Page Include="XboxUI\XboxMoodsPage.xaml" />
     <Page Include="XboxUI\XboxOnePlaylistsPage.xaml" />
     <Page Include="XboxUI\XboxGenresPage.xaml" />
+    <Page Include="XboxUI\XboxVideosPage.xaml" />
+    <Page Include="XboxUI\XboxSearchPage.xaml" />
+    <Page Include="XboxUI\XboxSearchResults.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\WiMP-Icons.ttf" />

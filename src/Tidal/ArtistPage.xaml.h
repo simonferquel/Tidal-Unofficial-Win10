@@ -11,7 +11,6 @@
 #include "ArtistPage.g.h"
 #include "TracksPlaybackStateManager.h"
 #include "IPageWithPreservedState.h"
-#include <Hat.h>
 
 namespace Tidal
 {
@@ -41,8 +40,8 @@ namespace Tidal
 		}
 	private:
 
-		concurrency::task<void> LoadAsync(Hat<Windows::UI::Xaml::Navigation::NavigationEventArgs> args);
-		concurrency::task<void> loadImageAsync(Hat<Platform::String> url);
+		concurrency::task<void> LoadAsync(Windows::UI::Xaml::Navigation::NavigationEventArgs^ args);
+		concurrency::task<void> loadImageAsync(Platform::String^ url);
 		void OnDrawHeaderImage(Microsoft::Graphics::Canvas::UI::Xaml::ICanvasAnimatedControl^ sender, Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedDrawEventArgs^ args);
 		
 		void OnAlbumClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);

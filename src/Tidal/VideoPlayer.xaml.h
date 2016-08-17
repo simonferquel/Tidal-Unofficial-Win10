@@ -7,7 +7,6 @@
 
 #include "VideoPlayer.g.h"
 #include <ppltasks.h>
-#include <Hat.h>
 namespace Tidal
 {
 	/// <summary>
@@ -25,7 +24,7 @@ namespace Tidal
 			_cts = concurrency::cancellation_token_source();
 		}
 	private:
-		concurrency::task<void> launchVideo(Hat<Platform::String> id);
+		concurrency::task<void> launchVideo(Platform::String^ id);
 	protected:
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
 		

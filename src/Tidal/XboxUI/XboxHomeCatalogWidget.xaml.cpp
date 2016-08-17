@@ -11,6 +11,8 @@
 #include "XboxShell.xaml.h"
 #include "XboxMoodsPage.xaml.h"
 #include "XboxGenresPage.xaml.h"
+#include "XboxVideosPage.xaml.h"
+#include "XboxSearchPage.xaml.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -92,10 +94,18 @@ void Tidal::XboxHomeCatalogWidget::GoToGenres()
 
 void Tidal::XboxHomeCatalogWidget::GoToVideos()
 {
+	auto shell = dynamic_cast<XboxShell^>(Window::Current->Content);
+	if (shell) {
+		shell->Frame->Navigate(XboxVideosPage::typeid);
+	}
 }
 
 void Tidal::XboxHomeCatalogWidget::GoToSearch()
 {
+	auto shell = dynamic_cast<XboxShell^>(Window::Current->Content);
+	if (shell) {
+		shell->Frame->Navigate(XboxSearchPage::typeid);
+	}
 }
 
 concurrency::task<void> Tidal::XboxHomeCatalogWidget::LoadAsync()
@@ -113,7 +123,6 @@ concurrency::task<void> Tidal::XboxHomeCatalogWidget::LoadAsync()
 	Selection = selection;
 	this->Bindings->Update();
 	loadingView->LoadingState = LoadingState::Loaded;
-	
 }
 
 
