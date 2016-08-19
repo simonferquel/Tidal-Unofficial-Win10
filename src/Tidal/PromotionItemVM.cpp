@@ -9,6 +9,7 @@
 #include "AuthenticationService.h"
 #include "UnauthenticatedDialog.h"
 #include "XboxUI\XboxShell.xaml.h"
+#include "XboxUI/XboxAlbumPage.xaml.h"
 using namespace tools::strings;
 void Tidal::PromotionItemVM::Go()
 {
@@ -40,7 +41,7 @@ void Tidal::PromotionItemVM::Go()
 		else {
 			auto xbShell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
 			if (xbShell) {
-				xbShell->Frame->Navigate(AlbumPage::typeid, ArtifactId);
+				xbShell->Frame->Navigate(XboxAlbumPage::typeid, ArtifactId);
 			}
 		}
 	}

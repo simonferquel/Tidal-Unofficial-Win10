@@ -340,6 +340,9 @@
     <ClInclude Include="WrapPanel.h" />
     <ClInclude Include="XamlHelpers.h" />
     <ClInclude Include="XboxUI\FocusHelper.h" />
+    <ClInclude Include="XboxUI\XboxAlbumPage.xaml.h">
+      <DependentUpon>XboxUI\XboxAlbumPage.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="XboxUI\XboxArticleListPageParameter.h" />
     <ClInclude Include="XboxOneHub.h" />
     <ClInclude Include="XboxUI\XboxArticleListPage.xaml.h">
@@ -464,6 +467,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Videos.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxAlbumPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="XboxUI\XboxArticleListPage.xaml">
@@ -696,6 +702,9 @@
       <DependentUpon>Videos.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="WrapPanel.cpp" />
+    <ClCompile Include="XboxUI\XboxAlbumPage.xaml.cpp">
+      <DependentUpon>XboxUI\XboxAlbumPage.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="XboxUI\XboxArticleListPageParameter.cpp" />
     <ClCompile Include="XboxOneHub.cpp" />
     <ClCompile Include="XboxUI\XboxArticleListPage.xaml.cpp">

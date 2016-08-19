@@ -15,6 +15,7 @@
 #include "MenuFlyouts.h"
 #include "XboxUI/XboxShell.xaml.h"
 #include "AudioService.h"
+#include "XboxUI/XboxAlbumPage.xaml.h"
 using namespace api;
 Windows::UI::Xaml::Input::ICommand^ Tidal::TrackItemVM::PlayCommand::get() {
 	auto lst = _trackListRef.Resolve<Windows::Foundation::Collections::IIterable<TrackItemVM^>>();
@@ -56,7 +57,7 @@ void Tidal::TrackItemVM::GoToAlbum()
 	else {
 		auto xbshell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
 		if (xbshell) {
-			xbshell->Frame->Navigate(AlbumPage::typeid, _trackInfo.album.id.ToString());
+			xbshell->Frame->Navigate(XboxAlbumPage::typeid, _trackInfo.album.id.ToString());
 		}
 	}
 }

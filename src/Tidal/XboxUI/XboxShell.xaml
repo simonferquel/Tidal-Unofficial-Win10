@@ -5,6 +5,8 @@
     xmlns:local="using:Tidal"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  KeyDown="OnKeyDown"
+    Unloaded="OnUnloaded"
+    Loaded="OnLoaded"
     mc:Ignorable="d"
     d:DesignHeight="540"
     d:DesignWidth="960">
@@ -28,6 +30,8 @@
                           HorizontalAlignment="Left" FontSize="136"/>
                     <TextBlock Text="unofficial" VerticalAlignment="Center" FontStyle="Italic" FontFamily="Consolas"/>
                 </StackPanel>
+                <TextBlock x:Name="importsIndicator" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                           Margin="12,0,0,4" Foreground="#66FFFFFF" FontSize="13" />
 
                 <local:LoginView Height="64"  Grid.Column="2" Margin="0,0,12,0"/>
             </Grid>

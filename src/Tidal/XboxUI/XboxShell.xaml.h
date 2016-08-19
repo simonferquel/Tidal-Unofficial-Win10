@@ -6,6 +6,7 @@
 #pragma once
 
 #include "XboxUI\XboxShell.g.h"
+#include "../Mediator.h"
 #include "XboxBackground.h"
 
 namespace Tidal
@@ -20,7 +21,11 @@ namespace Tidal
 		}
 		property XboxBackground^ AnimatedBackground {XboxBackground^get() { return bg; }}
 	private:
+		void OnImportStateChanged();
+		std::vector<RegistrationToken> _mediatorTokens;
 		void OnKeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^e);
 		void OnNavigated(Platform::Object^ sender, Windows::UI::Xaml::Navigation::NavigationEventArgs^ e);
+		void OnUnloaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

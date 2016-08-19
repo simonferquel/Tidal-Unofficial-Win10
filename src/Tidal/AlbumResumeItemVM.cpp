@@ -8,6 +8,7 @@
 #include "ArtistPage.xaml.h"
 #include <Api/CoverCache.h>
 #include <XboxUI/XboxShell.xaml.h>
+#include <XboxUI/XboxAlbumPage.xaml.h>
 
 void Tidal::AlbumResumeItemVM::Go()
 {
@@ -18,7 +19,7 @@ void Tidal::AlbumResumeItemVM::Go()
 	else {
 		auto xbshell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
 		if (xbshell) {
-			xbshell->Frame->Navigate(AlbumPage::typeid, Id.ToString());
+			xbshell->Frame->Navigate(XboxAlbumPage::typeid, Id.ToString());
 		}
 	}
 }
