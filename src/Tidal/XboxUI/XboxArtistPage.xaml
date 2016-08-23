@@ -1,0 +1,373 @@
+﻿<Page
+    x:Class="Tidal.XboxArtistPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    Loaded="OnLoaded"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <Style TargetType="GridViewItem" x:Key="GridViewItemLarge">
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="TabNavigation" Value="Local"/>
+            <Setter Property="IsHoldingEnabled" Value="True"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="12"/>
+            <Setter Property="MinWidth" Value="{ThemeResource GridViewItemMinWidth}"/>
+            <Setter Property="MinHeight" Value="{ThemeResource GridViewItemMinHeight}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridViewItem">
+                        <ListViewItemPresenter CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" ContentMargin="{TemplateBinding Padding}" CheckMode="Overlay" ContentTransitions="{TemplateBinding ContentTransitions}" CheckBoxBrush="{ThemeResource SystemControlBackgroundChromeMediumBrush}" DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}" FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" PointerOverForeground="{ThemeResource SystemControlForegroundBaseHighBrush}" PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}" ReorderHintOffset="{ThemeResource GridViewItemReorderHintThemeOffset}" SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}" SelectionCheckMarkVisualEnabled="True" SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}" SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}" SelectedBackground="{ThemeResource SystemControlHighlightAccentBrush}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TrackListViewItemStyle" TargetType="ListViewItem">
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="Background" Value="{ThemeResource ListViewItemBackground}"/>
+            <Setter Property="Foreground" Value="{ThemeResource ListViewItemForeground}"/>
+            <Setter Property="TabNavigation" Value="Local"/>
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="IsHoldingEnabled" Value="True"/>
+            <Setter Property="Padding" Value="12,0,12,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+            <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
+            <Setter Property="AllowDrop" Value="False"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="FocusVisualMargin" Value="0"/>
+            <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}"/>
+            <Setter Property="FocusVisualPrimaryThickness" Value="2"/>
+            <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}"/>
+            <Setter Property="FocusVisualSecondaryThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter CheckBrush="{ThemeResource ListViewItemCheckBrush}" ContentMargin="{TemplateBinding Padding}" CheckMode="{ThemeResource ListViewItemCheckMode}" ContentTransitions="{TemplateBinding ContentTransitions}" CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}" DragForeground="{ThemeResource ListViewItemDragForeground}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackground}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}" FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}" FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}" FocusVisualMargin="{TemplateBinding FocusVisualMargin}" FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}" FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}" FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Control.IsTemplateFocusTarget="True" PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}" PressedBackground="{ThemeResource ListViewItemBackgroundPressed}" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}" PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}" ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}" SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}" SelectedForeground="{ThemeResource ListViewItemForegroundSelected}" SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}" SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    <Grid Margin="0,-64,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="title"  Text="" Margin="300,0,0,0" 
+                   HorizontalAlignment="Left" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource PageTitleStyle}" FontSize="40" FontWeight="Thin" Width="400">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="#66FFFFFF" />
+            </TextBlock.Foreground>
+            <TextBlock.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition/>
+                </TransitionCollection>
+            </TextBlock.Transitions>
+        </TextBlock>
+        <local:LoadingView x:Name="loadingView" Grid.Row="1">
+            <local:XboxOneHub x:Name="hub">
+                <local:XboxOneHubSection Header="TRACKS">
+                    <Grid Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid VerticalAlignment="Top" Width="300" Margin="12,0" Background="#FF171717">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="200" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Image x:Name="artistImg"    />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1">
+                                
+
+                                <Button Style="{StaticResource XboxNoBorderButtonStyle}"
+                                    Width="48"
+                                    Height="48"
+                                        Click="OnToggleFavoritesClick"
+                                        ToolTipService.ToolTip="Favorite"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                            UseSystemFocusVisuals="True"
+                                            FocusVisualPrimaryBrush="{StaticResource TidalAccentBrush}"
+                                    Background="Transparent">
+                                    <Grid>
+                                        <FontIcon x:Name="btnAddToFavorites" VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="D" />
+                                        <FontIcon x:Name="btnRemoveFromFavorites" Foreground="{StaticResource TidalAccentBrush}" VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="€" />
+                                    </Grid>
+                                </Button>
+                                <Button Style="{StaticResource XboxNoBorderButtonStyle}"
+                                        ToolTipService.ToolTip="Play popular tracks"
+                                    Width="48"
+                                    Height="48"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                            UseSystemFocusVisuals="True"
+                                        Click="OnPlay"
+                                            FocusVisualPrimaryBrush="{StaticResource TidalAccentBrush}"
+                                    Background="Transparent">
+                                    <SymbolIcon Symbol="Play" />
+                                </Button>
+                                <Button Style="{StaticResource XboxNoBorderButtonStyle}"
+                                        ToolTipService.ToolTip="Play radio"
+                                    Width="48"
+                                    Height="48"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                            UseSystemFocusVisuals="True"
+                                        Click="OnPlayRadio"
+                                            FocusVisualPrimaryBrush="{StaticResource TidalAccentBrush}"
+                                    Background="Transparent">
+                                    <FontIcon VerticalAlignment="Center" FontFamily="ms-appx:///Assets/WiMP-Icons.ttf#WiMP-Icons-2014" Glyph="H" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                        <ListView Margin="0,0,12,0" x:Name="lv" Grid.Column="1" ItemContainerStyle="{StaticResource TrackListViewItemStyle}"
+                          
+                          SelectionMode="None"
+                          IsItemClickEnabled="False">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="local:TrackItemVM">
+                                    <Border Background="#33FFFFFF" BorderThickness="0,0,0,3" BorderBrush="Transparent" >
+                                        <Grid Height="48" Opacity="{x:Bind Opacity, Mode=OneWay}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="48" />
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Image Source="{x:Bind ImageUrl}"
+                                   Width="48"
+                                   Height="48"/>
+                                            <Button Style="{StaticResource XboxNoBorderButtonStyle}"
+                                            Click="{x:Bind TogglePlayPause}"
+                                    Width="48"
+                                    Height="48"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                            UseSystemFocusVisuals="True"
+                                            FocusVisualPrimaryBrush="{StaticResource TidalAccentBrush}"
+                                    Background="Transparent">
+                                                <Grid>
+                                                    <SymbolIcon Symbol="Play" Visibility="{x:Bind PlayButtonVisibility, Mode=OneWay}"/>
+                                                    <SymbolIcon Symbol="Pause" 
+                                            Visibility="{x:Bind PauseButtonVisibility, Mode=OneWay}" />
+
+                                                </Grid>
+                                            </Button>
+
+                                            <TextBlock Grid.Column="1" Margin="12,0,0,0"
+                                       VerticalAlignment="Center" Text="{x:Bind Title}" FontWeight="{x:Bind TitleFontWeight, Mode=OneWay}" TextTrimming="CharacterEllipsis"></TextBlock>
+                                            <Button Style="{StaticResource XboxNoBorderButtonStyle}" Grid.Column="2" Margin="12,0,0,0" 
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Center"  Click="{x:Bind GoToArtist}">
+                                                <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Bind ArtistName}" FontSize="13"  FontWeight="SemiLight"/>
+
+                                            </Button>
+                                            <Button Style="{StaticResource XboxNoBorderButtonStyle}" Grid.Column="3" Margin="12,0,0,0" FontSize="13"  FontWeight="SemiLight"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Center" Click="{x:Bind GoToAlbum}">
+                                                <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Bind AlbumTitle}" FontSize="13"  FontWeight="SemiLight"/>
+
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.Footer>
+                                <StackPanel>
+                                    <Rectangle Height="27" />
+                                </StackPanel>
+                            </ListView.Footer>
+                        </ListView>
+                    </Grid>
+                </local:XboxOneHubSection>
+                <local:XboxOneHubSection Header="DISCOGRAPHY">
+                    <Grid x:Name="albumsGrid" local:BindableSizeHelper.Enabled="True">
+                        <Grid.Resources>
+                            <local:MetricsHelper x:Key="MetricsSmall" DesiredItemSize="96" ItemMargin="12" ViewportSize="{Binding (local:BindableSizeHelper.BindableWidth), Mode=OneWay,ElementName=albumsGrid}" />
+                        </Grid.Resources>
+                        <GridView x:Name="albumsGV" SelectionMode="None"
+                              IsItemClickEnabled="True"
+                              Padding="0"
+                              ItemContainerStyle="{StaticResource GridViewItemLarge}"
+                              ItemClick="OnSelectionItemClick">
+                            <GridView.Footer>
+                                <Border Height="27" />
+                            </GridView.Footer>
+                            <GridView.GroupStyle>
+                                <GroupStyle HidesIfEmpty="True">
+
+                                    <GroupStyle.HeaderTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Title}"/>
+                                        </DataTemplate>
+                                    </GroupStyle.HeaderTemplate>
+                                    <GroupStyle.Panel>
+                                        <ItemsPanelTemplate>
+                                            <ItemsWrapGrid />
+                                        </ItemsPanelTemplate>
+                                    </GroupStyle.Panel>
+                                </GroupStyle>
+                            </GridView.GroupStyle>
+
+
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="local:AlbumResumeItemVM" >
+                                    <StackPanel  Width="{Binding ComputedItemSize, Source={StaticResource MetricsSmall}}" Background="#EE171717">
+
+                                        <Image Height="{Binding ComputedItemSize, Source={StaticResource MetricsSmall}}" >
+                                            <Image.Source>
+                                                <BitmapImage DecodePixelType="Logical" DecodePixelWidth="{Binding ComputedItemSize, Source={StaticResource MetricsSmall}}" 
+                                                         DecodePixelHeight="{Binding ComputedItemSize, Source={StaticResource MetricsSmall}}"
+                                         UriSource="{x:Bind ImageUrl}" />
+                                            </Image.Source>
+                                        </Image>
+                                        <Grid Padding="4" >
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock  TextTrimming="CharacterEllipsis" Margin="0" FontSize="13.333">
+                				<Run Text="{x:Bind Title}"/>
+                                            </TextBlock>
+                                            <TextBlock Grid.Row="1"  TextTrimming="CharacterEllipsis" Margin="0,0,8,0" Foreground="#FF999999" FontSize="12"
+                                               >
+                                       
+                				            <Run Text="{x:Bind ArtistName}"/>
+                                            </TextBlock>
+                                        </Grid>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                    </Grid>
+                </local:XboxOneHubSection>
+                <local:XboxOneHubSection Header="VIDEOS">
+                    <Grid x:Name="videosGrid" local:BindableSizeHelper.Enabled="True">
+                        <Grid.Resources>
+
+                            <local:MetricsHelper x:Key="MetricsMedium" DesiredItemSize="156" ItemMargin="12" ViewportSize="{Binding (local:BindableSizeHelper.BindableWidth), Mode=OneWay,ElementName=videosGrid}"/>
+                            <local:FactorConverter x:Key="FactorMedium" Factor="0.66875" />
+                        </Grid.Resources>
+                        <GridView x:Name="videosGV"
+                              SelectionMode="None"
+                              IsItemClickEnabled="True"
+                              Padding="0"
+                          ItemClick="OnSelectionItemClick"
+                              ItemContainerStyle="{StaticResource GridViewItemLarge}">
+                            <GridView.Footer>
+                                <Border Height="27" />
+                            </GridView.Footer>
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="local:VideoItemVM">
+                                    <StackPanel Width="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}}"
+                                            Background="#EE171717"
+                                  >
+
+                                        <Image Height="{Binding ComputedItemSize, Converter={StaticResource FactorMedium}, Source={StaticResource MetricsMedium}}">
+                                            <Image.Source>
+                                                <BitmapImage DecodePixelType="Logical" DecodePixelWidth="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}}" 
+            									DecodePixelHeight="{Binding ComputedItemSize, Converter={StaticResource FactorMedium}, Source={StaticResource MetricsMedium}}"
+            									UriSource="{x:Bind ImageUrl}" />
+                                            </Image.Source>
+                                        </Image>
+
+                                        <Grid Padding="4">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.ColumnSpan="2" TextTrimming="CharacterEllipsis" Margin="0" FontSize="13.333" Text="{x:Bind Title}" />
+                                            <TextBlock Grid.Row="1"  TextTrimming="CharacterEllipsis" Margin="0,0,8,0" Foreground="#FF999999" FontSize="12" 
+                                               >
+            									<Run Foreground="#FF999999"  Text="{x:Bind ArtistName}" />
+                                            </TextBlock>
+                                            <TextBlock Grid.Row="1" Grid.Column="1"  Foreground="#FF999999" FontSize="12" Text="{x:Bind DurationText}" />
+                                        </Grid>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                    </Grid>
+
+                </local:XboxOneHubSection>
+                <local:XboxOneHubSection Header="BIOGRAPHY" x:Name="bioSec">
+                    <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
+                        <StackPanel Margin="12">
+                            <TextBlock x:Name="bioTxt" TextWrapping="Wrap" />
+                            <TextBlock x:Name="bioSource" TextWrapping="Wrap" Margin="0,22,0,27" HorizontalAlignment="Right" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </local:XboxOneHubSection>
+                <local:XboxOneHubSection Header="SIMILAR ARTISTS">
+                    <Grid x:Name="artistsGrid" local:BindableSizeHelper.Enabled="True">
+                        <Grid.Resources>
+
+                            <local:MetricsHelper x:Key="MetricsMedium" DesiredItemSize="156" ItemMargin="12" ViewportSize="{Binding (local:BindableSizeHelper.BindableWidth), Mode=OneWay,ElementName=artistsGrid}"/>
+                            <local:FactorConverter x:Key="FactorMedium" Factor="0.66875" />
+                        </Grid.Resources>
+                        <GridView x:Name="similarArtistsGV"
+                              SelectionMode="None"
+                              IsItemClickEnabled="True"
+                              Padding="0"
+                          ItemClick="OnSelectionItemClick"
+                              ItemContainerStyle="{StaticResource GridViewItemLarge}">
+                            <GridView.Footer>
+                                <Border Height="27" />
+                            </GridView.Footer>
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="local:ArtistItemVM">
+                                    <StackPanel Width="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}}"
+                                            Background="#EE171717"
+                                  >
+
+                                        <Image Height="{Binding ComputedItemSize, Converter={StaticResource FactorMedium}, Source={StaticResource MetricsMedium}}">
+                                            <Image.Source>
+                                                <BitmapImage DecodePixelType="Logical" DecodePixelWidth="{Binding ComputedItemSize, Source={StaticResource MetricsMedium}}" 
+            									DecodePixelHeight="{Binding ComputedItemSize, Converter={StaticResource FactorMedium}, Source={StaticResource MetricsMedium}}"
+            									UriSource="{x:Bind ImageUrl}" />
+                                            </Image.Source>
+                                        </Image>
+
+                                        <Grid Padding="4">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.ColumnSpan="2" TextTrimming="CharacterEllipsis" Margin="0" FontSize="13.333" Text="{x:Bind Name}" />
+
+                                        </Grid>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                    </Grid>
+                </local:XboxOneHubSection>
+            </local:XboxOneHub>
+        </local:LoadingView>
+    </Grid>
+</Page>

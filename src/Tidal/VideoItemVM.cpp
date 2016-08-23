@@ -10,6 +10,7 @@
 #include "AuthenticationService.h"
 #include "UnauthenticatedDialog.h"
 #include "XboxUI/XboxShell.xaml.h"
+#include "XboxUI/XboxArtistPage.xaml.h"
 void Tidal::VideoItemVM::Go()
 {
 	if (!getAuthenticationService().authenticationState().isAuthenticated()) {
@@ -32,6 +33,12 @@ void Tidal::VideoItemVM::GoToArtist()
 	auto shell = dynamic_cast<Shell^>(Windows::UI::Xaml::Window::Current->Content);
 	if (shell && ArtistId != 0) {
 		shell->Frame->Navigate(ArtistPage::typeid, ArtistId);
+	}
+	else {
+		auto xbshell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
+		if (xbshell) {
+			xbshell->Frame->Navigate(XboxArtistPage::typeid, ArtistId);
+		}
 	}
 }
 Tidal::VideoItemVM::VideoItemVM(const api::VideoInfo & info)

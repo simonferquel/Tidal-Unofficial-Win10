@@ -16,6 +16,7 @@
 #include "../DownloadService.h"
 #include <Api/ImageUriResolver.h>
 #include "../ArtistDataSources.h"
+#include "XboxArtistPage.xaml.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -155,5 +156,5 @@ void Tidal::XboxAlbumPage::OnSelectionItemClick(Platform::Object^ sender, Window
 
 void Tidal::XboxAlbumPage::OnGoToArtist(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-
+	this->Frame->Navigate(XboxArtistPage::typeid, _artistId);
 }

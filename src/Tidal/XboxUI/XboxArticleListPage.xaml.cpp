@@ -58,60 +58,60 @@ concurrency::task<void> Tidal::XboxArticleListPage::LoadAsync(Platform::String^ 
 {
 	
 	
+	try {
 
+		auto subLists = co_await getSublistsAsync(concurrency::cancellation_token::none(), listName);
+		while (!subLists->empty() && subLists->at(0).path != group->Data()) {
+			subLists->erase(subLists->begin());
+		}
 
-	auto subLists = co_await getSublistsAsync(concurrency::cancellation_token::none(), listName);
-	while (!subLists->empty() && subLists->at(0).path != group->Data()) {
-		subLists->erase(subLists->begin());
-	}
-	
-	if (subLists->empty() || !subLists->at(0).hasAlbums) {
-		unsigned int idx;
-		hub->Items->IndexOf(secAlbums, &idx);
-		hub->Items->RemoveAt(idx);
-	}
-	else {
-		albumsGV->ItemsSource = getNewsAlbumsDataSource(listName, group);
-	}
-	if (subLists->empty() || !subLists->at(0).hasPlaylists) {
-		unsigned int idx;
-		hub->Items->IndexOf(secPlaylists, &idx);
-		hub->Items->RemoveAt(idx);
-	}
-	else {
-		playlistsGV->ItemsSource = getNewsPlaylistsDataSource(listName, group);
-	}
-	if (subLists->empty() || !subLists->at(0).hasVideos) {
-		unsigned int idx;
-		hub->Items->IndexOf(secVideos, &idx);
-		hub->Items->RemoveAt(idx);
-	}
+		if (subLists->empty() || !subLists->at(0).hasAlbums) {
+			unsigned int idx;
+			hub->Items->IndexOf(secAlbums, &idx);
+			hub->Items->RemoveAt(idx);
+		}
+		else {
+			albumsGV->ItemsSource = getNewsAlbumsDataSource(listName, group);
+		}
+		if (subLists->empty() || !subLists->at(0).hasPlaylists) {
+			unsigned int idx;
+			hub->Items->IndexOf(secPlaylists, &idx);
+			hub->Items->RemoveAt(idx);
+		}
+		else {
+			playlistsGV->ItemsSource = getNewsPlaylistsDataSource(listName, group);
+		}
+		if (subLists->empty() || !subLists->at(0).hasVideos) {
+			unsigned int idx;
+			hub->Items->IndexOf(secVideos, &idx);
+			hub->Items->RemoveAt(idx);
+		}
 
-	else {
-		videosGV->ItemsSource = getNewsVideosDataSource(listName, group);
-	}
-	
-	if (subLists->empty() || !subLists->at(0).hasTracks) {
-		unsigned int idx;
-		hub->Items->IndexOf(secTracks, &idx);
-		hub->Items->RemoveAt(idx);
-	}
-	else {
+		else {
+			videosGV->ItemsSource = getNewsVideosDataSource(listName, group);
+		}
 
-		auto tracks = co_await getNewsTrackItemsAsync(concurrency::cancellation_token::none(),
-			listName, group);
-		tracksLV->ItemsSource = tracks;
-		_tpsm = std::make_shared<TracksPlaybackStateManager>();
-		_tpsm->initialize(tracks, Dispatcher);
-	}
-	co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(100)), concurrency::cancellation_token::none());
-	if (listName == L"genres") {
-	//	hub->SelectedIndex = 2;
-		hub->Items->RemoveAt(0);
-		hub->SelectedIndex = 0;
-	}
-	
+		if (subLists->empty() || !subLists->at(0).hasTracks) {
+			unsigned int idx;
+			hub->Items->IndexOf(secTracks, &idx);
+			hub->Items->RemoveAt(idx);
+		}
+		else {
 
+			auto tracks = co_await getNewsTrackItemsAsync(concurrency::cancellation_token::none(),
+				listName, group);
+			tracksLV->ItemsSource = tracks;
+			_tpsm = std::make_shared<TracksPlaybackStateManager>();
+			_tpsm->initialize(tracks, Dispatcher);
+		}
+		co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(100)), concurrency::cancellation_token::none());
+		if (listName == L"genres") {
+			//	hub->SelectedIndex = 2;
+			hub->Items->RemoveAt(0);
+			hub->SelectedIndex = 0;
+		}
+
+	}catch(...){}
 }
 
 void Tidal::XboxArticleListPage::OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)

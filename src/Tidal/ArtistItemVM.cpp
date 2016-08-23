@@ -5,6 +5,7 @@
 #include <Shell.xaml.h>
 #include <ArtistPage.xaml.h>
 #include "XboxUI/XboxShell.xaml.h"
+#include "XboxUI/XboxArtistPage.xaml.h"
 void Tidal::ArtistItemVM::Go()
 {
 	auto shell = dynamic_cast<Shell^>(Windows::UI::Xaml::Window::Current->Content);
@@ -14,7 +15,7 @@ void Tidal::ArtistItemVM::Go()
 	else {
 		auto xbShell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
 		if (xbShell && Id != 0) {
-			xbShell->Frame->Navigate(ArtistPage::typeid, Id);
+			xbShell->Frame->Navigate(XboxArtistPage::typeid, Id);
 		}
 	}
 }

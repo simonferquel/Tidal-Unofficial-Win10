@@ -348,6 +348,9 @@
     <ClInclude Include="XboxUI\XboxArticleListPage.xaml.h">
       <DependentUpon>XboxUI\XboxArticleListPage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="XboxUI\XboxArtistPage.xaml.h">
+      <DependentUpon>XboxUI\XboxArtistPage.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="XboxUI\XboxBackground.h" />
     <ClInclude Include="XboxUI\XboxGenresPage.xaml.h">
       <DependentUpon>XboxUI\XboxGenresPage.xaml</DependentUpon>
@@ -369,6 +372,9 @@
     </ClInclude>
     <ClInclude Include="XboxUI\XboxOnePlaylistsPage.xaml.h">
       <DependentUpon>XboxUI\XboxOnePlaylistsPage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="XboxUI\XboxPlaylistPage.xaml.h">
+      <DependentUpon>XboxUI\XboxPlaylistPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="XboxUI\XboxSearchPage.xaml.h">
       <DependentUpon>XboxUI\XboxSearchPage.xaml</DependentUpon>
@@ -475,6 +481,9 @@
     <Page Include="XboxUI\XboxArticleListPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="XboxUI\XboxArtistPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="XboxUI\XboxGenresPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -494,6 +503,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="XboxUI\XboxOnePlaylistsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxPlaylistPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="XboxUI\XboxSearchPage.xaml">
@@ -710,6 +722,9 @@
     <ClCompile Include="XboxUI\XboxArticleListPage.xaml.cpp">
       <DependentUpon>XboxUI\XboxArticleListPage.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="XboxUI\XboxArtistPage.xaml.cpp">
+      <DependentUpon>XboxUI\XboxArtistPage.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="XboxUI\XboxBackground.cpp" />
     <ClCompile Include="XboxUI\XboxGenresPage.xaml.cpp">
       <DependentUpon>XboxUI\XboxGenresPage.xaml</DependentUpon>
@@ -731,6 +746,9 @@
     </ClCompile>
     <ClCompile Include="XboxUI\XboxOnePlaylistsPage.xaml.cpp">
       <DependentUpon>XboxUI\XboxOnePlaylistsPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="XboxUI\XboxPlaylistPage.xaml.cpp">
+      <DependentUpon>XboxUI\XboxPlaylistPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="XboxUI\XboxSearchPage.xaml.cpp">
       <DependentUpon>XboxUI\XboxSearchPage.xaml</DependentUpon>

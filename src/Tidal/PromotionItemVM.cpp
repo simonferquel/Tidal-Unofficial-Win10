@@ -10,6 +10,7 @@
 #include "UnauthenticatedDialog.h"
 #include "XboxUI\XboxShell.xaml.h"
 #include "XboxUI/XboxAlbumPage.xaml.h"
+#include <XboxUI/XboxPlaylistPage.xaml.h>
 using namespace tools::strings;
 void Tidal::PromotionItemVM::Go()
 {
@@ -53,7 +54,7 @@ void Tidal::PromotionItemVM::Go()
 		else {
 			auto xbShell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
 			if (xbShell) {
-				xbShell->Frame->Navigate(PlaylistPage::typeid, ArtifactId);
+				xbShell->Frame->Navigate(XboxPlaylistPage::typeid, ArtifactId);
 			}
 		}
 	}

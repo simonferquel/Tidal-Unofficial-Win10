@@ -9,6 +9,7 @@
 #include <Api/CoverCache.h>
 #include <XboxUI/XboxShell.xaml.h>
 #include <XboxUI/XboxAlbumPage.xaml.h>
+#include <XboxUI/XboxArtistPage.xaml.h>
 
 void Tidal::AlbumResumeItemVM::Go()
 {
@@ -29,6 +30,12 @@ void Tidal::AlbumResumeItemVM::GoToArtist()
 	auto shell = dynamic_cast<Shell^>(Windows::UI::Xaml::Window::Current->Content);
 	if (shell && ArtistId != 0) {
 		shell->Frame->Navigate(ArtistPage::typeid, ArtistId);
+	}
+	else {
+		auto xbshell = dynamic_cast<XboxShell^>(Windows::UI::Xaml::Window::Current->Content);
+		if (xbshell) {
+			xbshell->Frame->Navigate(XboxArtistPage::typeid, ArtistId);
+		}
 	}
 }
 
