@@ -8,6 +8,7 @@
 #include "SublistItemVM.h"
 #include "IncrementalDataSources.h"
 #include "../IGo.h"
+#include "../FavoritesService.h"
 using namespace Tidal;
 
 using namespace Platform;
@@ -34,6 +35,10 @@ void Tidal::XboxOnePlaylistsPage::OnNavigatedTo(Windows::UI::Xaml::Navigation::N
 	if (item) {
 		title->Text = item->Name;
 		playlistsGV->ItemsSource =  getNewsPlaylistsDataSource(L"moods", item->Path);
+	}
+	else {
+		title->Text = L"My playlists";
+		playlistsGV->ItemsSource = getFavoriteService().MyPlaylists();
 	}
 }
 

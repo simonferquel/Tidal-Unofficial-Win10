@@ -22,6 +22,8 @@ namespace Tidal
 	private:
 		std::shared_ptr<TracksPlaybackStateManager> _tpsm;
 		concurrency::task<void> LoadAsync(Platform::String^ listName, Platform::String^ group);
+		concurrency::task<void> LoadLocalMusicAsync();
+		void LoadFavorites();
 		void OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnSelectionItemClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
 		void OnPause(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

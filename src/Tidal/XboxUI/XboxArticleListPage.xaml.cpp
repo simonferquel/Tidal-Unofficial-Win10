@@ -15,6 +15,7 @@
 #include "SublistItemVM.h"
 #include <tools/AsyncHelpers.h>
 #include <tools/TimeUtils.h>
+#include <FavoritesService.h>
 using namespace Tidal;
 
 using namespace Platform;
@@ -40,10 +41,26 @@ void Tidal::XboxArticleListPage::OnNavigatedTo(Windows::UI::Xaml::Navigation::Na
 {
 	auto p = dynamic_cast<XboxArticleListPageParameter^>(args->Parameter);
 	if (p) {
-		title->Text = p->Title;
-		selectionGV->ItemsSource = getNewsPromotionsDataSource(p->PromotionListName);
-		LoadAsync(p->ListName, L"new");
-		return;
+		if (p->IsFavorites) {
+
+			secSelection->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+			title->Text = L"Favorites";
+			LoadFavorites();
+			return;
+		}
+		else if (p->IsLocalMusic) {
+
+			secSelection->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+			title->Text = L"Local music";
+			LoadLocalMusicAsync();
+			return;
+		}
+		else {
+			title->Text = p->Title;
+			selectionGV->ItemsSource = getNewsPromotionsDataSource(p->PromotionListName);
+			LoadAsync(p->ListName, L"new");
+			return;
+		}
 	}
 	auto genre = dynamic_cast<SublistItemVM^>(args->Parameter);
 	if (genre) {
@@ -56,8 +73,8 @@ void Tidal::XboxArticleListPage::OnNavigatedTo(Windows::UI::Xaml::Navigation::Na
 
 concurrency::task<void> Tidal::XboxArticleListPage::LoadAsync(Platform::String^ listName, Platform::String^ group)
 {
-	
-	
+
+
 	try {
 
 		auto subLists = co_await getSublistsAsync(concurrency::cancellation_token::none(), listName);
@@ -111,7 +128,63 @@ concurrency::task<void> Tidal::XboxArticleListPage::LoadAsync(Platform::String^ 
 			hub->SelectedIndex = 0;
 		}
 
-	}catch(...){}
+	}
+	catch (...) {}
+}
+
+concurrency::task<void> Tidal::XboxArticleListPage::LoadLocalMusicAsync()
+{
+	try {
+
+
+		albumsGV->ItemsSource = getLocalAlbumsDataSource();
+		playlistsGV->ItemsSource = getLocalPlaylistsDataSource();
+
+
+		unsigned int idx;
+		hub->Items->IndexOf(secVideos, &idx);
+		hub->Items->RemoveAt(idx);
+
+
+		auto tracks = getLocalTracksDataSource();
+		tracksLV->ItemsSource = tracks;
+		_tpsm = std::make_shared<TracksPlaybackStateManager>();
+		co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(20)), concurrency::cancellation_token::none());
+
+		hub->Items->RemoveAt(0);
+		hub->SelectedIndex = 0;
+
+	}
+	catch (...) {}
+}
+
+void Tidal::XboxArticleListPage::LoadFavorites()
+{
+	try {
+
+
+		albumsGV->ItemsSource = getFavoriteService().Albums();
+		playlistsGV->ItemsSource = getFavoriteService().Playlists();
+
+
+		unsigned int idx;
+		hub->Items->IndexOf(secVideos, &idx);
+		hub->Items->RemoveAt(idx);
+
+
+		auto tracks = getFavoriteService().Tracks();
+		tracksLV->ItemsSource = tracks;
+		_tpsm = std::make_shared<TracksPlaybackStateManager>();
+		_tpsm->initialize(tracks, Dispatcher);
+
+		tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(20)), concurrency::cancellation_token::none())
+			.then([=]() {
+			hub->Items->RemoveAt(0);
+			hub->SelectedIndex = 0;
+
+		}, concurrency::task_continuation_context::get_current_winrt_context());
+	}
+	catch (...) {}
 }
 
 void Tidal::XboxArticleListPage::OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)

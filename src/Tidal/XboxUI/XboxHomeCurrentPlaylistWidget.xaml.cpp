@@ -86,7 +86,9 @@ concurrency::task<void> Tidal::XboxHomeCurrentPlaylistWidget::LoadAsync(concurre
 	else {
 		auto vms = ref new Vector<TrackItemVM^>();
 		for (const auto& item : *playlist) {
-			vms->Append(ref new TrackItemVM(item));
+			auto itemVM = ref new TrackItemVM(item);
+			vms->Append(itemVM);
+			itemVM->AttachTo(vms);
 		}
 		_tracksPlaybackStateMgr = std::make_shared<TracksPlaybackStateManager>();
 		_tracksPlaybackStateMgr->initialize(vms, Dispatcher);

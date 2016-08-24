@@ -352,6 +352,9 @@
       <DependentUpon>XboxUI\XboxArtistPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="XboxUI\XboxBackground.h" />
+    <ClInclude Include="XboxUI\XboxDownloadsPage.xaml.h">
+      <DependentUpon>XboxUI\XboxDownloadsPage.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="XboxUI\XboxGenresPage.xaml.h">
       <DependentUpon>XboxUI\XboxGenresPage.xaml</DependentUpon>
     </ClInclude>
@@ -482,6 +485,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="XboxUI\XboxArtistPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxDownloadsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="XboxUI\XboxGenresPage.xaml">
@@ -726,6 +732,9 @@
       <DependentUpon>XboxUI\XboxArtistPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="XboxUI\XboxBackground.cpp" />
+    <ClCompile Include="XboxUI\XboxDownloadsPage.xaml.cpp">
+      <DependentUpon>XboxUI\XboxDownloadsPage.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="XboxUI\XboxGenresPage.xaml.cpp">
       <DependentUpon>XboxUI\XboxGenresPage.xaml</DependentUpon>
     </ClCompile>
