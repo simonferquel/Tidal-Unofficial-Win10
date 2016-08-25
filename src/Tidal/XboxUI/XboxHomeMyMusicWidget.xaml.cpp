@@ -11,6 +11,7 @@
 #include "XboxShell.xaml.h"
 #include "XboxOnePlaylistsPage.xaml.h"
 #include "XboxDownloadsPage.xaml.h"
+#include "XboxSettingsPage.xaml.h"
 #include <localdata/db.h>
 #include <localdata/GetExistingTrackImportJobQuery.h>
 using namespace Tidal;
@@ -114,5 +115,15 @@ void Tidal::XboxHomeMyMusicWidget::OnGoToDownloads(Platform::Object^ sender, Win
 	if (shell) {
 
 		shell->Frame->Navigate(XboxDownloadsPage::typeid);
+	}
+}
+
+
+void Tidal::XboxHomeMyMusicWidget::OnGoToSettings(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	auto shell = dynamic_cast<XboxShell^>(Window::Current->Content);
+	if (shell) {
+
+		shell->Frame->Navigate(XboxSettingsPage::typeid);
 	}
 }

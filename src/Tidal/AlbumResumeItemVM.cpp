@@ -41,6 +41,7 @@ void Tidal::AlbumResumeItemVM::GoToArtist()
 
 Tidal::AlbumResumeItemVM::AlbumResumeItemVM(const api::AlbumResume & info, bool offline)
 {
+	_albumInfo = info;
 	ArtistId = info.artist.id;
 	Id = info.id;
 	if (!offline) {

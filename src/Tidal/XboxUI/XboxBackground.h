@@ -11,11 +11,13 @@ namespace Tidal
 {
 	class BackgroundTilesBase;
 	class BackgroundTiles;
+	class BackgroundImagePool;
 	public ref class XboxBackground sealed : public Windows::UI::Xaml::Controls::Control
 	{
 	private:
 		concurrency::cancellation_token_source _cts;
 		std::shared_ptr<BackgroundTiles> _tiles;
+		std::shared_ptr<BackgroundImagePool> _bgImages;
 	public:
 		XboxBackground();
 		virtual ~XboxBackground();

@@ -8,6 +8,7 @@
 #include <Api/GetTrackInfoQuery.h>
 #include <tools/AsyncHelpers.h>
 #include <tools/TimeUtils.h>
+#include "Mediators.h"
 
 struct refresh_failed {
 
@@ -155,6 +156,7 @@ concurrency::task<void> FavoritesService::doRefreshAsync(concurrency::cancellati
 			throw refresh_failed();
 		}
 	}
+	getFavoritesRefreshedMediator().raise(true);
 }
 
 concurrency::task<void> FavoritesService::refreshAsync(concurrency::cancellation_token cancelToken)

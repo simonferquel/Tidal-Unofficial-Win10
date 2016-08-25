@@ -13,6 +13,11 @@
 #include <tools/AsyncHelpers.h>
 #include <Api/GetPromotionsQuery.h>
 #include <Api/PromotionArticle.h>
+#include <../Mediators.h>
+#include "../AudioService.h"
+#include <set>
+#include <Api/ImageUriResolver.h>
+#include <FavoritesService.h>
 
 using namespace Tidal;
 
@@ -34,8 +39,23 @@ using namespace Microsoft::Graphics::Canvas::UI::Composition;
 using namespace Windows::Graphics::DirectX;
 using namespace Microsoft::Graphics::Canvas::Effects;
 
+
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
+class Tidal::BackgroundImagePool : public std::enable_shared_from_this<BackgroundImagePool> {
+private:
+	std::mutex _mut;
+	std::random_device _rd;
+	std::vector<RegistrationToken> _mediatorTokens;
+	Platform::Collections::Vector<Platform::String^>^ _highPriority = ref new Platform::Collections::Vector<Platform::String^>();
+	Platform::Collections::Vector<Platform::String^>^ _mediumPriority = ref new Platform::Collections::Vector<Platform::String^>();
+	Platform::Collections::Vector<Platform::String^>^ _lowPriority = ref new Platform::Collections::Vector<Platform::String^>();
+	void OnCurrentPlaylistChanged(const std::vector<api::TrackInfo>& playlist);
+	void FillMediumPool();
+public:
+	concurrency::task<void> initializeAsync(concurrency::cancellation_token cancelToken);
+	Platform::String^ pickRandom();
+};
 
 class TileSlot {
 private:
@@ -81,9 +101,9 @@ public:
 };
 class Tidal::BackgroundTilesBase {
 public:
-	virtual ~BackgroundTilesBase(){}
+	virtual ~BackgroundTilesBase() {}
 };
-class Tidal::BackgroundTiles:public BackgroundTilesBase {
+class Tidal::BackgroundTiles :public BackgroundTilesBase {
 private:
 	std::random_device rd;
 	Compositor^ _compositor;
@@ -203,7 +223,7 @@ public:
 
 		auto darken = ref new ColorSourceEffect();
 		darken->Name = L"BlendForeground";
-		darken->Color = Windows::UI::ColorHelper::FromArgb(164,12,54,60);
+		darken->Color = Windows::UI::ColorHelper::FromArgb(164, 12, 54, 60);
 		auto blendEffect = ref new BlendEffect();
 		blendEffect->Name = L"Blend";
 		blendEffect->Background = desat;
@@ -213,18 +233,18 @@ public:
 		auto blurEffect = ref new GaussianBlurEffect();
 		blurEffect->Name = L"Blur";
 		blurEffect->BlurAmount = 10.0f;
-		blurEffect->BorderMode = EffectBorderMode::Hard;		
+		blurEffect->BorderMode = EffectBorderMode::Hard;
 		blurEffect->Optimization = EffectOptimization::Balanced;
 		blurEffect->Source = blendEffect;
 
 
-		
+
 		auto params = ref new Platform::Collections::Vector<String^>();
 		params->Append(L"Desat.Saturation");
 		params->Append(L"BlendForeground.Color");
 		params->Append(L"Blur.BlurAmount");
 		auto effectFactory = _compositor->CreateEffectFactory(blurEffect, params);
-		
+
 		auto blurBrush = effectFactory->CreateBrush();
 		_blurBrush = blurBrush;
 		blurBrush->SetSourceParameter(L"source", backdropBrush);
@@ -359,7 +379,7 @@ void XboxBackground::BlendBlue::set(double value) {
 	_tiles->blurBrush()->Properties->InsertColor(L"BlendForeground.Color", val);
 }
 
-XboxBackground::XboxBackground()
+XboxBackground::XboxBackground() : _bgImages(std::make_shared<BackgroundImagePool>())
 {
 	DefaultStyleKey = "Tidal.XboxBackground";
 	IsTabStop = false;
@@ -381,23 +401,28 @@ concurrency::task<CompositionSurfaceBrush^> LoadBitmapAsync(Compositor^ composit
 		ds->Clear(Windows::UI::ColorHelper::FromArgb(0, 0, 0, 0));
 		ds->DrawImage(canvasBmp, Rect(0, 0, canvasBmp->SizeInPixels.Width, canvasBmp->SizeInPixels.Height), Rect(0, 0, canvasBmp->SizeInPixels.Width, canvasBmp->SizeInPixels.Height));
 	}
-	return compositor->CreateSurfaceBrush(surface);
+	auto brush = compositor->CreateSurfaceBrush(surface);
+	brush->Stretch = CompositionStretch::UniformToFill;
+
+	return brush;
 }
 
-concurrency::task<void> animateBackground(std::shared_ptr<BackgroundTilesBase> tiles, concurrency::cancellation_token cancelToken) {
+concurrency::task<void> animateBackground(std::shared_ptr<BackgroundTilesBase> tiles, std::shared_ptr<BackgroundImagePool> imgPool, concurrency::cancellation_token cancelToken) {
 	//co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(1)), cancelToken);
-	api::GetPromotionsQuery query(1000, 0, L"NEWS", L"US");
+
 	try {
-		auto news = co_await query.executeAsync(cancelToken);
-		std::random_device rd;
-		std::uniform_int_distribution<int> dist(0, news->items.size() - 1);
-		Platform::String^ url;
+
+
+
 		while (!cancelToken.is_canceled()) {
 			auto t = std::dynamic_pointer_cast<BackgroundTiles>(tiles);
 
 			while (t->hasEmptySlots() && !cancelToken.is_canceled()) {
 				auto visual = t->compositor()->CreateSpriteVisual();
-				url = tools::strings::toWindowsString(news->items.at(dist(rd)).imageURL);
+				auto url = imgPool->pickRandom();
+				if (!url) {
+					break;
+				}
 				visual->Brush = co_await LoadBitmapAsync(t->compositor(), url);
 				t->pushContent(visual);
 			}
@@ -408,7 +433,10 @@ concurrency::task<void> animateBackground(std::shared_ptr<BackgroundTilesBase> t
 			co_await tools::async::WaitFor(tools::time::ToWindowsTimeSpan(std::chrono::seconds(3)), cancelToken);
 			{
 				auto visual = t->compositor()->CreateSpriteVisual();
-				auto url = tools::strings::toWindowsString(news->items.at(dist(rd)).imageURL);
+				auto url = imgPool->pickRandom();
+				if (!url) {
+					continue;
+				}
 				visual->Brush = co_await LoadBitmapAsync(t->compositor(), url);
 				t->pushContent(visual);
 			}
@@ -420,15 +448,20 @@ concurrency::task<void> animateBackground(std::shared_ptr<BackgroundTilesBase> t
 
 void Tidal::XboxBackground::OnLoaded(Platform::Object ^sender, Windows::UI::Xaml::RoutedEventArgs ^e)
 {
-	if (_tiles)
-	{
-		return;
-	}
-	auto referenceVisual = ElementCompositionPreview::GetElementVisual(this);
-	_tiles = std::make_shared<BackgroundTiles>(referenceVisual);
 
-	ElementCompositionPreview::SetElementChildVisual(this, _tiles->composedVisual());
-	animateBackground(_tiles, _cts.get_token());
+	if (!_tiles)
+	{
+		auto referenceVisual = ElementCompositionPreview::GetElementVisual(this);
+		_tiles = std::make_shared<BackgroundTiles>(referenceVisual);
+
+		ElementCompositionPreview::SetElementChildVisual(this, _tiles->composedVisual());
+
+	}
+	_bgImages->initializeAsync(_cts.get_token())
+		.then([tiles = _tiles, token = _cts.get_token(), imgs = _bgImages](){
+		tools::async::swallowCancellationException(tools::async::retryWithDelays([=]() { return animateBackground(tiles, imgs, token); }, tools::time::ToWindowsTimeSpan(std::chrono::seconds(5)), token));
+	});
+
 }
 
 
@@ -445,7 +478,118 @@ void Tidal::XboxBackground::SetParallaxAmountBinding(Windows::UI::Composition::E
 		_tiles = std::make_shared<BackgroundTiles>(referenceVisual);
 
 		ElementCompositionPreview::SetElementChildVisual(this, _tiles->composedVisual());
-		animateBackground(_tiles, _cts.get_token());
 	}
 	_tiles->setParallaxAmountBinding(anim);
+}
+
+void Tidal::BackgroundImagePool::OnCurrentPlaylistChanged(const std::vector<api::TrackInfo>& playlist)
+{
+	std::set<String^> urls;
+	for (auto&& item : playlist)
+	{
+
+		if (item.artist.picture.size() > 0) {
+			urls.insert(api::resolveImageUri(item.artist.picture, 1080, 720));
+		}
+
+		if (item.album.cover.size() > 0) {
+			urls.insert(api::resolveImageUri(item.album.cover, 1080, 1080));
+		}
+	}
+	auto urlsPool = ref new Platform::Collections::Vector<String^>();
+	for (auto&& url : urls) {
+		urlsPool->Append(url);
+	}
+	{
+		std::lock_guard<std::mutex> lg(_mut);
+		_highPriority = urlsPool;
+	}
+}
+
+void Tidal::BackgroundImagePool::FillMediumPool()
+{
+	std::set<String^> urls;
+	for (auto&& item : getFavoriteService().Tracks())
+	{
+		auto& artist = item->trackInfo().artist;
+		if (artist.picture.size() > 0) {
+			urls.insert(api::resolveImageUri(artist.picture, 1080, 720));
+		}
+
+		if (item->trackInfo().album.cover.size() > 0) {
+			urls.insert(api::resolveImageUri(item->trackInfo().album.cover, 1080, 1080));
+		}
+	}
+
+	for (auto&& item : getFavoriteService().Artists())
+	{
+		auto& artist = item->info();
+		if (artist.picture.size() > 0) {
+			urls.insert(api::resolveImageUri(artist.picture, 1080, 720));
+		}
+
+	}
+	for (auto&& album : getFavoriteService().Albums()) {
+		auto& artist = album->albumInfo().artist;
+		if (artist.picture.size() > 0) {
+			urls.insert(api::resolveImageUri(artist.picture, 1080, 720));
+		}
+
+		if (album->albumInfo().cover.size() > 0) {
+			urls.insert(api::resolveImageUri(album->albumInfo().cover, 1080, 1080));
+		}
+	}
+	auto urlsPool = ref new Platform::Collections::Vector<String^>();
+	for (auto&& url : urls) {
+		urlsPool->Append(url);
+	}
+	{
+		std::lock_guard<std::mutex> lg(_mut);
+		_mediumPriority = urlsPool;
+	}
+}
+
+concurrency::task<void> Tidal::BackgroundImagePool::initializeAsync(concurrency::cancellation_token cancelToken)
+{
+	_mediatorTokens.push_back(getCurrentPlaylistMediator()
+		.registerSharedPtrCallback<BackgroundImagePool>(shared_from_this(), &BackgroundImagePool::OnCurrentPlaylistChanged));
+	_mediatorTokens.push_back(getFavoritesRefreshedMediator()
+		.registerSharedPtrCallback<BackgroundImagePool>(shared_from_this(), &BackgroundImagePool::FillMediumPool));
+	return tools::async::swallowCancellationException(tools::async::retryWithDelays([this, cancelToken]() ->concurrency::task<void> {
+		auto playlist = co_await getAudioService().getCurrentPlaylistAsync();
+		this->OnCurrentPlaylistChanged(*playlist);
+
+		this->FillMediumPool();
+
+		api::GetPromotionsQuery query(1000, 0, L"NEWS", L"US");
+		auto news = co_await query.executeAsync(cancelToken);
+		for (auto&& item : news->items) {
+			std::lock_guard<std::mutex> lg(_mut);
+			_lowPriority->Append(tools::strings::toWindowsString(item.imageURL));
+		}
+
+	}, tools::time::ToWindowsTimeSpan(std::chrono::seconds(5)), cancelToken)).then([](tools::async::cancellable_result<void>) {});
+}
+
+Platform::String ^ Tidal::BackgroundImagePool::pickRandom()
+{
+	std::lock_guard<std::mutex> lg(_mut);
+	auto highWeight = _highPriority->Size * 4;
+	auto mediumWeight = _mediumPriority->Size * 2;
+	auto lowWeight = _lowPriority->Size;
+	if (highWeight + mediumWeight + lowWeight == 0)return nullptr;
+	std::uniform_int_distribution<> dist(0, highWeight + mediumWeight + lowWeight);
+	auto catRand = dist(_rd);
+	Platform::Collections::Vector<String^>^ subPool = _lowPriority;
+	if (catRand < highWeight)
+	{
+		subPool = _highPriority;
+	}
+	else if (catRand < highWeight + mediumWeight) {
+		subPool = _mediumPriority;
+	}
+
+	dist = std::uniform_int_distribution<>(0, subPool->Size - 1);
+	auto index = dist(_rd);
+	return subPool->GetAt(index);
 }

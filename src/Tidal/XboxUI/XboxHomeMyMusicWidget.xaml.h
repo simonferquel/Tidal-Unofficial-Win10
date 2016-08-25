@@ -30,5 +30,6 @@ namespace Tidal
 		void OnUnloaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnGoToNyPlaylists(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OnGoToDownloads(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void OnGoToSettings(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

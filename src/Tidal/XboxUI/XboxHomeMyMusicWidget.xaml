@@ -71,6 +71,7 @@
         </Button>
 
         <Button HorizontalAlignment="Stretch"
+                Click="OnGoToSettings"
                         VerticalAlignment="Stretch"
                         Grid.Row="1"
                         Grid.Column="1"

@@ -184,7 +184,8 @@
                         
                         <ContentControl IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" x:Name="PART_BodyContainer" Grid.Row="1"
                                         Margin="0,0,48,0">
-                            <Canvas x:Name="PART_Body" />
+                            <Canvas x:Name="PART_Body">
+                            </Canvas>
                         </ContentControl>
                     </Grid>
                 </ControlTemplate>

@@ -7,6 +7,7 @@
 #include "XboxOneHub.h"
 #include <vector>
 #include <tools/TimeUtils.h>
+#include "../AnimationHelpers.h"
 #include <WindowsNumerics.h>
 
 #include "XboxUI/FocusHelper.h"
@@ -50,7 +51,7 @@ _::DependencyProperty^ RegisterAttachedProperty(Platform::String^ name, const TP
 
 
 Control^ FindFirstTabStopChild(DependencyObject^ root) {
-	
+
 	auto childCount = VisualTreeHelper::GetChildrenCount(root);
 	for (auto ix = 0; ix < childCount; ++ix) {
 		auto child = VisualTreeHelper::GetChild(root, ix);
@@ -64,7 +65,7 @@ Control^ FindFirstTabStopChild(DependencyObject^ root) {
 
 
 bool IsWithin(DependencyObject^ root, DependencyObject^ child) {
-	
+
 	auto parent = VisualTreeHelper::GetParent(child);
 	if (parent == root) {
 		return true;
@@ -161,7 +162,7 @@ void Tidal::XboxOneHub::ComputeTotalExtentAndMaterializeBodyPresenters()
 				container->HasHeaderFocus = FocusHelper::GetIsFocusWithin(sender);
 			}));
 			_body->Children->Append(presenter);
-			
+
 		}
 		else {
 			presenter->Width = sectionWidth;
@@ -233,7 +234,7 @@ bool isFocusWithin(DependencyObject ^elem) {
 
 void Tidal::XboxOneHub::OnKeyDown(_::KeyRoutedEventArgs ^ e)
 {
-	
+
 	auto selectedContainer = SelectedIndex > -1 ? ContainerFromIndex(SelectedIndex) : nullptr;
 	auto selectedRoot = selectedContainer != nullptr ? GetBodyPresenter(selectedContainer) : nullptr;
 	auto k = e->Key;
@@ -269,7 +270,7 @@ void Tidal::XboxOneHub::OnKeyDown(_::KeyRoutedEventArgs ^ e)
 		}
 	}
 	else if (ShouldGoRight(e->OriginalKey, selectedRoot)) {
-		if (SelectedIndex < Items->Size-1) {
+		if (SelectedIndex < Items->Size - 1) {
 			e->Handled = true;
 			SelectedIndex++;
 		}
@@ -318,13 +319,13 @@ void Tidal::XboxOneHub::OnSelectionChanged(Platform::Object ^sender, Windows::UI
 		auto sectionWidth = _body->ActualWidth;
 		auto targetOffset = sectionWidth * SelectedIndex;
 		auto anim = _compositor->CreateScalarKeyFrameAnimation();
-		anim->InsertKeyFrame(1, targetOffset, _compositor->CreateCubicBezierEasingFunction(float2(0,0),float2(0.0f,1)));
-		
+		anim->InsertKeyFrame(1, targetOffset, _compositor->CreateCubicBezierEasingFunction(float2(0, 0), float2(0.0f, 1)));
+
 		anim->Duration = tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(500));
 
 		CompositionPropertySet->StartAnimation(L"CurrentOffsetX", anim);
 		batch->End();
-		
+
 	}
 
 	auto minIndex = SelectedIndex - 1;
@@ -333,7 +334,15 @@ void Tidal::XboxOneHub::OnSelectionChanged(Platform::Object ^sender, Windows::UI
 	for (auto ix = 0; ix < Items->Size; ++ix) {
 		auto presenter = GetBodyPresenter(ContainerFromIndex(ix));
 		if (presenter) {
-			presenter->Visibility = (ix<minIndex || ix>maxIndex) ? Windows::UI::Xaml::Visibility::Collapsed : Windows::UI::Xaml::Visibility::Visible;
+			if (ix<minIndex || ix>maxIndex) {
+				presenter->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+			}
+			else
+			{
+				presenter->Opacity = 1;
+				
+				presenter->Visibility = Windows::UI::Xaml::Visibility::Visible;
+			}
 		}
 	}
 }
@@ -358,7 +367,15 @@ void Tidal::XboxOneHub::OnLoaded(Platform::Object ^sender, Windows::UI::Xaml::Ro
 	for (auto ix = 0; ix < Items->Size; ++ix) {
 		auto presenter = GetBodyPresenter(ContainerFromIndex(ix));
 		if (presenter) {
-			presenter->Visibility = (ix<minIndex || ix>maxIndex) ? Windows::UI::Xaml::Visibility::Collapsed : Windows::UI::Xaml::Visibility::Visible;
+			if (ix<minIndex || ix>maxIndex) {
+				presenter->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+			}
+			else
+			{
+				presenter->Opacity = 0;
+				presenter->Visibility = Windows::UI::Xaml::Visibility::Visible;
+				AnimateTo(presenter, L"Opacity", 1, tools::time::ToWindowsTimeSpan(std::chrono::milliseconds(300)));
+			}
 		}
 	}
 }
@@ -430,7 +447,7 @@ Platform::Object ^ Tidal::BoolToVisibilityConverter::ConvertBack(Platform::Objec
 
 void Tidal::XboxOneHubSection::OnTapped(Platform::Object ^sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs ^e)
 {
-	auto hub = dynamic_cast<XboxOneHub^>( ItemsControl::ItemsControlFromItemContainer(this));
+	auto hub = dynamic_cast<XboxOneHub^>(ItemsControl::ItemsControlFromItemContainer(this));
 	if (hub) {
 		hub->SelectedIndex = hub->IndexFromContainer(this);
 	}

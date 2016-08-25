@@ -1,0 +1,86 @@
+﻿<Page
+    x:Class="Tidal.XboxSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tidal"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    Loaded="OnLoaded"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Margin="0,-64,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="title"  Text="Settings" Margin="300,0,0,0" 
+                   HorizontalAlignment="Left" 
+                   VerticalAlignment="Center" 
+                   Style="{StaticResource PageTitleStyle}" FontSize="40" FontWeight="Thin" Width="400">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="#66FFFFFF" />
+            </TextBlock.Foreground>
+            <TextBlock.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition/>
+                </TransitionCollection>
+            </TextBlock.Transitions>
+        </TextBlock>
+        <local:XboxOneHub Grid.Row="1">
+            <local:XboxOneHubSection Header="AUDIO">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Margin="12">Streaming quality</TextBlock>
+                        <RadioButton Margin="12,0" Tag="LOW" x:Name="streamLow" GroupName="StreamingQuality" Checked="OnStreamingQualityChecked">Low</RadioButton>
+                        <RadioButton Margin="12,0" Tag="HIGH" x:Name="streamHigh" GroupName="StreamingQuality" Checked="OnStreamingQualityChecked">High</RadioButton>
+                        <RadioButton Margin="12,0" Tag="LOSSLESS" x:Name="streamLossless" GroupName="StreamingQuality" Checked="OnStreamingQualityChecked">Lossless</RadioButton>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Margin="12">Import quality</TextBlock>
+                        <RadioButton x:Name="importLow" Margin="12,0" Tag="LOW" GroupName="ImportQuality" Checked="OnImportQualityChecked">Low</RadioButton>
+                        <RadioButton x:Name="importHigh" Margin="12,0" Tag="HIGH" GroupName="ImportQuality" Checked="OnImportQualityChecked">High</RadioButton>
+                        <RadioButton x:Name="importLossless" Margin="12,0" Tag="LOSSLESS" GroupName="ImportQuality" Checked="OnImportQualityChecked">Lossless</RadioButton>
+                    </StackPanel>
+                </Grid>
+            </local:XboxOneHubSection>
+            <local:XboxOneHubSection Header="STORAGE">
+                <Grid>
+
+                    <ProgressBar VerticalAlignment="Top"
+                                     x:Name="storageProgressBar"/>
+                    <StackPanel>
+                        <TextBlock Margin="12" Text="Cached tracks" />
+                        <TextBlock Margin="12,0" Style="{StaticResource CaptionTextBlockStyle}">
+                            <Run Text="total size: " />
+                            <Run x:Name="cacheTotal" />
+                            <LineBreak/>
+                            <Run Text="not played for 8 days: " />
+                            <Run x:Name="cache8Days" />
+                        </TextBlock>
+                        <StackPanel Orientation="Horizontal" Margin="12,4">
+                            <Button Content="Clear all" Click="OnClearCache_Click" />
+                            <Button Margin="4,0" Content="Clear not played for 8 days" Click="OnRemoveOldCacheTracks_Click" />
+                        </StackPanel>
+                        <TextBlock Margin="12" Text="Imported tracks" />
+                        <TextBlock Margin="12,0" Style="{StaticResource CaptionTextBlockStyle}">
+                            <Run Text="total size: " />
+                            <Run x:Name="importTotal" />
+                            <LineBreak/>
+                            <Run Text="not played for 8 days: " />
+                            <Run x:Name="import8Days" />
+                        </TextBlock>
+                        <StackPanel Orientation="Horizontal" Margin="12,4">
+                            <Button Content="Clear all" Click="OnClearImports_Click"/>
+                            <Button Margin="4,0" Content="Clear not played for 8 days" Click="OnRemoveOldImportedTracks_Click" />
+                        </StackPanel>
+                    </StackPanel>
+
+                </Grid>
+            </local:XboxOneHubSection>
+        </local:XboxOneHub>
+    </Grid>
+</Page>

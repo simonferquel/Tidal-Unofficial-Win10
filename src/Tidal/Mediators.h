@@ -22,7 +22,7 @@ struct ImportProgress {
 
 Mediator<ImportProgress>& getTrackImportProgress();
 
-
+Mediator<bool>& getFavoritesRefreshedMediator();
 
 Mediator<bool>& getTrackImportLaunchedMediator();
 

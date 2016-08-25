@@ -21,6 +21,7 @@ void Tidal::ArtistItemVM::Go()
 }
 Tidal::ArtistItemVM::ArtistItemVM(api::ArtistInfo & artistInfo)
 {
+	_info = artistInfo;
 	Id = artistInfo.id;
 	Name = tools::strings::toWindowsString(artistInfo.name);
 	if (artistInfo.picture.size() > 0) {

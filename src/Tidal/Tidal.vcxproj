@@ -385,6 +385,9 @@
     <ClInclude Include="XboxUI\XboxSearchResults.xaml.h">
       <DependentUpon>XboxUI\XboxSearchResults.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="XboxUI\XboxSettingsPage.xaml.h">
+      <DependentUpon>XboxUI\XboxSettingsPage.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="XboxUI\XboxShell.xaml.h">
       <DependentUpon>XboxUI\XboxShell.xaml</DependentUpon>
     </ClInclude>
@@ -518,6 +521,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="XboxUI\XboxSearchResults.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XboxUI\XboxSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="XboxUI\XboxShell.xaml">
@@ -764,6 +770,9 @@
     </ClCompile>
     <ClCompile Include="XboxUI\XboxSearchResults.xaml.cpp">
       <DependentUpon>XboxUI\XboxSearchResults.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="XboxUI\XboxSettingsPage.xaml.cpp">
+      <DependentUpon>XboxUI\XboxSettingsPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="XboxUI\XboxShell.xaml.cpp">
       <DependentUpon>XboxUI\XboxShell.xaml</DependentUpon>

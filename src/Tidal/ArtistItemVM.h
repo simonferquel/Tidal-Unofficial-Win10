@@ -3,6 +3,8 @@
 #include "IGo.h"
 namespace Tidal {
 	public ref class ArtistItemVM sealed : public IGo{
+	private:
+		api::ArtistInfo _info;
 	public:
 		property std::int64_t Id;
 		property Platform::String^ Name;
@@ -11,5 +13,6 @@ namespace Tidal {
 		virtual void Go();
 	internal:
 		ArtistItemVM(api::ArtistInfo& artistInfo);
+		const api::ArtistInfo& info() { return _info; }
 	};
 }

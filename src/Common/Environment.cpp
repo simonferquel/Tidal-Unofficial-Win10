@@ -3,6 +3,6 @@
 
 bool env::isRunningOnXbox()
 {
-	return true;
+	//return true;
 	return Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily == L"Windows.Xbox";
 }

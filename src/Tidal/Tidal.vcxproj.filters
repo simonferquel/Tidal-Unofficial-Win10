@@ -305,6 +305,7 @@
     <Page Include="XboxUI\XboxPlaylistPage.xaml" />
     <Page Include="XboxUI\XboxArtistPage.xaml" />
     <Page Include="XboxUI\XboxDownloadsPage.xaml" />
+    <Page Include="XboxUI\XboxSettingsPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\WiMP-Icons.ttf" />

@@ -43,6 +43,13 @@ Mediator<ImportProgress>& getTrackImportProgress()
 	return *m;
 }
 
+Mediator<bool>& getFavoritesRefreshedMediator()
+{
+
+	static std::shared_ptr<Mediator<bool>> m = std::make_shared<Mediator<bool>>();
+	return *m;
+}
+
 Mediator<bool>& getTrackImportLaunchedMediator()
 {
 	static std::shared_ptr<Mediator<bool>> m = std::make_shared<Mediator<bool>>();
