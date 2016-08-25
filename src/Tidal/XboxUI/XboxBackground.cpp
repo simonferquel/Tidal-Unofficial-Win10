@@ -232,7 +232,7 @@ public:
 
 		auto blurEffect = ref new GaussianBlurEffect();
 		blurEffect->Name = L"Blur";
-		blurEffect->BlurAmount = 10.0f;
+		blurEffect->BlurAmount = 4.0f;
 		blurEffect->BorderMode = EffectBorderMode::Hard;
 		blurEffect->Optimization = EffectOptimization::Balanced;
 		blurEffect->Source = blendEffect;
@@ -291,9 +291,9 @@ void XboxBackground::Saturation::set(double value) {
 }
 double XboxBackground::BlurAmount::get() {
 	if (!_tiles) {
-		return 5;
+		return 4;
 	}
-	float val = 5;
+	float val = 4;
 	_tiles->blurBrush()->Properties->TryGetScalar(L"Blur.BlurAmount", &val);
 	return val;
 }

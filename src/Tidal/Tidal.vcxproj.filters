@@ -97,6 +97,8 @@
     <ClCompile Include="XboxUI\XboxVideosPage.xaml.cpp" />
     <ClCompile Include="XboxUI\XboxArtistPage.xaml.cpp" />
     <ClCompile Include="XboxUI\XboxPlaylistPage.xaml.cpp" />
+    <ClCompile Include="XboxUI\XboxDownloadsPage.xaml.cpp" />
+    <ClCompile Include="XboxUI\XboxSettingsPage.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -191,6 +193,8 @@
     <ClInclude Include="XboxUI\XboxVideosPage.xaml.h" />
     <ClInclude Include="XboxUI\XboxArtistPage.xaml.h" />
     <ClInclude Include="XboxUI\XboxPlaylistPage.xaml.h" />
+    <ClInclude Include="XboxUI\XboxDownloadsPage.xaml.h" />
+    <ClInclude Include="XboxUI\XboxSettingsPage.xaml.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\tidal-logo-large.png">

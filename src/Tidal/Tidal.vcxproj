@@ -124,9 +124,9 @@
     <PackageCertificateKeyFile>Tidal_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|arm</AppxBundlePlatforms>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
-    <PackageCertificateThumbprint>764406BCCD326B5E3511CF0D4B5B442184968CBA</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>7EFED768FEBBD18E8AB632349BAB95250F731CC3</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)BuildOutput\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>

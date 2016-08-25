@@ -345,6 +345,19 @@ void Tidal::XboxOneHub::OnSelectionChanged(Platform::Object ^sender, Windows::UI
 			}
 		}
 	}
+	if (e->AddedItems == nullptr || e->AddedItems->Size == 0 || e->RemovedItems == nullptr || e->RemovedItems->Size == 0) {
+		return;
+	}
+	uint32 previousIndex;
+	if (Items->IndexOf(e->RemovedItems->GetAt(0), &previousIndex)) {
+		if (previousIndex < SelectedIndex) {
+			ElementSoundPlayer::Play(ElementSoundKind::MoveNext);
+		}
+		else {
+
+			ElementSoundPlayer::Play(ElementSoundKind::MovePrevious);
+		}
+	}
 }
 
 
