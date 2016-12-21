@@ -53,13 +53,29 @@ concurrency::task<void> Tidal::XboxSettingsPage::loadStorageStatisticsAsync()
 
 void Tidal::XboxSettingsPage::OnStreamingQualityChecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+    auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
+    auto fe = dynamic_cast<FrameworkElement^>(sender);
+    if (fe) {
+        auto quality = dynamic_cast<String^>(fe->Tag);
+        if (quality) {
 
+            settingsValues->Insert(L"streamingQuality", quality);
+        }
+    }
 }
 
 
 void Tidal::XboxSettingsPage::OnImportQualityChecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+    auto settingsValues = Windows::Storage::ApplicationData::Current->LocalSettings->Values;
+    auto fe = dynamic_cast<FrameworkElement^>(sender);
+    if (fe) {
+        auto quality = dynamic_cast<String^>(fe->Tag);
+        if (quality) {
 
+            settingsValues->Insert(L"importQuality", quality);
+        }
+    }
 }
 
 
